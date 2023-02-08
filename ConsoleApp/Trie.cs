@@ -51,6 +51,8 @@ namespace ConsoleApp
             }
         }
 
+        
+
         public void Insert(string word)
         {
             TrieNode level = root;
@@ -67,10 +69,7 @@ namespace ConsoleApp
             }
         }
 
-        public int[] Report(string pattern)
-        {
-
-        }
+        
 
 
     }

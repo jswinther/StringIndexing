@@ -7,14 +7,16 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            var s1 = new SuffixTree(DummyData.DNA);
+            var s1 = new PrecomputedSubstrings(DummyData.DNA1000);
 
-            Stopwatch stopwatch = new Stopwatch();
 
-            stopwatch.Start();
-            s1.Run();
-            stopwatch.Stop();
-            Console.WriteLine();
+
+
+
+            foreach (var occ in s1.Report("tat", 2, "ctc"))
+            {
+                global::System.Console.WriteLine(occ);
+            }
         }
     }
 }
