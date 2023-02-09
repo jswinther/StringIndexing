@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp
+namespace ConsoleApp.DataStructures
 {
     internal class SuffixTree
     {
@@ -41,7 +41,7 @@ namespace ConsoleApp
             if (subSuffix.Length == 1)
             {
                 Keys.Add(suffix, new SuffixTreeNode(suffix));
-            } 
+            }
         }
 
         public IEnumerable<int> ReportOccurrences(string P)
@@ -58,9 +58,9 @@ namespace ConsoleApp
             }
         }
 
-        public void Run() 
+        public void Run()
         {
-            
+
         }
     }
 }

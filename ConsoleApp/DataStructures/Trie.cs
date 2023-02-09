@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp
+namespace ConsoleApp.DataStructures
 {
     internal class Trie
     {
@@ -41,17 +41,58 @@ namespace ConsoleApp
             }
             public TrieNode AddLetter(char letter)
             {
-                children.Add(letter, new TrieNode());
+                children.Add(letter, new TrieNode(Sub + letter));
                 return children[letter];
             }
+
+            public TrieNode()
+            {
+
+            }
+
+            public TrieNode(string word)
+            {
+                Sub = word;
+            }
+
+            public string Sub { get; set; }
 
             public bool EndOfWord
             {
                 get => children.Count == 0;
             }
+
+            public List<TrieNode> GetChildren()
+            {
+                Queue<TrieNode> queue = new Queue<TrieNode>();
+                List<TrieNode> trieNodes = new List<TrieNode>();
+                queue.Enqueue(this);
+                while (queue.Count > 0)
+                {
+                    TrieNode node = queue.Dequeue();
+                    if (node.EndOfWord) trieNodes.Add(node);
+                    else
+                        foreach (var child in node.children.Values)
+                        {
+                            queue.Enqueue(child);
+                        }
+                }
+                return trieNodes;
+            }
         }
 
-        
+        public IEnumerable<string> GetStrings(string pattern)
+        {
+            var node = root;
+            foreach (var letter in pattern)
+            {
+                if (node.ContainsKey(letter))
+                    node = node[letter];
+                else
+                    return null;
+            }
+            return node.GetChildren().Select(s => s.Sub);
+        }
 
         public void Insert(string word)
         {
@@ -69,7 +110,7 @@ namespace ConsoleApp
             }
         }
 
-        
+
 
 
     }

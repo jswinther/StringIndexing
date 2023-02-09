@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleApp.DataStructures;
+using System;
 using System.Diagnostics;
 
 namespace ConsoleApp
@@ -7,16 +8,21 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            var s1 = new PrecomputedSubstrings(DummyData.DNA1000);
+            string text = DummyData.DNA10000;
+            string p1 = "tat";
+            Random random = new Random();
+            int x = random.Next(text.Length);
+            string p2 = "ctc";
+            Query query = new Query(p1, x, p2);
+            Problem problem = new Problem(text, query);
+            Runner runner = new Runner(problem);
 
-
-
-
-
-            foreach (var occ in s1.Report("tat", 2, "ctc"))
-            {
-                global::System.Console.WriteLine(occ);
-            }
+            runner.Run(
+                runner.TrieBenchmark, 
+                runner.TrieBenchmark,
+                runner.TrieBenchmark,
+                runner.PrecomputedBenchmark
+            );
         }
     }
 }

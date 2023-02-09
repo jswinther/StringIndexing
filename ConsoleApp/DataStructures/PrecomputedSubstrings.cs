@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp
+namespace ConsoleApp.DataStructures
 {
     internal class PrecomputedSubstrings
     {
@@ -24,11 +24,14 @@ namespace ConsoleApp
                     Substrings[t].Add(j);
                 }
             }
-            
+
         }
 
-        public IEnumerable<int> Report(string p1, int x, string p2)
+        public IEnumerable<int> Report(Query query)
         {
+            string p1 = query.P1;
+            int x = query.X;
+            string p2 = query.P2;
             List<int> occs = new List<int>();
             if (Substrings.ContainsKey(p1))
             {
@@ -52,13 +55,13 @@ namespace ConsoleApp
         {
             foreach (var key in Substrings.Keys)
             {
-                global::System.Console.WriteLine(key);
+                Console.WriteLine(key);
                 foreach (var index in Substrings[key])
                 {
-                    global::System.Console.Write($"{index}\t");
+                    Console.Write($"{index}\t");
                 }
 
-                global::System.Console.WriteLine("\n");
+                Console.WriteLine("\n");
             }
         }
     }
