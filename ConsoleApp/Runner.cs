@@ -20,22 +20,10 @@ namespace ConsoleApp
         public delegate Benchmark BenchmarkDataStructure();
         public void Run(params BenchmarkDataStructure[] benchmarks)
         {
-            List<Task> tasks = new List<Task>();
             foreach (var bench in benchmarks)
             {
-                tasks.Add(Task.Run(() => bench.Invoke()));
+                bench.Invoke();
             }
-            try
-            {
-                Task.WaitAll(tasks.ToArray());
-            }
-            catch (AggregateException ae)
-            {
-                Console.WriteLine("One or more exceptions occurred: ");
-                foreach (var ex in ae.Flatten().InnerExceptions)
-                    Console.WriteLine("   {0}", ex.Message);
-            }
-
         }
 
         public Benchmark TrieBenchmark()
