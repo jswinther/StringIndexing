@@ -1,6 +1,7 @@
 ﻿using ConsoleApp.DataStructures;
 using System;
 using System.Diagnostics;
+using static ConsoleApp.DataStructures.AlgoSuffixTreeProblem;
 
 namespace ConsoleApp
 {
@@ -32,6 +33,11 @@ namespace ConsoleApp
                 runner.TrieBenchmark
             );
             }
+
+            /* ---Suffix Tree Ukonnen implementation test---
+            AlgoSuffixTree SFtree = new AlgoSuffixTree("banana$");
+            SFtree.print();
+            */
 
             
         }
