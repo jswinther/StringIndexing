@@ -13,13 +13,14 @@ namespace ConsoleApp
 
         static void Main(string[] args)
         {
-            
-            
+            var a = new SuffixArrayKarkkainan("banana$");
+            global::System.Console.WriteLine(string.Join(',', a.SuffixArray));
 
 
 
 
-            
+
+
 
             string[] dnas = new string[] {
                 DummyData.DNA_512,
@@ -41,17 +42,13 @@ namespace ConsoleApp
                 Problem problem = new Problem(text, query);
                 Runner runner = new Runner(problem);
 
-                runner.Run(
-                    runner.SuffixArrayBenchmark
-                );
-                
+            runner.Run(
+                runner.TrieBenchmark, runner.SuffixOtherBenchmark
+            );
             }
-            
 
-            /* ---Suffix Tree Ukonnen implementation test---
-            AlgoSuffixTree SFtree = new AlgoSuffixTree("banana$");
-            SFtree.print();
-            */
+            
+            
 
             
         }
