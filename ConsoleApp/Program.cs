@@ -43,7 +43,7 @@ namespace ConsoleApp
                 Runner runner = new Runner(problem);
 
             runner.Run(
-                runner.TrieBenchmark, runner.SuffixOtherBenchmark
+                runner.SuffixArrayBenchmark, runner.SuffixOtherBenchmark
             );
             }
 

@@ -51,6 +51,18 @@ namespace ConsoleApp
             return benchmark;
         }
 
+        public Benchmark SuffixOtherBenchmark()
+        {
+            Benchmark benchmark = new Benchmark();
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            var su = new SuffixTreeOther(problem.Text);
+            su.Visualize();
+            stopwatch.Stop();
+            benchmark.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+            DisplayBenchmark(benchmark);
+            return benchmark;
+        }
+
         public Benchmark PrecomputedBenchmark()
         {
             Benchmark benchmark = new Benchmark();
