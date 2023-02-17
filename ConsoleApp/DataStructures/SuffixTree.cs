@@ -6,61 +6,124 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures
 {
-    internal class SuffixTree
-    {
-        private readonly string T;
-
-        Dictionary<string, SuffixTreeNode> Keys = new Dictionary<string, SuffixTreeNode>();
-
-        public SuffixTree(string t)
+  
+        class Node
         {
-            T = t;
-            SortedSet<string> suffixes = new();
+            public string sub;                     // a substring of the input string
+            public List<int> ch = new List<int>(); // vector of child nodes
 
-            for (int i = t.Length - 1; i >= 0; i--)
+            public Node()
             {
-                suffixes.Add(t.Substring(i, t.Length - i) + "$");
+                sub = "";
             }
 
-            foreach (var suffix in suffixes)
+            public Node(string sub, params int[] children)
             {
-                InsertSuffix(suffix);
+                this.sub = sub;
+                ch.AddRange(children);
             }
         }
 
-        private void InsertSuffix(string suffix)
+        class SuffixTree
         {
-            string subSuffix = suffix[0].ToString();
-            int iterator = 1;
-            while (Keys.ContainsKey(subSuffix))
+            readonly List<Node> nodes = new List<Node>();
+
+            public SuffixTree(string str)
             {
-                if (iterator == suffix.Length) return;
-                subSuffix += suffix[iterator];
-                iterator++;
+                nodes.Add(new Node());
+                for (int i = 0; i < str.Length; i++)
+                {
+                    AddSuffix(str.Substring(i));
+                }
             }
-            if (subSuffix.Length == 1)
+
+            public void Visualize()
             {
-                Keys.Add(suffix, new SuffixTreeNode(suffix));
+                if (nodes.Count == 0)
+                {
+                    Console.WriteLine("<empty>");
+                    return;
+                }
+
+                void f(int n, string pre)
+                {
+                    var children = nodes[n].ch;
+                    if (children.Count == 0)
+                    {
+                        Console.WriteLine("- {0}", nodes[n].sub);
+                        return;
+                    }
+                    Console.WriteLine("+ {0}", nodes[n].sub);
+
+                    var it = children.GetEnumerator();
+                    if (it.MoveNext())
+                    {
+                        do
+                        {
+                            var cit = it;
+                            if (!cit.MoveNext()) break;
+
+                            Console.Write("{0}+-", pre);
+                            f(it.Current, pre + "| ");
+                        } while (it.MoveNext());
+                    }
+
+                    Console.Write("{0}+-", pre);
+                    f(children[children.Count - 1], pre + "  ");
+                }
+
+                f(0, "");
             }
-        }
 
-        public IEnumerable<int> ReportOccurrences(string P)
-        {
-            return null;
-        }
-
-        private class SuffixTreeNode
-        {
-            private string suffix;
-            public SuffixTreeNode(string suffix)
+            private void AddSuffix(string suf)
             {
-                this.suffix = suffix;
+                int n = 0;
+                int i = 0;
+                while (i < suf.Length)
+                {
+                    char b = suf[i];
+                    int x2 = 0;
+                    int n2;
+                    while (true)
+                    {
+                        var children = nodes[n].ch;
+                        if (x2 == children.Count)
+                        {
+                            // no matching child, remainder of suf becomes new node
+                            n2 = nodes.Count;
+                            nodes.Add(new Node(suf.Substring(i)));
+                            nodes[n].ch.Add(n2);
+                            return;
+                        }
+                        n2 = children[x2];
+                        if (nodes[n2].sub[0] == b)
+                        {
+                            break;
+                        }
+                        x2++;
+                    }
+                    // find prefix of remaining suffix in common with child
+                    var sub2 = nodes[n2].sub;
+                    int j = 0;
+                    while (j < sub2.Length)
+                    {
+                        if (suf[i + j] != sub2[j])
+                        {
+                            // split n2
+                            var n3 = n2;
+                            // new node for the part in common
+                            n2 = nodes.Count;
+                            nodes.Add(new Node(sub2.Substring(0, j), n3));
+                            nodes[n3].sub = sub2.Substring(j); // old node loses the part in common
+                            nodes[n].ch[x2] = n2;
+                            break; // continue down the tree
+                        }
+                        j++;
+                    }
+                    i += j; // advance past part in common
+                    n = n2; // continue down the tree
+                }
             }
-        }
-
-        public void Run()
-        {
-
-        }
+        
     }
 }

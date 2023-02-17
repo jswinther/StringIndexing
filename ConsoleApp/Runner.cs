@@ -39,6 +39,18 @@ namespace ConsoleApp
             return benchmark;
         }
 
+        public Benchmark SuffixArrayBenchmark()
+        {
+            Benchmark benchmark = new Benchmark();
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            var suffixArray = new SuffixArrayKarkkainan(problem.Text);
+            suffixArray.ReportAllOccurrences(problem.Query);
+            stopwatch.Stop();
+            benchmark.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+            DisplayBenchmark(benchmark);
+            return benchmark;
+        }
+
         public Benchmark PrecomputedBenchmark()
         {
             Benchmark benchmark = new Benchmark();

@@ -19,7 +19,7 @@ namespace ConsoleApp.DataStructures
         {
             public List<STNode> nodes = new List<STNode>();
 
-            public AlgoSuffixTree(String T)
+            public AlgoSuffixTree(string T)
             {
                 nodes.Add(new STNode());
                 for (int i = 0; i < T.Length; i++)

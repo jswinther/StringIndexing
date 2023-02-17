@@ -27,10 +27,10 @@ namespace ConsoleApp.DataStructures
             suffixArray(S, SuffixArray, length, alphabetSize, 0);
         }
 
-        public IEnumerable<int> ReportAllOccurrences(string p)
+        private HashSet<int> ReportAllOccurrences(string p)
         {
             int index = 0;
-            List<int> ints = new List<int>();
+            HashSet<int> ints = new HashSet<int>();
 
         
 
@@ -46,7 +46,24 @@ namespace ConsoleApp.DataStructures
             return ints;
         }
 
-     
+        public IEnumerable<(int,int)> ReportAllOccurrences(Query query)
+        {
+            var p1occs = ReportAllOccurrences(query.P1);
+            var p2occs = ReportAllOccurrences(query.P2);
+            var occs = new HashSet<(int,int)>();
+            foreach (var item in p1occs)
+            {
+                if (p2occs.Contains(item + query.P1.Length + query.X))
+                {
+                    occs.Add((item, item + query.P1.Length + query.X));
+                    global::System.Console.WriteLine((item, item + query.P1.Length + query.X));
+                }
+                    
+            }
+            return occs;
+        }
+
+
 
 
 
