@@ -11,9 +11,11 @@ namespace ConsoleApp.DataStructures
     {
         public int[] SuffixArray { get; }
         public int[] S { get; }
+        public string Text { get; }
 
         public SuffixArrayKarkkainan(string text)
         {
+            Text = text;
             int[] ints = convertStringToArrayInt(text, 0);
             int length = text.Length;
             int alphabetSize = max(ints, 0, length);
@@ -25,7 +27,26 @@ namespace ConsoleApp.DataStructures
             suffixArray(S, SuffixArray, length, alphabetSize, 0);
         }
 
+        public IEnumerable<int> ReportAllOccurrences(string p)
+        {
+            int index = 0;
+            List<int> ints = new List<int>();
 
+        
+
+            for (int u = index; u < Text.Length; u++)
+            {
+                if (Text.Substring(SuffixArray[u], Text.Length - SuffixArray[u]).StartsWith(p))
+                {
+                    global::System.Console.WriteLine(Text.Substring(SuffixArray[u], Text.Length - SuffixArray[u]));
+                    ints.Add(SuffixArray[u]);
+                }
+                    
+            }
+            return ints;
+        }
+
+     
 
 
 
