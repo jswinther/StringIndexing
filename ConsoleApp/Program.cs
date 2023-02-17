@@ -42,14 +42,13 @@ namespace ConsoleApp
                 Problem problem = new Problem(text, query);
                 Runner runner = new Runner(problem);
 
-                
-                
+            runner.Run(
+                runner.TrieBenchmark, runner.SuffixOtherBenchmark
+            );
             }
 
-            /* ---Suffix Tree Ukonnen implementation test---
-            AlgoSuffixTree SFtree = new AlgoSuffixTree("banana$");
-            SFtree.print();
-            */
+            
+            
 
             
         }
