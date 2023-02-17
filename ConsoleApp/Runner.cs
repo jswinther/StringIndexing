@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using static ConsoleApp.DataStructures.AlgoSuffixTreeProblem;
 
 namespace ConsoleApp
 {
@@ -45,6 +45,18 @@ namespace ConsoleApp
             Stopwatch stopwatch = Stopwatch.StartNew();
             var trie = new PrecomputedSubstrings(problem.Text);
             trie.Report(problem.Query);
+            stopwatch.Stop();
+            benchmark.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+            DisplayBenchmark(benchmark);
+            return benchmark;
+        }
+
+        public Benchmark AlgoSuffixTreeBenchmark()
+        {
+            Benchmark benchmark = new Benchmark();
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            var algosuffixtree = new AlgoSuffixTree(problem.Text);
+            algosuffixtree.print();
             stopwatch.Stop();
             benchmark.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
             DisplayBenchmark(benchmark);

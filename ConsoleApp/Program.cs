@@ -2,13 +2,26 @@
 using System;
 using System.Diagnostics;
 using static ConsoleApp.DataStructures.AlgoSuffixTreeProblem;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleApp
 {
     internal class Program
     {
+       
+        
+
         static void Main(string[] args)
         {
+            var a = new SuffixArrayKarkkainan("banana$");
+            global::System.Console.WriteLine(string.Join(',', a.SuffixArray));
+
+
+
+
+
+
+
             string[] dnas = new string[] {
                 DummyData.DNA_512,
                 DummyData.DNA_1024,
@@ -29,9 +42,8 @@ namespace ConsoleApp
                 Problem problem = new Problem(text, query);
                 Runner runner = new Runner(problem);
 
-            runner.Run(
-                runner.TrieBenchmark
-            );
+                
+                
             }
 
             /* ---Suffix Tree Ukonnen implementation test---
