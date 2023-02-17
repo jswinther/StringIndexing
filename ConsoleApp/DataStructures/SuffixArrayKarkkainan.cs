@@ -55,8 +55,8 @@ namespace ConsoleApp.DataStructures
             {
                 if (p2occs.Contains(item + query.P1.Length + query.X))
                 {
-                    occs.Add((item, item + query.P1.Length + query.X));
-                    global::System.Console.WriteLine((item, item + query.P1.Length + query.X));
+                    occs.Add((item, item + query.P1.Length + query.X + query.P2.Length));
+                    global::System.Console.WriteLine((item, item + query.P1.Length + query.X + query.P2.Length));
                 }
                     
             }

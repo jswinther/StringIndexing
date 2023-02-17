@@ -13,15 +13,6 @@ namespace ConsoleApp
 
         static void Main(string[] args)
         {
-            var a = new SuffixArrayKarkkainan("banana$");
-            global::System.Console.WriteLine(string.Join(',', a.SuffixArray));
-
-
-
-
-
-
-
             string[] dnas = new string[] {
                 DummyData.DNA_512,
                 DummyData.DNA_1024,
@@ -34,16 +25,16 @@ namespace ConsoleApp
             foreach (var dna in dnas)
             {
                 string text = dna;
-                string p1 = "tat";
+                string p1 = dna.Substring(0, 10);
                 Random random = new Random();
-                int x = random.Next(text.Length);
-                string p2 = "ctc";
+                int x = 9;
+                string p2 = dna.Substring(19, 10);
                 Query query = new Query(p1, x, p2);
                 Problem problem = new Problem(text, query);
                 Runner runner = new Runner(problem);
 
             runner.Run(
-                runner.SuffixArrayBenchmark, runner.SuffixOtherBenchmark
+                runner.SuffixArrayBenchmark
             );
             }
 
