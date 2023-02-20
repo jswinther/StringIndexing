@@ -64,7 +64,8 @@ namespace ConsoleApp
             Benchmark benchmark = new Benchmark();
             Stopwatch stopwatch = Stopwatch.StartNew();
             var su = new SuffixTreeOther(problem.Text);
-            su.Visualize();
+            //su.Visualize();
+            su.ReportAllOccurrences(problem.Query);
             stopwatch.Stop();
             benchmark.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
             DisplayBenchmark(benchmark);

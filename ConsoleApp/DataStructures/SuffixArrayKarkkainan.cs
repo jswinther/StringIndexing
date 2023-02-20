@@ -167,7 +167,6 @@ namespace ConsoleApp.DataStructures
 
 
 
-
         //function is finding suffix array SA of s[0..n-1] in {1..K}^n
         //require s[n]=s[n+1]=s[n+2]=0, n>=2
         static public void SuffixArray(int[] s, int[] SA, int n, int K, int start)

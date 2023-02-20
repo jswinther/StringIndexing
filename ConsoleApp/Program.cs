@@ -29,7 +29,7 @@ namespace ConsoleApp
                 Runner runner = new Runner(problem);
 
             runner.Run(
-                runner.SuffixArrayBenchmark
+                runner.SuffixArrayBenchmark, runner.SuffixOtherBenchmark
             );
             }
 
