@@ -14,12 +14,7 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             string[] dnas = new string[] {
-                DummyData.DNA_512,
-                DummyData.DNA_1024,
-                DummyData.DNA_2048,
-                DummyData.DNA_4096,
-                DummyData.DNA_8192,
-                DummyData.DNA_16384
+                DummyData.DNA_131072
             };
 
             foreach (var dna in dnas)

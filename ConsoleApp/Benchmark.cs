@@ -9,6 +9,7 @@ namespace ConsoleApp
     internal class Benchmark
     {
         public long ElapsedMilliseconds { get; set; }
-        
+        public long ConstructionTimeMilliseconds { get; set; }
+        public long QueryTimeMilliseconds { get; set; }
     }
 }

@@ -44,10 +44,18 @@ namespace ConsoleApp
             Benchmark benchmark = new Benchmark();
             Stopwatch stopwatch = Stopwatch.StartNew();
             var suffixArray = new SuffixArrayKarkkainan(problem.Text);
-            suffixArray.ReportAllOccurrences(problem.Query);
             stopwatch.Stop();
-            benchmark.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+            benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            stopwatch = Stopwatch.StartNew();
+            var occs = suffixArray.ReportAllOccurrences(problem.Query);
+            stopwatch.Stop();
+            benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
             DisplayBenchmark(benchmark);
+            foreach (var occ in occs)
+            {
+                global::System.Console.WriteLine(occ);
+            }
+
             return benchmark;
         }
 
@@ -89,7 +97,8 @@ namespace ConsoleApp
 
         public void DisplayBenchmark(Benchmark benchmark)
         {
-            Console.WriteLine(benchmark.ElapsedMilliseconds.ToString());
+            Console.WriteLine($"Construction Time: {benchmark.ConstructionTimeMilliseconds}ms");
+            Console.WriteLine($"Query Time: {benchmark.QueryTimeMilliseconds}ms");
         }
     }
 }

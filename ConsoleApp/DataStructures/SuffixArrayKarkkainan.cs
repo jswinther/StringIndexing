@@ -2,48 +2,149 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures
 {
     internal class SuffixArrayKarkkainan
     {
-        public int[] SuffixArray { get; }
-        public int[] S { get; }
-        public string Text { get; }
+        private readonly int[] _sa;
+        private readonly int[] _lcp;
+        private readonly int[] _up;
+        private readonly int[] _down;
+        private readonly int[] _nextl;
+        private readonly string _str;
 
         public SuffixArrayKarkkainan(string text)
         {
-            Text = text;
-            int[] ints = convertStringToArrayInt(text, 0);
-            int length = text.Length;
+            _str = text;
+            int[] ints = convertStringToArrayInt(_str, 0);
+            int length = _str.Length;
             int alphabetSize = max(ints, 0, length);
-            S = new int[length + 3];
+            var S = new int[length + 3];
             int[] end = new int[3] { 0, 0, 0 };
-            SuffixArray = new int[length + 3];
+            _sa = new int[length + 3];
+            _lcp = new int[_sa.Length + 1];
+            _lcp[0] = _lcp[_sa.Length] = 0;
+
+            for (int i = 1; i < _sa.Length; i++)
+            {
+                _lcp[i] = CalcLcp(_sa[i - 1], _sa[i]);
+            }
             Array.Copy(ints, 0, S, 0, length);
             Array.Copy(end, 0, S, length, 3);
-            suffixArray(S, SuffixArray, length, alphabetSize, 0);
+            SuffixArray(S, _sa, length, alphabetSize, 0);
+        }
+
+        public void report(string p)
+        {
+            int c = 0;
+            bool queryFound = true;
+            int m = p.Length;
+            (int i, int j) = getInterval(0, _str.Length, p[c]);
+            while (i != -1 && j != -1 && c < m && queryFound)
+            {
+                if (i != j)
+                {
+                    int l = getlcp(i, j);
+                    int min = Math.Min(l, m);
+                    for (int k = c; k < min - 1; k++)
+                    {
+                        queryFound = _str[_sa[i] + k] != p[k];
+                    }
+                    c = min;
+                    (i, j) = getInterval(i, j, p[c]);
+                }
+                else
+                {
+                    for (int k = c; k < m - 1; k++)
+                    {
+                        queryFound = _str[_sa[i] + k] != p[k];
+                    }
+                }
+            }
+
+            if (queryFound)
+            {
+                for (int k = i; k < j; k++)
+                {
+                    global::System.Console.WriteLine(_sa[k]);
+                }
+            }
+        }
+
+       
+
+        private (int i, int j) getInterval(int v, int length, char p)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// 
+        /// <summary>Find the index of a substring </summary>
+        /// <param name="substr">Substring to look for</param>
+        /// <returns>First index in the original string. -1 if not found</returns>
+        public int IndexOf(string substr)
+        {
+            int l = 0;
+            int r = _sa.Length;
+            int m = -1;
+
+            if ((substr == null) || (substr.Length == 0))
+            {
+                return -1;
+            }
+
+            // Binary search for substring
+            while (r > l)
+            {
+                m = (l + r) / 2;
+                if (_str.Substring(_sa[m]).CompareTo(substr) < 0)
+                {
+                    l = m + 1;
+                }
+                else
+                {
+                    r = m;
+                }
+            }
+            if ((l == r) && (l < _str.Length) && (_str.Substring(_sa[l]).StartsWith(substr)))
+            {
+                return _sa[l];
+            }
+            else
+            {
+                return -1;
+            }
         }
 
         private HashSet<int> ReportAllOccurrences(string p)
         {
-            int index = 0;
+            
             HashSet<int> ints = new HashSet<int>();
+            int index = IndexOf(p);
 
-        
-
-            for (int u = index; u < Text.Length; u++)
+            if (index == -1) return ints;
+            for (int u = index; u < _str.Length; u++) 
             {
-                if (Text.Substring(SuffixArray[u], Text.Length - SuffixArray[u]).StartsWith(p))
+                if (_str.Substring(_sa[u], _str.Length - _sa[u]).StartsWith(p))
                 {
-                    global::System.Console.WriteLine(Text.Substring(SuffixArray[u], Text.Length - SuffixArray[u]));
-                    ints.Add(SuffixArray[u]);
+                    global::System.Console.WriteLine(_str.Substring(_sa[u], _str.Length - _sa[u]));
+                    ints.Add(_sa[u]);
                 }
                     
             }
             return ints;
+        }
+
+    
+
+        private int CalcLcp(int i, int j)
+        {
+            int lcp;
+            int maxIndex = _str.Length - Math.Max(i, j);       // Out of bounds prevention
+            for (lcp = 0; (lcp < maxIndex) && (_str[i + lcp] == _str[j + lcp]); lcp++) ;
+            return lcp;
         }
 
         public IEnumerable<(int,int)> ReportAllOccurrences(Query query)
@@ -69,7 +170,7 @@ namespace ConsoleApp.DataStructures
 
         //function is finding suffix array SA of s[0..n-1] in {1..K}^n
         //require s[n]=s[n+1]=s[n+2]=0, n>=2
-        static public void suffixArray(int[] s, int[] SA, int n, int K, int start)
+        static public void SuffixArray(int[] s, int[] SA, int n, int K, int start)
         {
 
             //converting int n to double n
@@ -162,7 +263,7 @@ namespace ConsoleApp.DataStructures
             if (name < n02) //names are not unique
             {
                 //recursive call
-                suffixArray(s12, SA12, n02, name, start);
+                SuffixArray(s12, SA12, n02, name, start);
                 //put unique names in s12
                 for (int i = 0; i < n02; i++)
                 {
@@ -315,7 +416,7 @@ namespace ConsoleApp.DataStructures
                     returnArray[i] = Convert.ToInt32(s[i]);
                 }
             }
-            else //type is plain text		
+            else //type is plain _str		
             {
                 // put $ char on the end of array
                 returnArray[length] = 1;
