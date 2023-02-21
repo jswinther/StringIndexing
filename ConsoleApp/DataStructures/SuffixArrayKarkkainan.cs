@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -9,102 +10,59 @@ namespace ConsoleApp.DataStructures
 {
     internal class SuffixArrayKarkkainan
     {
-        // Suffix Array, the array of sorted suffixes.
-        private readonly int[] _sa;
-        // The Longest Common Prefix Array, how many characets two adjacent suffixes have in common
-        private readonly int[] _lcp;
+        private readonly string S; //The original input text
+        private readonly int n; // The length of the original input text
+        private readonly int[] suftab; //The suffix array
+        private readonly int[] lcptab; //The longest common prefix array
+        private readonly int[] childtab; 
+        private readonly int[] suflink;
 
-        private readonly int[] _up;
-        private readonly int[] _down;
-        private readonly int[] _nextl;
-        private readonly string _str;
+      
+        
         RangeMinimumQuery RangeMinimumQuery;
 
         public SuffixArrayKarkkainan(string text)
         {
-            _str = text;
-            int[] ints = convertStringToArrayInt(_str, 0);
-            int length = _str.Length;
-            int alphabetSize = max(ints, 0, length);
-            var S = new int[length + 3];
-            int[] end = new int[3] { 0, 0, 0 };
-            _sa = new int[length + 3];
-            _lcp = new int[_sa.Length + 1];
-            _lcp[0] = _lcp[_sa.Length] = 0;
+            S = text;
+            n = text.Length;
+            suftab = new int[n + 3];
+            ConstructESA();
 
-            for (int i = 1; i < _sa.Length; i++)
-            {
-                _lcp[i] = CalcLcp(_sa[i - 1], _sa[i]);
-            }
-            RangeMinimumQuery = new SparseTable(_lcp);
-            var queue = new Queue<(int, int)>();
+            
+           
 
-            for (int i = 1; i < length; i++)
-            {
-                var lb = i - 1;
-                while (_lcp[i] < )
-                {
-
-                }
-            }
-
-            Array.Copy(ints, 0, S, 0, length);
-            Array.Copy(end, 0, S, length, 3);
-            SuffixArray(S, _sa, length, alphabetSize, 0);
+            
         }
 
-
-
-
-
-        public void report(string p)
+        public void ConstructESA()
         {
-            int c = 0;
-            bool queryFound = true;
-            int m = p.Length;
-            (int i, int j) = getInterval(0, _str.Length, p[c]);
-            while (i != -1 && j != -1 && c < m && queryFound)
-            {
-                if (i != j)
-                {
-                    int l = getlcp(i, j);
-                    int min = Math.Min(l, m);
-                    for (int k = c; k < min - 1; k++)
-                    {
-                        queryFound = _str[_sa[i] + k] != p[k];
-                    }
-                    c = min;
-                    (i, j) = getInterval(i, j, p[c]);
-                }
-                else
-                {
-                    for (int k = c; k < m - 1; k++)
-                    {
-                        queryFound = _str[_sa[i] + k] != p[k];
-                    }
-                }
-            }
-
-            if (queryFound)
-            {
-                for (int k = i; k < j; k++)
-                {
-                    global::System.Console.WriteLine(_sa[k]);
-                }
-            }
+            int[] ints = convertStringToArrayInt(this.S, 0);
+            int alphabetSize = max(ints, 0, n);
+            var S = new int[n + 3];
+            int[] end = new int[3] { 0, 0, 0 };
+            Array.Copy(ints, 0, S, 0, n);
+            Array.Copy(end, 0, S, n, 3);
+            SuffixArray(S, suftab, n, alphabetSize, 0);
         }
+
+        public void ConstructLCP()
+        {
+            for (int i = 1; i < suftab.Length; i++)
+            {
+                lcptab[i] = CalcLcp(suftab[i - 1], suftab[i]);
+            }
+            RangeMinimumQuery = new SparseTable(lcptab);
+        }
+
+
+
+
 
         
 
-        private int getlcp(int i, int j)
-        {
-            return RangeMinimumQuery.RMQ(i, j);
-        }
+        
 
-        private (int i, int j) getInterval(int v, int length, char p)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         /// 
         /// <summary>Find the index of a substring </summary>
@@ -113,7 +71,7 @@ namespace ConsoleApp.DataStructures
         public int IndexOf(string substr)
         {
             int l = 0;
-            int r = _sa.Length;
+            int r = suftab.Length;
             int m = -1;
 
             if ((substr == null) || (substr.Length == 0))
@@ -125,7 +83,7 @@ namespace ConsoleApp.DataStructures
             while (r > l)
             {
                 m = (l + r) / 2;
-                if (_str.Substring(_sa[m]).CompareTo(substr) < 0)
+                if (S.Substring(suftab[m]).CompareTo(substr) < 0)
                 {
                     l = m + 1;
                 }
@@ -134,9 +92,9 @@ namespace ConsoleApp.DataStructures
                     r = m;
                 }
             }
-            if ((l == r) && (l < _str.Length) && (_str.Substring(_sa[l]).StartsWith(substr)))
+            if ((l == r) && (l < S.Length) && (S.Substring(suftab[l]).StartsWith(substr)))
             {
-                return _sa[l];
+                return suftab[l];
             }
             else
             {
@@ -151,12 +109,12 @@ namespace ConsoleApp.DataStructures
             int index = IndexOf(p);
 
             if (index == -1) return ints;
-            for (int u = index; u < _str.Length; u++) 
+            for (int u = index; u < S.Length; u++) 
             {
-                if (_str.Substring(_sa[u], _str.Length - _sa[u]).StartsWith(p))
+                if (S.Substring(suftab[u], S.Length - suftab[u]).StartsWith(p))
                 {
-                    global::System.Console.WriteLine(_str.Substring(_sa[u], _str.Length - _sa[u]));
-                    ints.Add(_sa[u]);
+                    global::System.Console.WriteLine(S.Substring(suftab[u], S.Length - suftab[u]));
+                    ints.Add(suftab[u]);
                 }
                     
             }
@@ -168,8 +126,8 @@ namespace ConsoleApp.DataStructures
         private int CalcLcp(int i, int j)
         {
             int lcp;
-            int maxIndex = _str.Length - Math.Max(i, j);       // Out of bounds prevention
-            for (lcp = 0; (lcp < maxIndex) && (_str[i + lcp] == _str[j + lcp]); lcp++) ;
+            int maxIndex = S.Length - Math.Max(i, j);       // Out of bounds prevention
+            for (lcp = 0; (lcp < maxIndex) && (S[i + lcp] == S[j + lcp]); lcp++) ;
             return lcp;
         }
 
@@ -441,7 +399,7 @@ namespace ConsoleApp.DataStructures
                     returnArray[i] = Convert.ToInt32(s[i]);
                 }
             }
-            else //type is plain _str		
+            else //type is plain S		
             {
                 // put $ char on the end of array
                 returnArray[length] = 1;

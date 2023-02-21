@@ -55,9 +55,6 @@ namespace ConsoleApp
             {
                 global::System.Console.WriteLine(occ);
             }
-
-            suffixArray.report(problem.Query.P1);
-
             return benchmark;
         }
 
