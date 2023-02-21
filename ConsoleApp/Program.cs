@@ -14,16 +14,16 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             string[] dnas = new string[] {
-                DummyData.DNA_131072
+                DummyData.DNA_512
             };
 
             foreach (var dna in dnas)
             {
                 string text = dna;
-                string p1 = dna.Substring(0, 10);
+                string p1 = "t";
                 Random random = new Random();
-                int x = 9;
-                string p2 = dna.Substring(19, 10);
+                int x = 1;
+                string p2 = "g";
                 Query query = new Query(p1, x, p2);
                 Problem problem = new Problem(text, query);
                 Runner runner = new Runner(problem);

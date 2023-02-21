@@ -107,16 +107,13 @@ namespace ConsoleApp.DataStructures
             
             HashSet<int> ints = new HashSet<int>();
             int index = IndexOf(p);
-
             if (index == -1) return ints;
             for (int u = index; u < S.Length; u++) 
             {
                 if (S.Substring(suftab[u], S.Length - suftab[u]).StartsWith(p))
                 {
-                    global::System.Console.WriteLine(S.Substring(suftab[u], S.Length - suftab[u]));
                     ints.Add(suftab[u]);
                 }
-                    
             }
             return ints;
         }
@@ -141,7 +138,7 @@ namespace ConsoleApp.DataStructures
                 if (p2occs.Contains(item + query.P1.Length + query.X))
                 {
                     occs.Add((item, item + query.P1.Length + query.X + query.P2.Length));
-                    global::System.Console.WriteLine((item, item + query.P1.Length + query.X + query.P2.Length));
+                   
                 }
                     
             }
