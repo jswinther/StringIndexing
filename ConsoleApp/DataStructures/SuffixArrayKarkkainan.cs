@@ -2,18 +2,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures
 {
     internal class SuffixArrayKarkkainan
     {
+        // Suffix Array, the array of sorted suffixes.
         private readonly int[] _sa;
+        // The Longest Common Prefix Array, how many characets two adjacent suffixes have in common
         private readonly int[] _lcp;
+
         private readonly int[] _up;
         private readonly int[] _down;
         private readonly int[] _nextl;
         private readonly string _str;
+        RangeMinimumQuery RangeMinimumQuery;
 
         public SuffixArrayKarkkainan(string text)
         {
@@ -31,10 +36,26 @@ namespace ConsoleApp.DataStructures
             {
                 _lcp[i] = CalcLcp(_sa[i - 1], _sa[i]);
             }
+            RangeMinimumQuery = new SparseTable(_lcp);
+            var queue = new Queue<(int, int)>();
+
+            for (int i = 1; i < length; i++)
+            {
+                var lb = i - 1;
+                while (_lcp[i] < )
+                {
+
+                }
+            }
+
             Array.Copy(ints, 0, S, 0, length);
             Array.Copy(end, 0, S, length, 3);
             SuffixArray(S, _sa, length, alphabetSize, 0);
         }
+
+
+
+
 
         public void report(string p)
         {
@@ -73,7 +94,12 @@ namespace ConsoleApp.DataStructures
             }
         }
 
-       
+        
+
+        private int getlcp(int i, int j)
+        {
+            return RangeMinimumQuery.RMQ(i, j);
+        }
 
         private (int i, int j) getInterval(int v, int length, char p)
         {
@@ -173,7 +199,7 @@ namespace ConsoleApp.DataStructures
         {
 
             //converting int n to double n
-            double nDouble = (double)n;
+            double nDouble = n;
 
             //number of triplets on start position i = 0 (mod 3)
             int n0 = (int)Math.Ceiling(nDouble / 3);
@@ -431,5 +457,70 @@ namespace ConsoleApp.DataStructures
         }
         
         
+    }
+
+    internal abstract class RangeMinimumQuery
+    {
+        protected int[] arr;
+        protected int N;
+
+        protected RangeMinimumQuery(int[] arr)
+        {
+            this.arr = arr;
+            this.N = arr.Length;
+        }
+
+        public abstract int RMQ(int startIndex, int endIndex);
+    }
+
+    internal class SparseTable : RangeMinimumQuery
+    {
+        private int[,] lookup;
+        public SparseTable(int[] arr) : base(arr)
+        {
+            int logArr = (int)Math.Ceiling(Math.Log2(N));
+            lookup = new int[logArr, logArr];
+            // Initialize M for the intervals with length 1
+            for (int i = 0; i < N; i++)
+                lookup[i, 0] = arr[i];
+
+            // Compute values from smaller to bigger intervals
+            for (int j = 1; (1 << j) <= N; j++)
+            {
+
+                // Compute minimum value for all intervals with
+                // size 2^j
+                for (int i = 0; (i + (1 << j) - 1) < N; i++)
+                {
+
+                    // For arr[2][10], we compare arr[lookup[0][7]]
+                    // and arr[lookup[3][10]]
+                    if (lookup[i, j - 1] <
+                                lookup[i + (1 << (j - 1)), j - 1])
+                        lookup[i, j] = lookup[i, j - 1];
+                    else
+                        lookup[i, j] =
+                                lookup[i + (1 << (j - 1)), j - 1];
+                }
+            }
+        }
+
+        public override int RMQ(int startIndex, int endIndex)
+        {
+            // Find highest power of 2 that is smaller
+            // than or equal to count of elements in given
+            // range. For [2, 10], j = 3
+            int j = (int)Math.Log(endIndex - startIndex + 1);
+
+            // Compute minimum of last 2^j elements with first
+            // 2^j elements in range.
+            // For [2, 10], we compare arr[lookup[0][3]] and
+            // arr[lookup[3][3]],
+            if (lookup[startIndex, j] <= lookup[endIndex - (1 << j) + 1, j])
+                return lookup[startIndex, j];
+
+            else
+                return lookup[endIndex - (1 << j) + 1, j];
+        }
     }
 }
