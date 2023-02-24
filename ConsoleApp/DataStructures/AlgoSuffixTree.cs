@@ -1,3 +1,5 @@
+/* DEN HER ER FRICKED!! DO NOT USE! */
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
