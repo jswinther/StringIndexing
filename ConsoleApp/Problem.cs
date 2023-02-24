@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
-    internal class Problem
+    public class Problem
     {
         public string Text { get; set; }
         public Query Query { get; set; }

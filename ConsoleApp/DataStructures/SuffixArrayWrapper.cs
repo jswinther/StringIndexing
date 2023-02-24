@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures
 {
-    internal class SuffixArrayWrapper
+    public class SuffixArrayWrapper
     {
         SuffixArrayEranMeir sa;
 

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp
 {
-    internal class DummyData
+    public class DummyData
     {
         public static readonly string Dummy = "banana";
         public static string DNA_512 = "tcgcttttacgatatcggtatcaacggggctgaagtcgtgatccctgaatttagaagagtcacgagaaagaaactacgcgttccagaaagctgactctacgggaggttatagtttttatgaaccgccttagtggataaatagctatagggtcatttaaagaatcgggctactcctagaacctataagcgtgacagattcttcgtctacgacacggtcaggctacaaatacggcggcaatcctactgaggtcaggggatcaactcgagtggagaggccacgttcaggcatacgtccctgtaaccccaaatgtatagtgggcgttcaatggaaaatcctgcctaccgcagtaacacttcgaaggcctagtgcgcgacacagcgtagttcctcgggtgttcttgcgtatgtgcttgggtgctacgctggctatctaacccgaccccagagcattgctccgccacgcgtaagtcgctgagatatctgcttagcgggcgtcaatctgatgttggtct";
