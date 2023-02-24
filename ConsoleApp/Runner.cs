@@ -1,4 +1,5 @@
 ﻿using ConsoleApp.DataStructures;
+using Gma.DataStructures.StringSearch;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -74,6 +75,45 @@ namespace ConsoleApp
             return benchmark;
         }
 
+        public Benchmark UkkonenBenchmark()
+        {
+            Benchmark benchmark = new Benchmark();
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            var suffixTree = new CharUkkonenTrie<int>(0);
+            suffixTree.Add(problem.Text,0);
+            stopwatch.Stop();
+            benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            stopwatch = Stopwatch.StartNew();
+            IEnumerable<WordPosition<int>> occs1 = suffixTree.RetrieveSubstrings(problem.Query.P1);
+            IEnumerable<WordPosition<int>> occs2 = suffixTree.RetrieveSubstrings(problem.Query.P2);
+            List<(int, int)> occs = new List<(int, int)>();
+            stopwatch.Stop();
+            benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            stopwatch = Stopwatch.StartNew();
+            foreach (var item1 in occs1)
+            {
+                foreach (var item2 in occs2)
+                {
+                    if (item2.CharPosition == (item1.CharPosition + problem.Query.P1.Length + problem.Query.X))
+                    {
+                        occs.Add((item1.CharPosition, item2.CharPosition));
+                    }
+                }
+                    
+            }
+            stopwatch.Stop();
+            benchmark.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
+            Console.WriteLine("Ukkonen Benchmark Suffix Tree");
+            DisplayBenchmark(benchmark);
+            foreach (var item in occs)
+            {
+                Console.WriteLine(item);
+            }
+            return benchmark;
+        }
+            
+
+
         public Benchmark SuffixOtherBenchmark()
         {
             Benchmark benchmark = new Benchmark();
@@ -144,6 +184,7 @@ namespace ConsoleApp
         {
             Console.WriteLine($"Construction Time: {benchmark.ConstructionTimeMilliseconds}ms");
             Console.WriteLine($"Query Time: {benchmark.QueryTimeMilliseconds}ms");
+            Console.WriteLine($"Elapsed Time: {benchmark.ElapsedMilliseconds}ms");
         }
     }
 }

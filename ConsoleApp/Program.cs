@@ -1,4 +1,5 @@
 ﻿using ConsoleApp.DataStructures;
+using Gma.DataStructures.StringSearch;
 using System;
 using System.Diagnostics;
 using static ConsoleApp.DataStructures.AlgoSuffixTreeProblem;
@@ -14,32 +15,33 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             string[] dnas = new string[] {
-                //DummyData.DNA_512,
-                DummyData.DNA_262144
+                DummyData.DNA_512,
+                DummyData.DNA_1024,
+                DummyData.DNA_2048,
+                DummyData.DNA_8192
+                //DummyData.DNA_262144
             };
 
             foreach (var dna in dnas)
             {
                 string text = dna;
-                //string text = "mississippi";
-                string p1 = text.Substring(0, 10);
-                //string p1 = "ss";
+                //string text = "banana$";
+                string p1 = "t";
+                //string p1 = "a";
                 Random random = new Random();
-                int x = 0;
-                string p2 = text.Substring(15, 10);
+                int x = random.Next();
+                string p2 = "g";
                 //string p2 = "a";
                 Query query = new Query(p1, x, p2);
-                query.Y = (5, 15);
+                query.Y = (3, 10);
                 Problem problem = new Problem(text, query);
                 Runner runner = new Runner(problem);
 
             runner.Run(
-                runner.SuffixArrayBenchmark, runner.SuffixArrayBenchmarkSortedSet, runner.BaratgaborBenchmark, runner.SuffixOtherBenchmark
+                //runner.SuffixArrayBenchmark, runner.BaratgaborBenchmark,
+                runner.UkkonenBenchmark
             );
             }
-            //BaratgaborSuffixTree SF = new BaratgaborSuffixTree();
-            //SF.AddString("banana");
-            //Console.Write(SF.PrintTree());
 
             
             
