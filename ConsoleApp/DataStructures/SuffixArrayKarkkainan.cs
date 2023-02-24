@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -92,9 +93,9 @@ namespace ConsoleApp.DataStructures
                     r = m;
                 }
             }
-            if ((l == r) && (l < S.Length) && (S.Substring(suftab[l]).StartsWith(substr)))
+            if (l == r)
             {
-                return suftab[l];
+                return l;
             }
             else
             {
@@ -102,10 +103,70 @@ namespace ConsoleApp.DataStructures
             }
         }
 
-        private HashSet<int> ReportAllOccurrences(string p)
+        public IEnumerable<(int, int)> GetOccurrencesWithSortedSet(Query query)
         {
-            
-            HashSet<int> ints = new HashSet<int>();
+            var p1occs = ReportOccurrences(query.P1);
+            var p2occs = ReportOccurrencesSortedSet(query.P2);
+            int ymin = query.Y.Min;
+            int ymax = query.Y.Max;
+            Stopwatch sw = Stopwatch.StartNew();
+            List<(int, int)> items = new();
+            foreach (var o1 in p1occs)
+            {
+                int min = o1 + ymin + query.P1.Length - 1;
+                int max = o1 + ymax + query.P1.Length + 1;
+                foreach (var item in p2occs.GetViewBetween(min, max))
+                {
+                    items.Add((o1, item));
+                }
+
+            }
+            sw.Stop();
+            Console.WriteLine(sw.ElapsedMilliseconds);
+            return items;
+        }
+
+        public static Span<int> GetIntsInRange(int min, int max, int[] arr)
+        {
+            var start = Array.BinarySearch<int>(arr, min);
+            var end = Array.BinarySearch<int>(arr, max);
+            if (start < 0 || end < 0) return new();
+            return arr.AsSpan(start, end - start);
+        }
+
+       
+
+        public IEnumerable<(int, int)> GetOccurrencesWithList(Query query)
+        {
+            var p1occs = ReportOccurrences(query.P1);
+            var p2occs = ReportOccurrencesSortedSet(query.P2);
+            int ymin = query.Y.Min;
+            int ymax = query.Y.Max;
+            Stopwatch sw = Stopwatch.StartNew();
+            List<(int, int)> occs = new List<(int, int)>();
+            foreach (var o1 in p1occs)
+            {
+                int min = o1 + ymin + query.P1.Length - 1;
+                int max = o1 + ymax + query.P1.Length + 1;
+                foreach (var o2 in GetIntsInRange(min, max, p2occs.ToArray()))
+                {
+                    occs.Add((o1, o2));
+                }
+            }
+            sw.Stop();
+            Console.WriteLine(sw.ElapsedMilliseconds);
+            return occs;
+        }
+
+
+
+
+
+
+
+        public List<int> ReportOccurrences(string p)
+        {
+            List<int> ints = new List<int>();
             int index = IndexOf(p);
             if (index == -1) return ints;
             for (int u = index; u < S.Length; u++) 
@@ -118,7 +179,22 @@ namespace ConsoleApp.DataStructures
             return ints;
         }
 
-    
+        private SortedSet<int> ReportOccurrencesSortedSet(string p)
+        {
+            List<int> ints = new List<int>();
+            int index = IndexOf(p);
+            if (index == -1) return null;
+            for (int u = index; u < S.Length; u++)
+            {
+                if (S.Substring(suftab[u], S.Length - suftab[u]).StartsWith(p))
+                {
+                    ints.Add(suftab[u]);
+                }
+            }
+            var sorted = new SortedSet<int>(ints);
+            return sorted;
+        }
+
 
         private int CalcLcp(int i, int j)
         {
@@ -128,22 +204,7 @@ namespace ConsoleApp.DataStructures
             return lcp;
         }
 
-        public IEnumerable<(int,int)> ReportAllOccurrences(Query query)
-        {
-            var p1occs = ReportAllOccurrences(query.P1);
-            var p2occs = ReportAllOccurrences(query.P2);
-            var occs = new HashSet<(int,int)>();
-            foreach (var item in p1occs)
-            {
-                if (p2occs.Contains(item + query.P1.Length + query.X))
-                {
-                    occs.Add((item, item + query.P1.Length + query.X + query.P2.Length));
-                   
-                }
-                    
-            }
-            return occs;
-        }
+
 
 
 

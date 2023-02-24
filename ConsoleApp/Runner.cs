@@ -47,14 +47,29 @@ namespace ConsoleApp
             stopwatch.Stop();
             benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
             stopwatch = Stopwatch.StartNew();
-            var occs = suffixArray.ReportAllOccurrences(problem.Query);
+            var occs = suffixArray.GetOccurrencesWithList(problem.Query);
             stopwatch.Stop();
             benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            Console.WriteLine("List Benchmark Suffix Array");
             DisplayBenchmark(benchmark);
-            foreach (var occ in occs)
-            {
-                global::System.Console.WriteLine(occ);
-            }
+            Console.WriteLine("Number of occurrences: " + occs.Count());
+            return benchmark;
+        }
+
+        public Benchmark SuffixArrayBenchmarkSortedSet()
+        {
+            Benchmark benchmark = new Benchmark();
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            var suffixArray = new SuffixArrayKarkkainan(problem.Text);
+            stopwatch.Stop();
+            benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            stopwatch = Stopwatch.StartNew();
+            var occs = suffixArray.GetOccurrencesWithSortedSet(problem.Query);
+            stopwatch.Stop();
+            benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            Console.WriteLine("SortedSet Benchmark Suffix Array");
+            DisplayBenchmark(benchmark);
+            Console.WriteLine("Number of occurrences: " + occs.Count());
             return benchmark;
         }
 

@@ -11,6 +11,7 @@ namespace ConsoleApp
         public string P1 { get; set; }
         public int X { get; set; }
         public string P2 { get; set; }
+        public (int Min, int Max) Y { get; set; }
 
         public Query(string p1, int x, string p2)
         {
