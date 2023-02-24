@@ -43,16 +43,17 @@ namespace ConsoleApp
         {
             Benchmark benchmark = new Benchmark();
             Stopwatch stopwatch = Stopwatch.StartNew();
-            var suffixArray = new SuffixArrayKarkkainan(problem.Text);
+            var suffixArray = new SuffixArrayWrapper(problem.Text);
             stopwatch.Stop();
             benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
             stopwatch = Stopwatch.StartNew();
-            var occs = suffixArray.GetOccurrencesWithList(problem.Query);
+            var occs = suffixArray.GetOccurrencesWithSortedSet(problem.Query);
             stopwatch.Stop();
             benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
             Console.WriteLine("List Benchmark Suffix Array");
             DisplayBenchmark(benchmark);
             Console.WriteLine("Number of occurrences: " + occs.Count());
+          
             return benchmark;
         }
 

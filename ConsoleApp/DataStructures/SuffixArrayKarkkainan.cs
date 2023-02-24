@@ -84,7 +84,7 @@ namespace ConsoleApp.DataStructures
             while (r > l)
             {
                 m = (l + r) / 2;
-                if (S.Substring(suftab[m]).CompareTo(substr) < 0)
+                if (S.Substring(suftab[m], substr.Length).CompareTo(substr) < 0)
                 {
                     l = m + 1;
                 }
@@ -103,13 +103,14 @@ namespace ConsoleApp.DataStructures
             }
         }
 
+   
+
         public IEnumerable<(int, int)> GetOccurrencesWithSortedSet(Query query)
         {
             var p1occs = ReportOccurrences(query.P1);
             var p2occs = ReportOccurrencesSortedSet(query.P2);
             int ymin = query.Y.Min;
             int ymax = query.Y.Max;
-            Stopwatch sw = Stopwatch.StartNew();
             List<(int, int)> items = new();
             foreach (var o1 in p1occs)
             {
@@ -121,8 +122,6 @@ namespace ConsoleApp.DataStructures
                 }
 
             }
-            sw.Stop();
-            Console.WriteLine(sw.ElapsedMilliseconds);
             return items;
         }
 
@@ -142,7 +141,6 @@ namespace ConsoleApp.DataStructures
             var p2occs = ReportOccurrencesSortedSet(query.P2);
             int ymin = query.Y.Min;
             int ymax = query.Y.Max;
-            Stopwatch sw = Stopwatch.StartNew();
             List<(int, int)> occs = new List<(int, int)>();
             foreach (var o1 in p1occs)
             {
@@ -153,8 +151,6 @@ namespace ConsoleApp.DataStructures
                     occs.Add((o1, o2));
                 }
             }
-            sw.Stop();
-            Console.WriteLine(sw.ElapsedMilliseconds);
             return occs;
         }
 
@@ -169,30 +165,27 @@ namespace ConsoleApp.DataStructures
             List<int> ints = new List<int>();
             int index = IndexOf(p);
             if (index == -1) return ints;
-            for (int u = index; u < S.Length; u++) 
+            int u = index;
+            while (S.Substring(suftab[u], S.Length - suftab[u]).StartsWith(p))
             {
-                if (S.Substring(suftab[u], S.Length - suftab[u]).StartsWith(p))
-                {
-                    ints.Add(suftab[u]);
-                }
+                ints.Add(suftab[u]);
+                ++u;
             }
             return ints;
         }
 
         private SortedSet<int> ReportOccurrencesSortedSet(string p)
         {
-            List<int> ints = new List<int>();
+            SortedSet<int> ints = new SortedSet<int>();
             int index = IndexOf(p);
-            if (index == -1) return null;
-            for (int u = index; u < S.Length; u++)
+            if (index == -1) return ints;
+            int u = index;
+            while (S.Substring(suftab[u], S.Length - suftab[u]).StartsWith(p))
             {
-                if (S.Substring(suftab[u], S.Length - suftab[u]).StartsWith(p))
-                {
-                    ints.Add(suftab[u]);
-                }
+                ints.Add(suftab[u]);
+                ++u;
             }
-            var sorted = new SortedSet<int>(ints);
-            return sorted;
+            return ints;
         }
 
 
