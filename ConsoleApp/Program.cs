@@ -14,24 +14,27 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             string[] dnas = new string[] {
-                DummyData.DNA_65536
+                DummyData.DNA_512,
+                //DummyData.DNA_262144
             };
 
             foreach (var dna in dnas)
             {
-                string text = dna;
-                string p1 = "gca";
+                //string text = dna;
+                string text = "banana$";
+                //string p1 = "t";
+                string p1 = "n";
                 Random random = new Random();
-                int x = 1;
-                string p2 = "tag";
+                int x = 0;
+                //string p2 = "g";
+                string p2 = "a";
                 Query query = new Query(p1, x, p2);
                 query.Y = (3, 10);
                 Problem problem = new Problem(text, query);
                 Runner runner = new Runner(problem);
 
             runner.Run(
-                runner.SuffixArrayBenchmark, runner.BaratgaborBenchmark,
-                runner.SuffixArrayBenchmark, runner.SuffixArrayBenchmarkSortedSet
+                runner.SuffixArrayBenchmark, runner.BaratgaborBenchmark, runner.SuffixOtherBenchmark
             );
             }
             //BaratgaborSuffixTree SF = new BaratgaborSuffixTree();

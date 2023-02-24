@@ -121,43 +121,45 @@ class SuffixTreeOther {
             Node curr = toCheck.Dequeue();
             foreach (var child in curr.children.Values)
             {
-                if (inputString[child.start] == rest[0] && !matched)
+                if (rest.Length > 0 & (!matched && inputString[child.start] == rest[0]))
                 {
-                    if (rest.Length > (child.end - child.start))
+                    if (rest.Length > ((child.end - child.start) + 1))
                     {
                         currPref = rest.Substring(0,child.end - child.start);
-                        string nodeSubstring = inputString.Substring(child.start, child.end);
+                        string nodeSubstring = inputString.Substring(child.start, (child.end - child.start) + 1);
                         if (currPref == nodeSubstring)
                         {
-                            ints.Add(curr.start);
+                            ints.Add(child.start);
                             rest = rest.Substring(child.end - child.start);
-                            foreach (var c in child.children.Values)
+                            toCheck.Enqueue(child);
+                            /*foreach (var c in child.children.Values)
                             {
                                 toCheck.Enqueue(c);
-                            }
+                            }*/
                         }
                     } else {
-                        string nodeSubstring = inputString.Substring(child.start, child.start+rest.Length);
+                        string nodeSubstring = inputString.Substring(child.start,rest.Length);
                         if (rest == nodeSubstring)
                         {
-                            ints.Add(curr.start);
-                            rest = "";
-                            matched = true;
-                            toCheck.Clear();
+                            ints.Add(child.start);
+                            rest = p;
+                            matched = false;
+                            toCheck.Enqueue(child);
+                            /*toCheck.Clear();
                             foreach (var c in child.children.Values)
                             {
                                 toCheck.Enqueue(c);
-                            }
+                            }*/
                         }
                     }
                     
                 } else if (matched)
                 {
-                    ints.Add(curr.start);
+                    /*ints.Add(child.start);
                     foreach (var c in curr.children.Values)
                     {
                         toCheck.Enqueue(c);
-                    }
+                    }*/
                 }
             }
         }
@@ -174,8 +176,8 @@ class SuffixTreeOther {
             {
                 if (p2occs.Contains(item + query.P1.Length + query.X))
                 {
-                    occs.Add((item, item + query.P1.Length + query.X + query.P2.Length));
-                    global::System.Console.WriteLine((item, item + query.P1.Length + query.X + query.P2.Length));
+                    occs.Add((item, item + query.P1.Length + query.X));
+                    //global::System.Console.WriteLine((item, item + query.P1.Length + query.X + query.P2.Length));
                 }
                     
             }

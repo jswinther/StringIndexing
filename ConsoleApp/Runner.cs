@@ -73,6 +73,26 @@ namespace ConsoleApp
             return benchmark;
         }
 
+        public Benchmark SuffixOtherBenchmark()
+        {
+            Benchmark benchmark = new Benchmark();
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            var su = new SuffixTreeOther(problem.Text);
+            stopwatch.Stop();
+            benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            stopwatch = Stopwatch.StartNew();
+            //su.Visualize();
+            var occs = su.ReportAllOccurrences(problem.Query);
+            stopwatch.Stop();
+            benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            DisplayBenchmark(benchmark);
+            foreach (var occ in occs)
+            {
+                global::System.Console.WriteLine(occ);
+            }
+            return benchmark;
+        }
+
         public Benchmark BaratgaborBenchmark()
         {
             Benchmark benchmark = new Benchmark();
@@ -93,18 +113,7 @@ namespace ConsoleApp
             return benchmark;
         }
 
-        public Benchmark SuffixOtherBenchmark()
-        {
-            Benchmark benchmark = new Benchmark();
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            var su = new SuffixTreeOther(problem.Text);
-            //su.Visualize();
-            su.ReportAllOccurrences(problem.Query);
-            stopwatch.Stop();
-            benchmark.ElapsedMilliseconds = stopwatch.ElapsedMilliseconds;
-            DisplayBenchmark(benchmark);
-            return benchmark;
-        }
+        
 
         public Benchmark PrecomputedBenchmark()
         {

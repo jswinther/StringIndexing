@@ -272,66 +272,73 @@ namespace ConsoleApp.DataStructures
 
         /*Made by us! Frederik & Jonathan
         Not finished yet! Needs to be refactored to Baratgabor implementation!! */
-        private IEnumerable<int> reportAllOccurrences(String p) {
-        HashSet<int> ints = new HashSet<int>();
-        Queue<Node> toCheck = new Queue<Node>();
-        toCheck.Enqueue(_root);
-        string rest = p;
-        bool matched = false;
-        while(toCheck.Count != 0) {
-            string currPref = "";
-            Node curr = toCheck.Dequeue();
-            foreach (var child in curr.children.Values)
+        /*
+        private IEnumerable<int> reportAllOccurrences(String p)
+        {
+            HashSet<int> ints = new HashSet<int>();
+            Queue<Node> toCheck = new Queue<Node>();
+            toCheck.Enqueue(_root);
+            string rest = p;
+            bool matched = false;
+            while (toCheck.Count != 0)
             {
-                if (inputString[child.start] == rest[0] && !matched)
+                string currPref = "";
+                Node curr = toCheck.Dequeue();
+                foreach (var child in curr.children.Values)
                 {
-                    if (rest.Length > (child.end - child.start))
+                    if (inputString[child.start] == rest[0] && !matched)
                     {
-                        currPref = rest.Substring(0,child.end - child.start);
-                        string nodeSubstring = inputString.Substring(child.start, child.end);
-                        if (currPref == nodeSubstring)
+                        if (rest.Length > (child.end - child.start))
                         {
-                            ints.Add(curr.start);
-                            rest = rest.Substring(child.end - child.start);
-                            foreach (var c in child.children.Values)
+                            currPref = rest.Substring(0, child.end - child.start);
+                            string nodeSubstring = inputString.Substring(child.start, child.end);
+                            if (currPref == nodeSubstring)
                             {
-                                toCheck.Enqueue(c);
+                                ints.Add(curr.start);
+                                rest = rest.Substring(child.end - child.start);
+                                foreach (var c in child.children.Values)
+                                {
+                                    toCheck.Enqueue(c);
+                                }
                             }
                         }
-                    } else {
-                        string nodeSubstring = inputString.Substring(child.start, child.start+rest.Length);
-                        if (rest == nodeSubstring)
+                        else
                         {
-                            ints.Add(curr.start);
-                            rest = "";
-                            matched = true;
-                            toCheck.Clear();
-                            foreach (var c in child.children.Values)
+                            string nodeSubstring = inputString.Substring(child.start, child.start + rest.Length);
+                            if (rest == nodeSubstring)
                             {
-                                toCheck.Enqueue(c);
+                                ints.Add(curr.start);
+                                rest = "";
+                                matched = true;
+                                toCheck.Clear();
+                                foreach (var c in child.children.Values)
+                                {
+                                    toCheck.Enqueue(c);
+                                }
                             }
                         }
+
                     }
-                    
-                } else if (matched)
-                {
-                    ints.Add(curr.start);
-                    foreach (var c in curr.children.Values)
+                    else if (matched)
                     {
-                        toCheck.Enqueue(c);
+                        ints.Add(curr.start);
+                        foreach (var c in curr.children.Values)
+                        {
+                            toCheck.Enqueue(c);
+                        }
                     }
                 }
             }
+
+
+            return ints;
+
         }
-
-
-        return ints;
-
-    }
-    public IEnumerable<(int,int)> ReportAllOccurrences(Query query){
-        var p1occs = reportAllOccurrences(query.P1);
-        var p2occs = reportAllOccurrences(query.P2);
-        var occs = new HashSet<(int,int)>();
+        public IEnumerable<(int, int)> ReportAllOccurrences(Query query)
+        {
+            var p1occs = reportAllOccurrences(query.P1);
+            var p2occs = reportAllOccurrences(query.P2);
+            var occs = new HashSet<(int, int)>();
             foreach (var item in p1occs)
             {
                 if (p2occs.Contains(item + query.P1.Length + query.X))
@@ -339,10 +346,10 @@ namespace ConsoleApp.DataStructures
                     occs.Add((item, item + query.P1.Length + query.X + query.P2.Length));
                     global::System.Console.WriteLine((item, item + query.P1.Length + query.X + query.P2.Length));
                 }
-                    
+
             }
-        return occs;
-    }
+            return occs;
+        } */
     }
 }
 
