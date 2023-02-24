@@ -14,7 +14,8 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             string[] dnas = new string[] {
-                DummyData.DNA_512
+                DummyData.DNA_512,
+                DummyData.DNA_262144
             };
 
             foreach (var dna in dnas)
@@ -29,9 +30,12 @@ namespace ConsoleApp
                 Runner runner = new Runner(problem);
 
             runner.Run(
-                runner.SuffixArrayBenchmark
+                runner.SuffixArrayBenchmark, runner.BaratgaborBenchmark
             );
             }
+            //BaratgaborSuffixTree SF = new BaratgaborSuffixTree();
+            //SF.AddString("banana");
+            //Console.Write(SF.PrintTree());
 
             
             

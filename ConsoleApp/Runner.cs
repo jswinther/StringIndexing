@@ -58,6 +58,26 @@ namespace ConsoleApp
             return benchmark;
         }
 
+        public Benchmark BaratgaborBenchmark()
+        {
+            Benchmark benchmark = new Benchmark();
+            Stopwatch stopwatch = Stopwatch.StartNew();
+            var suffixTree = new BaratgaborSuffixTree();
+            suffixTree.AddString(problem.Text);
+            stopwatch.Stop();
+            benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            stopwatch = Stopwatch.StartNew();
+            //var occs = suffixTree.ReportAllOccurrences(problem.Query);
+            stopwatch.Stop();
+            benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            DisplayBenchmark(benchmark);
+            /*foreach (var occ in occs)
+            {
+                global::System.Console.WriteLine(occ);
+            }*/
+            return benchmark;
+        }
+
         public Benchmark SuffixOtherBenchmark()
         {
             Benchmark benchmark = new Benchmark();
