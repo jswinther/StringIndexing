@@ -96,16 +96,16 @@ namespace ConsoleApp.DataStructures
                             start = mid + 1;
                         }
                     }
+                    else if (pattern1.CompareTo(suffix) < 0)
+                    {
+                        end = mid - 1;
+                    }
+                    else
+                    {
+                        start = mid + 1;
+                    }
                 }
-
-                else if (pattern1.CompareTo(suffix) < 0)
-                {
-                    end = mid - 1;
-                }
-                else
-                {
-                    start = mid + 1;
-                }
+                
             }
             return matchingIndices;
         }
