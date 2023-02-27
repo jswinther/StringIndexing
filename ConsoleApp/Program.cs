@@ -115,11 +115,11 @@ namespace ConsoleApp
                 DummyData.DNA_2048,
                 DummyData.DNA_4096,
                 DummyData.DNA_8192,
-                //DummyData.DNA_16384,
-                //DummyData.DNA_32768,
-                //DummyData.DNA_65536,
-                //DummyData.DNA_131072,
-                //DummyData.DNA_262144
+                DummyData.DNA_16384,
+                DummyData.DNA_32768,
+                DummyData.DNA_65536,
+                DummyData.DNA_131072,
+                DummyData.DNA_262144
             };
 
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
