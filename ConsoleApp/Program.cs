@@ -131,7 +131,7 @@ namespace ConsoleApp
 
             string p1 = "t";
             Random random = new Random();
-            int x = random.Next();
+            int x = random.Next(5, 10);
             string p2 = "a";
             Query query = new Query(p1, x, p2);
             query.Y = (4, 50);
