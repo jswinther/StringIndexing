@@ -1,3 +1,4 @@
+using ConsoleApp.DataStructures;
 using System;
 using System.Collections.Generic;
 
@@ -20,4 +21,6 @@ namespace Gma.DataStructures.StringSearch {
             return RetrieveSubstrings(query.AsSpan());
         }
     }
+
+    
 }

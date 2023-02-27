@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures
 {
-    internal class PrecomputedSubstrings
+    internal class PrecomputedSubstrings : PatternMatcher
     {
         Dictionary<string, HashSet<int>> Substrings = new();
 
-        public PrecomputedSubstrings(string text)
+        public PrecomputedSubstrings(string text): base(text)
         {
             for (int i = 1; i <= text.Length; i++)
             {
@@ -63,6 +63,21 @@ namespace ConsoleApp.DataStructures
 
                 Console.WriteLine("\n");
             }
+        }
+
+        public override IEnumerable<int> Matches(string pattern)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -1,11 +1,12 @@
 /* DEN HER ER FRICKED!! DO NOT USE! */
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ConsoleApp.DataStructures{
 
 
-class SuffixTreeOther {
+class SuffixTreeOther : PatternMatcher{
     private class Node {
         public int start, end;
         public Dictionary<char, Node> children = new Dictionary<char, Node>();
@@ -29,7 +30,7 @@ class SuffixTreeOther {
     private Node lastNewNode = null;
     private static List<Node> nodes = new List<Node>();
 
-    public SuffixTreeOther(string inputString) {
+    public SuffixTreeOther(string inputString) :base(inputString) {
         SuffixTreeOther.inputString = inputString;
         lastIndex = inputString.Length - 1;
         root.suffixLink = root;
@@ -169,20 +170,33 @@ class SuffixTreeOther {
         return ints;
 
     }
-    public IEnumerable<(int,int)> ReportAllOccurrences(Query query){
-        var p1occs = reportAllOccurrences(query.P1);
-        var p2occs = reportAllOccurrences(query.P2);
-        var occs = new HashSet<(int,int)>();
+   
+
+        public override IEnumerable<int> Matches(string pattern)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
+        {
+            var p1occs = reportAllOccurrences(pattern1);
+            var p2occs = reportAllOccurrences(pattern2);
+            var occs = new HashSet<(int, int)>();
             foreach (var item in p1occs)
             {
-                if (p2occs.Contains(item + query.P1.Length + query.X))
+                if (p2occs.Contains(item + pattern1.Length + x))
                 {
-                    occs.Add((item, item + query.P1.Length + query.X));
+                    occs.Add((item, item + pattern1.Length + x));
                     //global::System.Console.WriteLine((item, item + query.P1.Length + query.X + query.P2.Length));
                 }
-                    
+
             }
-        return occs;
+            return occs;
+        }
+
+        public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
+        {
+            throw new NotImplementedException();
+        }
     }
-}
 }

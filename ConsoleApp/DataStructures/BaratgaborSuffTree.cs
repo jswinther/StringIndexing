@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ConsoleApp.DataStructures
 {
-    public class BaratgaborSuffixTree
+    public class BaratgaborSuffixTree : PatternMatcher
     {
         private const int BOUNDLESS = -1;
 
@@ -87,23 +87,17 @@ namespace ConsoleApp.DataStructures
             }
         }
 
-        public BaratgaborSuffixTree()
+        public BaratgaborSuffixTree(string str): base(str)
         {
             _root = new Node() { Start = 0, End = 0 };
             _structure.Add((null, default(char)), _root);
             _AP = new ActivePoint(this) { ActiveParent = _root };
+            AddString(str);
         }
 
-        /// <summary>
-        /// Creates and returns a tree with the specified value.
-        /// Shorthand for separately instantiating and adding a string.
-        /// </summary>
-        public static BaratgaborSuffixTree Build(string value)
-        {
-            var t = new BaratgaborSuffixTree();
-            t.AddString(value);
-            return t;
-        }
+  
+
+    
 
         /// <summary>
         /// Extends the suffix tree with the specified value.
@@ -270,6 +264,21 @@ namespace ConsoleApp.DataStructures
                         Print(depth + 1, childNode);
                 }
             }
+        }
+
+        public override IEnumerable<int> Matches(string pattern)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
+        {
+            throw new NotImplementedException();
         }
 
         /*Made by us! Frederik & Jonathan

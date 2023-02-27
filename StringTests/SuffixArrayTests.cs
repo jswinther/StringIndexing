@@ -7,7 +7,6 @@ namespace StringTests
     [TestClass]
     public class SuffixArrayTests
     {
-        private SuffixArrayWrapper SA;
         private Problem problem;
         public SuffixArrayTests()
         {
