@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures
 {
-    internal class PrecomputedSubstrings : PatternMatcher
+    internal class PreCompSubs : PatternMatcher
     {
         Dictionary<string, HashSet<int>> Substrings = new();
 
-        public PrecomputedSubstrings(string text): base(text)
+        public PreCompSubs(string text): base(text)
         {
             for (int i = 1; i <= text.Length; i++)
             {

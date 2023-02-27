@@ -19,7 +19,7 @@ namespace ConsoleApp
 
         public static PatternMatcher BuildPrecomputed(string str)
         {
-            return new PrecomputedSubstrings(str);
+            return new PreCompSubs(str);
         }
 
         public static PatternMatcher BuildUkkonen(string str)
@@ -47,37 +47,45 @@ namespace ConsoleApp
             stopwatch.Stop();
             benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
             // Query Time
-            stopwatch = Stopwatch.StartNew();
             foreach (var query in queries)
             {
                 // Single Pattern
                 try
                 {
-                    benchmark.SinglePatternMatches = patternMatcher.Matches(query.P1).Count();
+                    stopwatch = Stopwatch.StartNew();
+                    patternMatcher.Matches(query.P1);
+                    stopwatch.Stop();
+                    benchmark.SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
                 }
                 catch (NotImplementedException)
                 {
-
+                    benchmark.SinglePatternMatchesQuery = -1;
                 }
 
                 // Double Pattern + Fixed Gap
                 try
                 {
-                    benchmark.DoublePatternFixedMatches = patternMatcher.Matches(query.P1, query.X, query.P2).Count();
+                    stopwatch = Stopwatch.StartNew();
+                    patternMatcher.Matches(query.P1, query.X, query.P2).Count();
+                    stopwatch.Stop();
+                    benchmark.DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
                 }
                 catch (NotImplementedException)
                 {
-
+                    benchmark.DoublePatternFixedMatchesQuery = -1;
                 }
                 
                 // Double Pattern + Variable Gap
                 try
                 {
-                    benchmark.DoublePatternVariableMatches = patternMatcher.Matches(query.P1, query.Y.Min, query.Y.Max, query.P2).Count();
+                    stopwatch = Stopwatch.StartNew();
+                    patternMatcher.Matches(query.P1, query.Y.Min, query.Y.Max, query.P2).Count();
+                    stopwatch.Stop();
+                    benchmark.DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
                 }
                 catch (NotImplementedException)
                 {
-
+                    benchmark.DoublePatternVariableMatchesQuery = -1;
                 }
                 
             }
@@ -95,15 +103,11 @@ namespace ConsoleApp
             public string DataName { get; set; }
             public long ConstructionTimeMilliseconds { get; set; }
             public long QueryTimeMilliseconds { get; set; }
-            public int SinglePatternMatches { get; internal set; }
-            public int DoublePatternFixedMatches { get; internal set; }
-            public int DoublePatternVariableMatches { get; internal set; }
+            public long SinglePatternMatchesQuery { get; internal set; }
+            public long DoublePatternFixedMatchesQuery { get; internal set; }
+            public long DoublePatternVariableMatchesQuery { get; internal set; }
 
-            public override string ToString()
-            {
-                return $"\nData Structure: {DataStructureName}\nDataset Size: {DataName}\nConstruction Time: {ConstructionTimeMilliseconds}ms\nQuery Time: {QueryTimeMilliseconds}ms\n" +
-                    $"Single Matches: {SinglePatternMatches}\nDouble Matches Fixed: {DoublePatternFixedMatches}\nDouble Matches Variable: {DoublePatternVariableMatches}";
-            }
+         
         }
 
         static void Main(string[] args)
@@ -124,9 +128,11 @@ namespace ConsoleApp
 
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
-                BuildSuffixArray
-        
+                BuildSuffixArray,
+                BuildUkkonen
             };
+            
+            var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
             string p1 = "t";
             Random random = new Random();
@@ -135,20 +141,17 @@ namespace ConsoleApp
             Query query = new Query(p1, x, p2);
             query.Y = (5, 10);
 
-           
-            var benchmarks = new List<Benchmark>();
-
-            foreach (var sequence in dnaSequences)
+            foreach (var dataStructure in dataStructures)
             {
-                foreach (var dataStructure in dataStructures)
+                foreach (var sequence in dnaSequences)
                 {
-                    var benchmark = BenchDataStructure(dataStructure, sequence, query);
-                    Console.WriteLine(benchmark);
-                    benchmarks.Add(benchmark);
+                    var b = BenchDataStructure(dataStructure, sequence, query);
+                    table.AddRow($"{b.DataStructureName} {b.DataName}", b.ConstructionTimeMilliseconds, b.SinglePatternMatchesQuery, b.DoublePatternFixedMatchesQuery, b.DoublePatternVariableMatchesQuery);
                 }
             }
+            table.Options.NumberAlignment = Alignment.Right;
+            table.Write();
 
-            
         }
     }
 }
