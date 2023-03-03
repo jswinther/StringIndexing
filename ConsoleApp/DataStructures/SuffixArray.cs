@@ -1,6 +1,8 @@
 ﻿using C5;
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,41 +25,51 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<int> Matches(string pattern)
         {
-            int l = 0;
-            int r = m_sa.Length;
-            int m = -1;
-            List<int> list = new List<int>();
-            if ((pattern == null) || (pattern.Length == 0))
+            var suffixArray = m_sa;
+            var lcpArray = m_lcp;
+            int start = 0;
+            var text = str;
+            int end = text.Length - 1;
+            List<int> matchingIndices = new List<int>();
+            while (start <= end)
             {
-                return list;
-            }
-
-            // Binary search for substring
-            while (r > l)
-            {
-                m = (l + r) / 2;
-                if (m_str.Substring(m_sa[m]).CompareTo(pattern) < 0)
+                int mid = (start + end) / 2;
+                string suffix = text.Substring(suffixArray[mid]);
+                int lcp = lcpArray[mid];
+                if (suffix.StartsWith(pattern))
                 {
-                    l = m + 1;
+                    if (lcp >= pattern.Length - 1)
+                    {
+                        matchingIndices.Add(suffixArray[mid]);
+                        int left = mid - 1;
+                        while (left >= start && lcpArray[left] >= pattern.Length - 1)
+                        {
+                            matchingIndices.Add(suffixArray[left]);
+                            left--;
+                        }
+                        int right = mid + 1;
+                        while (right <= end && lcpArray[right] >= pattern.Length - 1)
+                        {
+                            matchingIndices.Add(suffixArray[right]);
+                            right++;
+                        }
+                        return matchingIndices;
+                    }
+                    else
+                    {
+                        start = mid + 1;
+                    }
+                }
+                else if (pattern.CompareTo(suffix) < 0)
+                {
+                    end = mid - 1;
                 }
                 else
                 {
-                    r = m;
+                    start = mid + 1;
                 }
             }
-            if ((l == r) && (l < m_str.Length) && (m_str.Substring(m_sa[l]).StartsWith(pattern)))
-            {
-                while ((l < m_str.Length) && (m_str.Substring(m_sa[l]).StartsWith(pattern)))
-                {
-                    list.Add(m_sa[l]);
-                    ++l;
-                }
-            }
-            else
-            {
-                return list;
-            }
-            return list;
+            return matchingIndices;
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
@@ -112,62 +124,25 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            throw new NotImplementedException();
-        }
-
-        public SortedSet<int> FindSubstringOccurrencesSorted(string s1, int x, string s2)
-        {
-       
-            int start = 0;
-  
-            int end = str.Length - 1;
-            SortedSet<int> matchingIndices = new SortedSet<int>();
-            while (start <= end)
+            var p1occs = Matches(pattern1);
+            var p2occs = PrivateSortedSetMatches(pattern2);
+            int ymin = y_min;
+            int ymax = y_max;
+            List<(int, int)> items = new();
+            foreach (var o1 in p1occs)
             {
-                int mid = (start + end) / 2;
-                string suffix = str.Substring(m_sa[mid]);
-                if (mid + x + s2.Length < m_sa.Length)
+                int min = o1 + ymin + pattern1.Length - 1;
+                int max = o1 + ymax + pattern1.Length + 1;
+                foreach (var item in p2occs.GetViewBetween(min, max))
                 {
-                    int lcp = m_lcp[mid];
-                    if (suffix.StartsWith(s1))
-                    {
-                        if (lcp >= s1.Length - 1)
-                        {
-                            matchingIndices.Add(m_sa[mid]);
-                            int left = mid - 1;
-                            while (left >= start && m_lcp[left] >= s1.Length - 1)
-                            {
-                                matchingIndices.Add(m_sa[left]);
-                                left--;
-                            }
-                            int right = mid + 1;
-                            while (right <= end && m_lcp[right] >= s1.Length - 1)
-                            {
-                                matchingIndices.Add(m_sa[right]);
-                                right++;
-                            }
-                            return matchingIndices;
-                        }
-                        else
-                        {
-                            start = mid + 1;
-                        }
-                    }
+                    items.Add((o1, item));
                 }
 
-                else if (s1.CompareTo(suffix) < 0)
-                {
-                    end = mid - 1;
-                }
-                else
-                {
-                    start = mid + 1;
-                }
             }
-            return matchingIndices;
+            return items;
         }
 
-        public SortedSet<int> FindSubstringOccurrencesSorted(string substring)
+        private SortedSet<int> PrivateSortedSetMatches(string substring)
         {
             var suffixArray = m_sa;
             var lcpArray = m_lcp;
@@ -216,91 +191,12 @@ namespace ConsoleApp.DataStructures
             return matchingIndices;
         }
 
-        public IEnumerable<(int, int)> GetOccurrencesWithSortedSet(Query query)
-        {
-            var p1occs = Matches(query.P1);
-            var p2occs = FindSubstringOccurrencesSorted(query.P2);
-            int ymin = query.Y.Min;
-            int ymax = query.Y.Max;
-            List<(int, int)> items = new();
-            foreach (var o1 in p1occs)
-            {
-                int min = o1 + ymin + query.P1.Length - 1;
-                int max = o1 + ymax + query.P1.Length + 1;
-                foreach (var item in p2occs.GetViewBetween(min, max))
-                {
-                    items.Add((o1, item));
-                }
+      
 
-            }
-            return items;
-        }
+       
 
-        public List<int> ReportOccurrences(string p)
-        {
-            List<int> ints = new List<int>();
-            int index = IndexOf(p);
-            if (index == -1) return ints;
-            for (int u = index; u < str.Length; u++)
-            {
-                if (Lcp[u] == Lcp[index])
-                {
-                    ints.Add(m_sa[u]);
-                }
-            }
-            return ints;
-        }
 
-        public SortedSet<int> ReportOccurrencesSortedSet(string p)
-        {
-            SortedSet<int> ints = new SortedSet<int>();
-            int index = IndexOf(p);
-            if (index == -1) return ints;
-            int u = index;
-            while (Lcp[u] == Lcp[index])
-            {
-                ints.Add(m_sa[u]);
-                ++u;
-            }
-            return ints;
-        }
-
-        public List<int> FindSubstringOccurrences(string substring, int min, int max)
-        {
-            var suffixArray = m_sa;
-            var lcpArray = Lcp;
-            int start = 0;
-            var text = str;
-            int end = text.Length - 1;
-            List<int> matchingIndices = new List<int>();
-            while (start <= end)
-            {
-                int mid = (start + end) / 2;
-                string suffix = text.Substring(suffixArray[mid]);
-                int lcp = lcpArray[mid];
-                if (suffix.StartsWith(substring))
-                {
-                    if (lcp >= substring.Length - 1 && suffixArray[mid] >= - min && suffixArray[mid] <= max)
-                    {
-                        matchingIndices.Add(suffixArray[mid]);
-                        start = mid + 1;
-                    }
-                    else
-                    {
-                        start = mid + 1;
-                    }
-                }
-                else if (substring.CompareTo(suffix) < 0)
-                {
-                    end = mid - 1;
-                }
-                else
-                {
-                    start = mid + 1;
-                }
-            }
-            return matchingIndices;
-        }
+       
 
    
 

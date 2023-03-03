@@ -53,9 +53,11 @@ namespace ConsoleApp
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
-                    patternMatcher.Matches(query.P1);
+                    var occs = patternMatcher.Matches(query.P1).Count();
                     stopwatch.Stop();
                     benchmark.SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
+                    benchmark.SinglePatternMatchesQueryOccs = occs;
+
                 }
                 catch (NotImplementedException)
                 {
@@ -66,9 +68,10 @@ namespace ConsoleApp
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
-                    patternMatcher.Matches(query.P1, query.X, query.P2).Count();
+                    var occs = patternMatcher.Matches(query.P1, query.X, query.P2).Count();
                     stopwatch.Stop();
                     benchmark.DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
+                    benchmark.DoublePatternFixedMatchesQueryOccs = occs;
                 }
                 catch (NotImplementedException)
                 {
@@ -79,9 +82,10 @@ namespace ConsoleApp
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
-                    patternMatcher.Matches(query.P1, query.Y.Min, query.Y.Max, query.P2).Count();
+                    var occs = patternMatcher.Matches(query.P1, query.Y.Min, query.Y.Max, query.P2).Count();
                     stopwatch.Stop();
                     benchmark.DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
+                    benchmark.DoublePatternVariableMatchesQueryOccs = occs;
                 }
                 catch (NotImplementedException)
                 {
@@ -106,8 +110,9 @@ namespace ConsoleApp
             public long SinglePatternMatchesQuery { get; internal set; }
             public long DoublePatternFixedMatchesQuery { get; internal set; }
             public long DoublePatternVariableMatchesQuery { get; internal set; }
-
-         
+            public int SinglePatternMatchesQueryOccs { get; internal set; }
+            public int DoublePatternFixedMatchesQueryOccs { get; internal set; }
+            public int DoublePatternVariableMatchesQueryOccs { get; internal set; }
         }
 
         static void Main(string[] args)
@@ -146,7 +151,7 @@ namespace ConsoleApp
                 foreach (var sequence in dnaSequences)
                 {
                     var b = BenchDataStructure(dataStructure, sequence, query);
-                    table.AddRow($"{b.DataStructureName} {b.DataName}", b.ConstructionTimeMilliseconds, b.SinglePatternMatchesQuery, b.DoublePatternFixedMatchesQuery, b.DoublePatternVariableMatchesQuery);
+                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
                 }
             }
             table.Options.NumberAlignment = Alignment.Right;
