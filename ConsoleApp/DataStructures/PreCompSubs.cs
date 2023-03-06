@@ -47,6 +47,7 @@ namespace ConsoleApp.DataStructures
                     }
                 }
             }
+
             return occs;
         }
 

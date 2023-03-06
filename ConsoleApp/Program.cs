@@ -53,10 +53,10 @@ namespace ConsoleApp
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(query.P1).Count();
+                    var occs = patternMatcher.Matches(query.P1);
                     stopwatch.Stop();
                     benchmark.SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmark.SinglePatternMatchesQueryOccs = occs;
+                    benchmark.SinglePatternMatchesQueryOccs = occs.Count();
 
                 }
                 catch (NotImplementedException)
@@ -68,10 +68,10 @@ namespace ConsoleApp
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(query.P1, query.X, query.P2).Count();
+                    var occs = patternMatcher.Matches(query.P1, query.X, query.P2);
                     stopwatch.Stop();
                     benchmark.DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmark.DoublePatternFixedMatchesQueryOccs = occs;
+                    benchmark.DoublePatternFixedMatchesQueryOccs = occs.Count();
                 }
                 catch (NotImplementedException)
                 {
@@ -82,10 +82,10 @@ namespace ConsoleApp
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(query.P1, query.Y.Min, query.Y.Max, query.P2).Count();
+                    var occs = patternMatcher.Matches(query.P1, query.Y.Min, query.Y.Max, query.P2);
                     stopwatch.Stop();
                     benchmark.DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmark.DoublePatternVariableMatchesQueryOccs = occs;
+                    benchmark.DoublePatternVariableMatchesQueryOccs = occs.Count();
                 }
                 catch (NotImplementedException)
                 {
@@ -119,10 +119,8 @@ namespace ConsoleApp
         {
             string[] dnaSequences = new string[] 
             {
-                DummyData.DNA_512,
-                DummyData.DNA_1024,
-                DummyData.DNA_2048,
-                
+                DummyData.Dummy,
+                DummyData.DNA_512
             };
 
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
@@ -134,9 +132,9 @@ namespace ConsoleApp
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
-            string p1 = "t";
+            string p1 = "a";
             Random random = new Random();
-            int x = random.Next(5, 10);
+            int x = 1;
             string p2 = "a";
             Query query = new Query(p1, x, p2);
             query.Y = (5, 10);

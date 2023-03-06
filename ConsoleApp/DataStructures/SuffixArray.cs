@@ -38,17 +38,17 @@ namespace ConsoleApp.DataStructures
                 int lcp = lcpArray[mid];
                 if (suffix.StartsWith(pattern))
                 {
-                    if (lcp >= pattern.Length - 1)
+                    if (lcp >= pattern.Length)
                     {
                         matchingIndices.Add(suffixArray[mid]);
                         int left = mid - 1;
-                        while (left >= start && lcpArray[left] >= pattern.Length - 1)
+                        while (left >= start && lcpArray[left] >= pattern.Length)
                         {
                             matchingIndices.Add(suffixArray[left]);
                             left--;
                         }
                         int right = mid + 1;
-                        while (right <= end && lcpArray[right] >= pattern.Length - 1)
+                        while (right <= end && lcpArray[right] >= pattern.Length)
                         {
                             matchingIndices.Add(suffixArray[right]);
                             right++;
@@ -86,17 +86,17 @@ namespace ConsoleApp.DataStructures
                     int lcp = m_lcp[mid];
                     if (suffix.StartsWith(pattern1))
                     {
-                        if (lcp >= pattern1.Length - 1)
+                        if (lcp >= pattern1.Length)
                         {
                             matchingIndices.Add((m_sa[mid], m_sa[mid] + x + pattern2.Length));
                             int left = mid - 1;
-                            while (left >= start && m_lcp[left] >= pattern1.Length - 1)
+                            while (left >= start && m_lcp[left] >= pattern1.Length)
                             {
                                 matchingIndices.Add((m_sa[left], m_sa[left] + x + pattern2.Length));
                                 left--;
                             }
                             int right = mid + 1;
-                            while (right <= end && m_lcp[right] >= pattern1.Length - 1)
+                            while (right <= end && m_lcp[right] >= pattern1.Length)
                             {
                                 matchingIndices.Add((m_sa[right], m_sa[right] + x + pattern2.Length));
                                 right++;
