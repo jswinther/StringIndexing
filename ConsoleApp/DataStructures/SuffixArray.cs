@@ -119,7 +119,7 @@ namespace ConsoleApp.DataStructures
             List<(int, int)> occs = new();
             var occurrencesP1 = Matches(pattern1);
 
-            C5.HashSet<int> occurencesP2 = new();
+            System.Collections.Generic.HashSet<int> occurencesP2 = new();
 
             // Construct the suffix array for the text
             int n = m_str.Length;
