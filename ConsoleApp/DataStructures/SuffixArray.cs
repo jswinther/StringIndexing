@@ -6,6 +6,7 @@ using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleApp.DataStructures
 {
@@ -25,16 +26,15 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<int> Matches(string pattern)
         {
-            var suffixArray = m_sa;
-            var lcpArray = m_lcp;
+            int[] suffixArray = m_sa;
+            int[] lcpArray = m_lcp;
             int start = 0;
-            var text = str;
-            int end = text.Length - 1;
+            int end = m_str.Length - 1;
             List<int> matchingIndices = new List<int>();
             while (start <= end)
             {
                 int mid = (start + end) / 2;
-                string suffix = text.Substring(suffixArray[mid]);
+                string suffix = m_str.Substring(suffixArray[mid]);
                 int lcp = lcpArray[mid];
                 if (suffix.StartsWith(pattern))
                 {

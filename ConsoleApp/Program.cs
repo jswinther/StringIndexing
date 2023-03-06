@@ -122,19 +122,14 @@ namespace ConsoleApp
                 DummyData.DNA_512,
                 DummyData.DNA_1024,
                 DummyData.DNA_2048,
-                DummyData.DNA_4096,
-                DummyData.DNA_8192,
-                DummyData.DNA_16384,
-                DummyData.DNA_32768,
-                DummyData.DNA_65536,
-                DummyData.DNA_131072,
-                DummyData.DNA_262144
+                
             };
 
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
+                BuildPrecomputed,
                 BuildSuffixArray,
-                //BuildUkkonen
+                BuildUkkonen
             };
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");

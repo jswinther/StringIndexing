@@ -24,15 +24,14 @@ namespace ConsoleApp.DataStructures
                     Substrings[t].Add(j);
                 }
             }
-
         }
 
-        public IEnumerable<int> Report(Query query)
+        public IEnumerable<(int, int)> Report(Query query)
         {
             string p1 = query.P1;
             int x = query.X;
             string p2 = query.P2;
-            List<int> occs = new List<int>();
+            List<(int, int)> occs = new();
             if (Substrings.ContainsKey(p1))
             {
                 var p1occs = Substrings[p1];
@@ -43,7 +42,7 @@ namespace ConsoleApp.DataStructures
                     {
                         if (p2occs.Contains(p1occ + p1.Length + x))
                         {
-                            occs.Add(p1occ);
+                            occs.Add((p1occ, p1occ + p1.Length + x));
                         }
                     }
                 }
@@ -67,12 +66,12 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<int> Matches(string pattern)
         {
-            throw new NotImplementedException();
+            return Substrings[pattern];
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
         {
-            throw new NotImplementedException();
+            return Report(new Query(pattern1, x, pattern2));
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)

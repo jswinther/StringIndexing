@@ -18,7 +18,7 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<int> Matches(string pattern)
         {
-            throw new NotImplementedException();
+            return suffixTree.RetrieveSubstrings(pattern).Select(x => x.CharPosition);
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
