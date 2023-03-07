@@ -117,15 +117,14 @@ namespace ConsoleApp
 
         static void Main(string[] args)
         {
-            string[] dnaSequences = new string[] 
+            string[] dnaSequences = new string[]
             {
                 DummyData.Dummy,
-                DummyData.DNA_512,
-                DummyData.DNA_1024,
-                DummyData.DNA_2048,
-                DummyData.DNA_4096,
-                DummyData.DNA_8192,
-                DummyData.DNA_131072
+                DummyData.DNA("DNA_512"),
+                DummyData.DNA("DNA_262144"),
+                DummyData.DNA("DNA_524288"),
+                DummyData.DNA("DNA_1048576"),
+                DummyData.DNA("DNA_2097152")
             };
 
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
@@ -140,7 +139,7 @@ namespace ConsoleApp
             int x = 1;
             string p2 = "a";
             Query query = new Query(p1, x, p2);
-            query.Y = (1, 10);
+            query.Y = (1, 45);
 
             foreach (var dataStructure in dataStructures)
             {
