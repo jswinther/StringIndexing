@@ -12,9 +12,14 @@ namespace ConsoleApp
         
 
         public delegate PatternMatcher BuildDataStructure(string str);
-        public static PatternMatcher BuildSuffixArray(string str)
+        public static PatternMatcher BuildSuffixArray_V1(string str)
         {
-            return new SuffixArray(str);
+            return new SuffixArray_V1(str);
+        }
+
+        public static PatternMatcher BuildSuffixArray_V2(string str)
+        {
+            return new SuffixArray_V2(str);
         }
 
         public static PatternMatcher BuildPrecomputed(string str)
@@ -119,17 +124,22 @@ namespace ConsoleApp
         {
             string[] dnaSequences = new string[]
             {
-                DummyData.Dummy,
-                DummyData.DNA("DNA_512"),
-                DummyData.DNA("DNA_262144"),
-                DummyData.DNA("DNA_524288"),
+                //DummyData.Dummy,
+                //DummyData.DNA("DNA_512"),
+                //DummyData.DNA("DNA_262144"),
+                //DummyData.DNA("DNA_524288"),
                 DummyData.DNA("DNA_1048576"),
-                DummyData.DNA("DNA_2097152")
+                DummyData.DNA("DNA_2097152"),
+                DummyData.DNA("DNA_4194304"),
+                DummyData.DNA("DNA_8388608"),
+                //DummyData.DNA("DNA_16777216"),
+                //DummyData.DNA("DNA_33554432")
             };
 
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
-                BuildSuffixArray
+                BuildSuffixArray_V1,
+                BuildSuffixArray_V2
             };
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");

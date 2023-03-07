@@ -11,9 +11,9 @@ using static System.Net.Mime.MediaTypeNames;
 namespace ConsoleApp.DataStructures
 {
     [Serializable]
-    internal class SuffixArray : PatternMatcher
+    internal class SuffixArray_V1 : PatternMatcher
     {
-        public SuffixArray(string str) : base(str)
+        public SuffixArray_V1(string str) : base(str)
         {
             m_str = str;
             m_sa = new int[str.Length];
