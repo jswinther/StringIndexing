@@ -39,11 +39,24 @@ namespace ConsoleApp.DataStructures
                 if (Substrings.ContainsKey(p2))
                 {
                     var p2occs = Substrings[p2];
-                    foreach (var p1occ in p1occs)
+                    if (p1occs.Count < p2occs.Count)
                     {
-                        if (p2occs.Contains(p1occ + p1.Length + x))
+                        foreach (var p1occ in p1occs)
                         {
-                            occs.Add((p1occ, p1occ + p1.Length + x));
+                            if (p2occs.Contains(p1occ + p1.Length + x))
+                            {
+                                occs.Add((p1occ, p1occ + p1.Length + x));
+                            }
+                        }
+                    }
+                    else
+                    {
+                        foreach (var p2occ in p2occs)
+                        {
+                            if (p1occs.Contains(p2occ - p1.Length - x))
+                            {
+                                occs.Add((p1.Length - x - p2occ, p2occ + p2.Length));
+                            }
                         }
                     }
                 }
