@@ -10,9 +10,20 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleApp.DataStructures
 {
+
     [Serializable]
     internal class SuffixArray_V1 : PatternMatcher
     {
+
+        private const int EOC = int.MaxValue;
+        private int[] m_sa;
+        private int[] m_isa;
+        private int[] m_lcp;
+        private C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
+        private List<Chain> m_chainStack = new List<Chain>();
+        private ArrayList<Chain> m_subChains = new ArrayList<Chain>();
+        private int m_nextRank = 1;
+        private string m_str;
         public SuffixArray_V1(string str) : base(str)
         {
             m_str = str;
@@ -267,15 +278,7 @@ namespace ConsoleApp.DataStructures
 
    
 
-        private const int EOC = int.MaxValue;
-        private int[] m_sa;
-        private int[] m_isa;
-        private int[] m_lcp;
-        private C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
-        private List<Chain> m_chainStack = new List<Chain>();
-        private ArrayList<Chain> m_subChains = new ArrayList<Chain>();
-        private int m_nextRank = 1;
-        private string m_str;
+        
 
         public int Length
         {
@@ -533,6 +536,8 @@ namespace ConsoleApp.DataStructures
                 }
             }
         }
+
+       
 
         private void BuildLcpArray()
         {

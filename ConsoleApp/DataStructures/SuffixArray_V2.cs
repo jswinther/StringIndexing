@@ -13,6 +13,7 @@ namespace ConsoleApp.DataStructures
     [Serializable]
     internal class SuffixArray_V2 : PatternMatcher
     {
+        public IntervalTree IntervalTree;
         public SuffixArray_V2(string str) : base(str)
         {
             m_str = str;
@@ -22,6 +23,7 @@ namespace ConsoleApp.DataStructures
             FormInitialChains();
             BuildSuffixArray();
             ComputeLCP();
+            IntervalTree = new IntervalTree(m_lcp);
         }
 
         public override IEnumerable<int> Matches(string pattern)
@@ -30,30 +32,34 @@ namespace ConsoleApp.DataStructures
 
             // Construct the suffix array for the text
             int n = m_str.Length;
-            int[] suffixArray = m_sa;
 
             // Find the first occurrence of the substring in the text
-            int substringIndex = BinarySearch(pattern, m_str, suffixArray);
-
+            int substringIndex = BinarySearch(pattern);
+            
             // If the substring is not found in the text, return an empty list
             if (substringIndex == -1)
             {
                 return occurrences;
             }
 
+            var m = IntervalTree.Query(pattern.Length, substringIndex);
+            
+
+
+
             // Add the index of the first occurrence of the substring to the list of occurrences
-            occurrences.Add(suffixArray[substringIndex]);
+            occurrences.Add(m_sa[substringIndex]);
 
             // Check all suffixes that come after the first occurrence of the substring
             for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern.Length; i++)
             {
-                occurrences.Add(suffixArray[i]);
+                occurrences.Add(m_sa[i]);
             }
 
             // Check all suffixes that come before the first occurrence of the substring
             for (int i = substringIndex - 1; i >= 0 && m_lcp[i] >= pattern.Length; i--)
             {
-                occurrences.Add(suffixArray[i]);
+                occurrences.Add(m_sa[i]);
             }
 
             return occurrences;
@@ -72,14 +78,14 @@ namespace ConsoleApp.DataStructures
             return n;
         }
 
-        static int BinarySearch(string pattern, string text, int[] suffixArray)
+        int BinarySearch(string pattern)
         {
             int lo = 0;
-            int hi = suffixArray.Length - 1;
+            int hi = m_sa.Length - 1;
             while (lo <= hi)
             {
                 int mid = lo + (hi - lo) / 2;
-                string suffix = text.Substring(suffixArray[mid]);
+                string suffix = m_str.Substring(m_sa[mid]);
                 int cmp = ComparePrefix(pattern, suffix);
                 if (cmp < 0)
                 {
@@ -97,7 +103,7 @@ namespace ConsoleApp.DataStructures
             return -1;
         }
 
-        static int ComparePrefix(string pattern, string suffix)
+        int ComparePrefix(string pattern, string suffix)
         {
             int n = Math.Min(pattern.Length, suffix.Length);
             for (int i = 0; i < n; i++)
@@ -123,10 +129,9 @@ namespace ConsoleApp.DataStructures
 
             // Construct the suffix array for the text
             int n = m_str.Length;
-            int[] suffixArray = m_sa;
 
             // Find the first occurrence of the substring in the text
-            int substringIndex = BinarySearch(pattern2, m_str, suffixArray);
+            int substringIndex = BinarySearch(pattern2);
 
             // If the substring is not found in the text, return an empty list
             if (substringIndex == -1)
@@ -135,25 +140,25 @@ namespace ConsoleApp.DataStructures
             }
 
             // Add the index of the first occurrence of the substring to the list of occurrences
-            occurencesP2.Add(suffixArray[substringIndex]);
+            occurencesP2.Add(m_sa[substringIndex]);
 
             // Check all suffixes that come after the first occurrence of the substring
             for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern2.Length; i++)
             {
-                occurencesP2.Add(suffixArray[i]);
+                occurencesP2.Add(m_sa[i]);
             }
 
             // Check all suffixes that come before the first occurrence of the substring
             for (int i = substringIndex - 1; i >= 0 && m_lcp[i] >= pattern2.Length; i--)
             {
-                occurencesP2.Add(suffixArray[i]);
+                occurencesP2.Add(m_sa[i]);
             }
-
+            int[] occs2 = occurencesP2.ToArray();
             foreach (var occ1 in occurrencesP1)
             {
-                if (occurencesP2.Contains(occ1 + pattern1.Length + x))
+                if ( occurencesP2.Contains(occ1 + pattern1.Length + x))
                 {
-                    occs.Add((occ1, occ1 + pattern1.Length + x));
+                   occs.Add((occ1, occ1 + pattern1.Length + x));
                 }
             }
 
@@ -169,11 +174,10 @@ namespace ConsoleApp.DataStructures
 
             // Construct the suffix array for the text
             int n = m_str.Length;
-            int[] suffixArray = m_sa;
 
             // Find the first occurrence of the substring in the text
-            int substringIndex = BinarySearch(pattern2, m_str, suffixArray);
-
+            int substringIndex = BinarySearch(pattern2);
+            
             // If the substring is not found in the text, return an empty list
             if (substringIndex == -1)
             {
@@ -181,18 +185,18 @@ namespace ConsoleApp.DataStructures
             }
 
             // Add the index of the first occurrence of the substring to the list of occurrences
-            occurencesP2.Add(suffixArray[substringIndex]);
+            occurencesP2.Add(m_sa[substringIndex]);
 
             // Check all suffixes that come after the first occurrence of the substring
             for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern2.Length; i++)
             {
-                occurencesP2.Add(suffixArray[i]);
+                occurencesP2.Add(m_sa[i]);
             }
 
             // Check all suffixes that come before the first occurrence of the substring
             for (int i = substringIndex - 1; i >= 0 && m_lcp[i] >= pattern2.Length; i--)
             {
-                occurencesP2.Add(suffixArray[i]);
+                occurencesP2.Add(m_sa[i]);
             }
 
             foreach (var occ1 in occurrencesP1)
@@ -208,6 +212,8 @@ namespace ConsoleApp.DataStructures
             
             return occs;
         }
+
+   
 
         private SortedSet<int> PrivateSortedSetMatches(string substring)
         {

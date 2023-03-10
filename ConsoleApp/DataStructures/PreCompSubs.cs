@@ -8,7 +8,7 @@ namespace ConsoleApp.DataStructures
 {
     internal class PreCompSubs : PatternMatcher
     {
-        Dictionary<string, HashSet<int>> Substrings = new();
+        Dictionary<string, SortedSet<int>> Substrings = new();
 
         public PreCompSubs(string text): base(text)
         {
@@ -19,7 +19,7 @@ namespace ConsoleApp.DataStructures
                     var t = text.Substring(j, i);
                     if (!Substrings.ContainsKey(t))
                     {
-                        Substrings[t] = new HashSet<int>();
+                        Substrings[t] = new SortedSet<int>();
                     }
                     Substrings[t].Add(j);
                 }
@@ -77,7 +77,16 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            throw new NotImplementedException();
+            var occ2s = Substrings[pattern2];
+            var m1 = pattern1.Length + y_min;
+            var m2 = pattern1.Length + y_max;
+            foreach (var occ1 in Substrings[pattern1])
+            {
+                foreach (var occ2 in occ2s.GetViewBetween(occ1 + m1, occ1 + m2))
+                {
+                    yield return (occ1, occ2 + pattern2.Length);
+                }
+            }
         }
     }
 }

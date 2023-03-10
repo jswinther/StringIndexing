@@ -126,8 +126,8 @@ namespace ConsoleApp
             {
                 //DummyData.Dummy,
                 //DummyData.DNA("DNA_512"),
-                //DummyData.DNA("DNA_262144"),
-                //DummyData.DNA("DNA_524288"),
+                DummyData.DNA("DNA_262144"),
+                DummyData.DNA("DNA_524288"),
                 DummyData.DNA("DNA_1048576"),
                 DummyData.DNA("DNA_2097152"),
                 DummyData.DNA("DNA_4194304"),
@@ -139,7 +139,8 @@ namespace ConsoleApp
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
                 BuildSuffixArray_V1,
-                BuildSuffixArray_V2
+                BuildSuffixArray_V2,
+                //BuildPrecomputed
             };
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
