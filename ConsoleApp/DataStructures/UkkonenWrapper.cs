@@ -1,6 +1,7 @@
 ﻿using Gma.DataStructures.StringSearch;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -38,7 +39,18 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            throw new NotImplementedException();
+            var occs1 = suffixTree.RetrieveSubstrings(pattern1).Select(s => s.CharPosition);
+            var occs2 = new SortedSet<int>(suffixTree.RetrieveSubstrings(pattern2).Select(s => s.CharPosition));
+
+            List<(int, int)> occs = new List<(int, int)>();
+            foreach (var item1 in occs1)
+            {
+                foreach (var item2 in occs2.GetViewBetween(item1 + pattern1.Length + y_min, item1 + pattern1.Length + y_max))
+                {
+                    occs.Add((item1, item2 + pattern2.Length));
+                }                  
+            }
+            return occs;
         }
         
     }
