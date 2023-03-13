@@ -23,18 +23,14 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
         {
-            IEnumerable<WordPosition<int>> occs1 = suffixTree.RetrieveSubstrings(pattern1);
-            IEnumerable<WordPosition<int>> occs2 = suffixTree.RetrieveSubstrings(pattern2);
+            var occs1 = suffixTree.RetrieveSubstrings(pattern1).Select(s => s.CharPosition);
+            var occs2 = suffixTree.RetrieveSubstrings(pattern2).Select(s => s.CharPosition).ToHashSet();
+
             List<(int, int)> occs = new List<(int, int)>();
             foreach (var item1 in occs1)
             {
-                foreach (var item2 in occs2)
-                {
-                    if (item2.CharPosition == (item1.CharPosition + pattern1.Length + x))
-                    {
-                        occs.Add((item1.CharPosition, item2.CharPosition));
-                    }
-                }
+                if (occs2.Contains(item1 + pattern1.Length + x))
+                    occs.Add((item1, item1 + pattern1.Length + x + pattern2.Length));
 
             }
             return occs;
