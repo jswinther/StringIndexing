@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlTypes;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ namespace ConsoleApp.DataStructures
     internal class SuffixArray_V2 : PatternMatcher
     {
         public IntervalTree IntervalTree;
+    
         public SuffixArray_V2(string str) : base(str)
         {
             m_str = str;
@@ -23,8 +25,82 @@ namespace ConsoleApp.DataStructures
             FormInitialChains();
             BuildSuffixArray();
             ComputeLCP();
-            IntervalTree = new IntervalTree(m_lcp);
+            var intervals = BottomUpTraversal().ToArray();
+            IntervalTree = new IntervalTree();
+            foreach (var interval in intervals)
+            {
+                (int a, int b, int c) = interval;
+                IntervalTree.Insert(b, c, a, new SortedSet<int>(m_sa.Take(new Range(new Index(b), new Index(c)))));
+            }
         }
+
+        [DebuggerDisplay("l: {l}, r: {r}")]
+        private class Interval : IEquatable<Interval?>, IComparable<Interval>
+        {
+            public readonly int l;
+            public readonly int r;
+            public readonly SortedSet<int> ints;
+
+            public Interval(int l, int r, SortedSet<int> ints)
+            {
+                this.l = l;
+                this.r = r;
+                this.ints = ints;
+            }
+
+            public int CompareTo(Interval? other)
+            {
+                if (r - l > other.r - other.l)
+                {
+                    return -1;
+                } 
+                else if (r - l < other.r - other.l)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+
+            public override bool Equals(object? obj)
+            {
+                return Equals(obj as Interval);
+            }
+
+            public bool Equals(Interval? other)
+            {
+                return other is not null &&
+                       l == other.l &&
+                       r == other.r;
+            }
+
+            public override int GetHashCode()
+            {
+                return HashCode.Combine(l, r);
+            }
+        }
+
+        public IEnumerable<(int lcp, int l, int r)> BottomUpTraversal()
+        {
+            int n = m_sa.Length;
+            Stack<(int, int)> stack = new();
+            stack.Push((0, 0));
+            for (int R = 1; R < n; R++)
+            {
+                int next_L = R - 1;
+                while (stack.Count > 0 && m_lcp[R] < stack.Peek().Item1)
+                {
+                    (int d, int L) = stack.Pop();
+                    yield return (d, L, R);
+                    next_L = L;
+                }
+                if (m_lcp[R] > stack.Peek().Item1)
+                    stack.Push((m_lcp[R], next_L));
+            }
+        }
+
 
         public override IEnumerable<int> Matches(string pattern)
         {
@@ -42,10 +118,10 @@ namespace ConsoleApp.DataStructures
                 return occurrences;
             }
 
-            var m = IntervalTree.Query(pattern.Length, substringIndex);
+            // Find all intervals of value pattern length
+            var occs = IntervalTree.Query(pattern.Length, substringIndex).MaxBy(s => s.end - s.start).ints;
+            return occs;
             
-
-
 
             // Add the index of the first occurrence of the substring to the list of occurrences
             occurrences.Add(m_sa[substringIndex]);
@@ -184,6 +260,9 @@ namespace ConsoleApp.DataStructures
                 return occs;
             }
 
+            occurencesP2 = IntervalTree.Query(pattern2.Length, substringIndex).MaxBy(s => s.end - s.start).ints;
+
+            /*
             // Add the index of the first occurrence of the substring to the list of occurrences
             occurencesP2.Add(m_sa[substringIndex]);
 
@@ -198,12 +277,13 @@ namespace ConsoleApp.DataStructures
             {
                 occurencesP2.Add(m_sa[i]);
             }
+            */
 
             foreach (var occ1 in occurrencesP1)
             {
                 int min = occ1 + y_min + pattern1.Length;
-                int max = occ1 + y_max + pattern1.Length;
-                foreach (var occ2 in occurencesP2.GetViewBetween(min, max))
+                int max1 = occ1 + y_max + pattern1.Length;
+                foreach (var occ2 in occurencesP2.GetViewBetween(min, max1))
                 {
                     occs.Add((occ1, occ2 - occ1 + pattern2.Length));
                 }
@@ -211,65 +291,7 @@ namespace ConsoleApp.DataStructures
 
             
             return occs;
-        }
-
-   
-
-        private SortedSet<int> PrivateSortedSetMatches(string substring)
-        {
-            var suffixArray = m_sa;
-            var lcpArray = m_lcp;
-            int start = 0;
-            var text = str;
-            int end = text.Length - 1;
-            SortedSet<int> matchingIndices = new SortedSet<int>();
-            while (start <= end)
-            {
-                int mid = (start + end) / 2;
-                string suffix = text.Substring(suffixArray[mid]);
-                int lcp = lcpArray[mid];
-                if (suffix.StartsWith(substring))
-                {
-                    if (lcp >= substring.Length - 1)
-                    {
-                        matchingIndices.Add(suffixArray[mid]);
-                        int left = mid - 1;
-                        while (left >= start && lcpArray[left] >= substring.Length - 1)
-                        {
-                            matchingIndices.Add(suffixArray[left]);
-                            left--;
-                        }
-                        int right = mid + 1;
-                        while (right <= end && lcpArray[right] >= substring.Length - 1)
-                        {
-                            matchingIndices.Add(suffixArray[right]);
-                            right++;
-                        }
-                        return matchingIndices;
-                    }
-                    else
-                    {
-                        start = mid + 1;
-                    }
-                }
-                else if (substring.CompareTo(suffix) < 0)
-                {
-                    end = mid - 1;
-                }
-                else
-                {
-                    start = mid + 1;
-                }
-            }
-            return matchingIndices;
-        }
-
-      
-
-       
-
-
-       
+        }       
 
    
 

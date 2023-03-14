@@ -36,7 +36,7 @@
 
         public override int RMQ(int left, int right)
         {
-            int length = right - left + 1;
+            int length = right - left;
             int k = logTable[length];
             return Math.Min(table[left, k], table[right - (1 << k) + 1, k]);
         }

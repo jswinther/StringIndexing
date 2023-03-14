@@ -16,8 +16,9 @@ namespace ConsoleApp.DataStructures
             public int start, end, maxEnd;
             public Node left, right;
             public int v;
+            public SortedSet<int> ints;
 
-            public Node(int start, int end, int v)
+            public Node(int start, int end, int v, SortedSet<int> ints)
             {
                 this.start = start;
                 this.end = end;
@@ -25,59 +26,40 @@ namespace ConsoleApp.DataStructures
                 this.left = null;
                 this.right = null;
                 this.v = v;
+                this.ints = ints;
             }
         }
 
         private Node root;
 
-        public IntervalTree(int[] arr)
+
+
+        public IntervalTree()
         {
-            SparseTable = new SparseTable(arr);
-            this.root = buildIntervalTree(arr);
+
         }
 
-        Node buildIntervalTree(int[] arr)
+    
+
+        public void Insert(int start, int end, int v, SortedSet<int> ints)
         {
-            return buildIntervalTree(arr, 0, arr.Length - 1);
+            this.root = InsertHelper(this.root, start, end, v, ints);
         }
 
-        Node buildIntervalTree(int[] arr, int start, int end)
-        {
-            Node node = new Node(start, end, SparseTable.RMQ(start, end));
-            if (start == end)
-            {
-                node.v = arr[start];
-                return node;
-            }
-            else
-            {
-                int mid = (start + end) / 2;
-                node.left = buildIntervalTree(arr, start, mid);
-                node.right = buildIntervalTree(arr, mid + 1, end);
-                node.v = Math.Min(node.left.v, node.right.v);
-                return node;
-            }
-        }
-
-        public void Insert(int start, int end, int v, int[] isa)
-        {
-            this.root = InsertHelper(this.root, start, end, v);
-        }
-
-        private Node InsertHelper(Node node, int start, int end, int v)
+        private Node InsertHelper(Node node, int start, int end, int v, SortedSet<int> ints)
         {
             if (node == null)
             {
-                var node1 = new Node(start, end, v);
+                var node1 = new Node(start, end, v, ints);
                 
                 return node1;
             }
                 
 
             if (start < node.start)
-                node.left = InsertHelper(node.left, start, end, v);
+                node.left = InsertHelper(node.left, start, end, v, ints);
             else
-                node.right = InsertHelper(node.right, start, end, v);
+                node.right = InsertHelper(node.right, start, end, v, ints);
 
             node.maxEnd = Math.Max(node.maxEnd, end);
             return node;
