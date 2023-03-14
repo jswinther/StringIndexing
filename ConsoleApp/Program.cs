@@ -125,13 +125,14 @@ namespace ConsoleApp
             string[] dnaSequences = new string[]
             {
                 //DummyData.Dummy,
-                //DummyData.DNA("DNA_512"),
+                DummyData.DNA("TEST"),
+                DummyData.DNA("DNA_512"),
                 DummyData.DNA("DNA_262144"),
                 DummyData.DNA("DNA_524288"),
                 DummyData.DNA("DNA_1048576"),
-                DummyData.DNA("DNA_2097152"),
-                DummyData.DNA("DNA_4194304"),
-                DummyData.DNA("DNA_8388608"),
+                //DummyData.DNA("DNA_2097152"),
+                //DummyData.DNA("DNA_4194304"),
+                //DummyData.DNA("DNA_8388608"),
                 //DummyData.DNA("DNA_16777216"),
                 //DummyData.DNA("DNA_33554432")
             };
@@ -140,7 +141,8 @@ namespace ConsoleApp
             {
                 BuildSuffixArray_V1,
                 BuildSuffixArray_V2,
-                //BuildPrecomputed
+                //BuildPrecomputed,
+                BuildUkkonen
             };
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");

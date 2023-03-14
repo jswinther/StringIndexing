@@ -56,7 +56,7 @@ namespace ConsoleApp.DataStructures
             occurrences.Add(suffixArray[substringIndex]);
 
             // Check all suffixes that come after the first occurrence of the substring
-            for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern.Length; i++)
+            for (int i = substringIndex + 1; i < n && m_lcp[i - 1] >= pattern.Length; i++)
             {
                 occurrences.Add(suffixArray[i]);
             }
@@ -149,7 +149,7 @@ namespace ConsoleApp.DataStructures
             occurencesP2.Add(suffixArray[substringIndex]);
 
             // Check all suffixes that come after the first occurrence of the substring
-            for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern2.Length; i++)
+            for (int i = substringIndex + 1; i < n && m_lcp[i - 1] >= pattern2.Length; i++)
             {
                 occurencesP2.Add(suffixArray[i]);
             }
@@ -195,7 +195,7 @@ namespace ConsoleApp.DataStructures
             occurencesP2.Add(suffixArray[substringIndex]);
 
             // Check all suffixes that come after the first occurrence of the substring
-            for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern2.Length; i++)
+            for (int i = substringIndex + 1; i < n && m_lcp[i - 1] >= pattern2.Length; i++)
             {
                 occurencesP2.Add(suffixArray[i]);
             }
