@@ -14,6 +14,15 @@ namespace ConsoleApp.DataStructures
     [Serializable]
     internal class SuffixArray_V2 : PatternMatcher
     {
+        private const int EOC = int.MaxValue;
+        private int[] m_sa;
+        private int[] m_isa;
+        private int[] m_lcp;
+        private C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
+        private List<Chain> m_chainStack = new List<Chain>();
+        private ArrayList<Chain> m_subChains = new ArrayList<Chain>();
+        private int m_nextRank = 1;
+        private string m_str;
         public IntervalTree IntervalTree;
     
         public SuffixArray_V2(string str) : base(str)
@@ -25,82 +34,7 @@ namespace ConsoleApp.DataStructures
             FormInitialChains();
             BuildSuffixArray();
             ComputeLCP();
-            var intervals = BottomUpTraversal().ToArray();
-            IntervalTree = new IntervalTree();
-            foreach (var interval in intervals)
-            {
-                (int a, int b, int c) = interval;
-                IntervalTree.Insert(b, c, a, new SortedSet<int>(m_sa.Take(new Range(new Index(b), new Index(c)))));
-            }
         }
-
-        [DebuggerDisplay("l: {l}, r: {r}")]
-        private class Interval : IEquatable<Interval?>, IComparable<Interval>
-        {
-            public readonly int l;
-            public readonly int r;
-            public readonly SortedSet<int> ints;
-
-            public Interval(int l, int r, SortedSet<int> ints)
-            {
-                this.l = l;
-                this.r = r;
-                this.ints = ints;
-            }
-
-            public int CompareTo(Interval? other)
-            {
-                if (r - l > other.r - other.l)
-                {
-                    return -1;
-                } 
-                else if (r - l < other.r - other.l)
-                {
-                    return 1;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-
-            public override bool Equals(object? obj)
-            {
-                return Equals(obj as Interval);
-            }
-
-            public bool Equals(Interval? other)
-            {
-                return other is not null &&
-                       l == other.l &&
-                       r == other.r;
-            }
-
-            public override int GetHashCode()
-            {
-                return HashCode.Combine(l, r);
-            }
-        }
-
-        public IEnumerable<(int lcp, int l, int r)> BottomUpTraversal()
-        {
-            int n = m_sa.Length;
-            Stack<(int, int)> stack = new();
-            stack.Push((0, 0));
-            for (int R = 1; R < n; R++)
-            {
-                int next_L = R - 1;
-                while (stack.Count > 0 && m_lcp[R] < stack.Peek().Item1)
-                {
-                    (int d, int L) = stack.Pop();
-                    yield return (d, L, R);
-                    next_L = L;
-                }
-                if (m_lcp[R] > stack.Peek().Item1)
-                    stack.Push((m_lcp[R], next_L));
-            }
-        }
-
 
         public override IEnumerable<int> Matches(string pattern)
         {
@@ -119,8 +53,6 @@ namespace ConsoleApp.DataStructures
             }
 
             // Find all intervals of value pattern length
-            var occs = IntervalTree.Query(pattern.Length, substringIndex).MaxBy(s => s.end - s.start).ints;
-            return occs;
             
 
             // Add the index of the first occurrence of the substring to the list of occurrences
@@ -139,61 +71,6 @@ namespace ConsoleApp.DataStructures
             }
 
             return occurrences;
-        }
-
-        static int Lcp(string s1, string s2)
-        {
-            int n = Math.Min(s1.Length, s2.Length);
-            for (int i = 0; i < n; i++)
-            {
-                if (s1[i] != s2[i])
-                {
-                    return i;
-                }
-            }
-            return n;
-        }
-
-        int BinarySearch(string pattern)
-        {
-            int lo = 0;
-            int hi = m_sa.Length - 1;
-            while (lo <= hi)
-            {
-                int mid = lo + (hi - lo) / 2;
-                string suffix = m_str.Substring(m_sa[mid]);
-                int cmp = ComparePrefix(pattern, suffix);
-                if (cmp < 0)
-                {
-                    hi = mid - 1;
-                }
-                else if (cmp > 0)
-                {
-                    lo = mid + 1;
-                }
-                else
-                {
-                    return mid;
-                }
-            }
-            return -1;
-        }
-
-        int ComparePrefix(string pattern, string suffix)
-        {
-            int n = Math.Min(pattern.Length, suffix.Length);
-            for (int i = 0; i < n; i++)
-            {
-                if (pattern[i] < suffix[i])
-                {
-                    return -1;
-                }
-                else if (pattern[i] > suffix[i])
-                {
-                    return 1;
-                }
-            }
-            return 0;
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
@@ -291,76 +168,52 @@ namespace ConsoleApp.DataStructures
 
             
             return occs;
-        }       
-
-   
-
-        private const int EOC = int.MaxValue;
-        private int[] m_sa;
-        private int[] m_isa;
-        private int[] m_lcp;
-        private C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
-        private List<Chain> m_chainStack = new List<Chain>();
-        private ArrayList<Chain> m_subChains = new ArrayList<Chain>();
-        private int m_nextRank = 1;
-        private string m_str;
-
-        public int Length
-        {
-            get { return m_sa.Length; }
         }
 
-        public int this[int index]
+
+        int BinarySearch(string pattern)
         {
-            get { return m_sa[index]; }
-        }
-
-  
-
-
-
-
-    
-
-        /// 
-        /// <summary>Find the index of a substring </summary>
-        /// <param name="substr">Substring to look for</param>
-        /// <returns>First index in the original string. -1 if not found</returns>
-        public int IndexOf(string substr)
-        {
-            int l = 0;
-            int r = m_sa.Length;
-            int m = -1;
-
-            if ((substr == null) || (substr.Length == 0))
+            int lo = 0;
+            int hi = m_sa.Length - 1;
+            while (lo <= hi)
             {
-                return -1;
-            }
-
-            // Binary search for substring
-            while (r > l)
-            {
-                m = (l + r) / 2;
-                if (m_str.Substring(m_sa[m]).CompareTo(substr) < 0)
+                int mid = lo + (hi - lo) / 2;
+                string suffix = m_str.Substring(m_sa[mid]);
+                int cmp = ComparePrefix(pattern, suffix);
+                if (cmp < 0)
                 {
-                    l = m + 1;
+                    hi = mid - 1;
+                }
+                else if (cmp > 0)
+                {
+                    lo = mid + 1;
                 }
                 else
                 {
-                    r = m;
+                    return mid;
                 }
             }
-            if ((l == r) && (l < m_str.Length) && (m_str.Substring(m_sa[l]).StartsWith(substr)))
-            {
-                return m_sa[l];
-            }
-            else
-            {
-                return -1;
-            }
+            return -1;
         }
 
-  
+        int ComparePrefix(string pattern, string suffix)
+        {
+            int n = Math.Min(pattern.Length, suffix.Length);
+            for (int i = 0; i < n; i++)
+            {
+                if (pattern[i] < suffix[i])
+                {
+                    return -1;
+                }
+                else if (pattern[i] > suffix[i])
+                {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+
+
 
         private void FormInitialChains()
         {
@@ -423,27 +276,6 @@ namespace ConsoleApp.DataStructures
                     RefineChainWithInductionSorting(chain);
                 }
             }
-        }
-
-        private void RefineChains(Chain chain)
-        {
-            m_chainHeadsDict.Clear();
-            m_subChains.Clear();
-            while (chain.head != EOC)
-            {
-                int nextIndex = m_isa[chain.head];
-                if (chain.head + chain.length > m_str.Length - 1)
-                {
-                    RankSuffix(chain.head);
-                }
-                else
-                {
-                    ExtendChain(chain);
-                }
-                chain.head = nextIndex;
-            }
-            // Keep stack sorted
-            SortAndPushSubchains();
         }
 
         private void ExtendChain(Chain chain)
@@ -523,7 +355,7 @@ namespace ConsoleApp.DataStructures
             m_nextRank++;
         }
 
-        public void ComputeLCP()
+        private void ComputeLCP()
         {
             int n = m_str.Length;
             m_lcp = new int[n];
