@@ -324,19 +324,18 @@ namespace ConsoleApp.DataStructures
             return matchingIndices;
         }
 
-        
-
-       
 
 
-       
 
-   
 
-        private const int EOC = int.MaxValue;
+
+
+
+
         private int[] m_sa;
         private int[] m_isa;
         private int[] m_lcp;
+        private const int EOC = int.MaxValue;
         private C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
         private List<Chain> m_chainStack = new List<Chain>();
         private ArrayList<Chain> m_subChains = new ArrayList<Chain>();
@@ -528,6 +527,25 @@ namespace ConsoleApp.DataStructures
             for (int i = 0; i < notedSuffixes.Count; ++i)
             {
                 RankSuffix(notedSuffixes[i].head);
+            }
+        }
+
+        public IEnumerable<(int lcp, int l, int r)> BottomUpTraversal()
+        {
+            int n = m_sa.Length;
+            Stack<(int, int)> stack = new();
+            stack.Push((0, 0));
+            for (int R = 1; R < n; R++)
+            {
+                int next_L = R - 1;
+                while (stack.Count > 0 && m_lcp[R] < stack.Peek().Item1)
+                {
+                    (int d, int L) = stack.Pop();
+                    yield return (d, L, R);
+                    next_L = L;
+                }
+                if (m_lcp[R] > stack.Peek().Item1)
+                    stack.Push((m_lcp[R], next_L));
             }
         }
 

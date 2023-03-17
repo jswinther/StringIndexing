@@ -1,4 +1,5 @@
-﻿using System;
+﻿using C5;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,16 +16,19 @@ namespace ConsoleApp.DataStructures
         public int[] LCP { get; }
         public string BWT { get; }
         public int[] ISA { get; }
+        public (int Up, int Down, int Next)[] Children { get; }
 
         public SuffixArray_V3_Ger(string S) : base(S)
         {
             n = S.Length;
-            if (!S.EndsWith("$")) S += "$";
-            this.S = S;
-            SA = SuffixArray();
-            LCP = LongestCommonPrefix();
-            BWT = BurrowsWheelersTransformation();
-            ISA = InverseSuffixArray();
+            this.S = str;
+            SA = new int[n + 1];
+            ISA = new int[n + 1];
+            LCP = new int[n + 1];
+            Children = new (int Up, int Down, int Next)[n + 1];
+            FormInitialChains();
+            BuildSuffixArray();
+            ComputeLCP();
         }
 
         #region Building the LCP Intervals and Other Stuff
@@ -39,21 +43,60 @@ namespace ConsoleApp.DataStructures
         {
             int substringOccurrence = FindIndexOfFirstOccurrence(pattern);
             if (substringOccurrence < 0) return Enumerable.Empty<int>();
-            LinkedList<int> list = new LinkedList<int>();
-            list.AddLast(substringOccurrence);
-            AddOccurrencesToTheLeftOfIndex(substringOccurrence, pattern.Length, list);
-            AddOccurrencesToTheRightOfIndex(substringOccurrence, pattern.Length, list);
-            return list;
+            return AddOccurrences(substringOccurrence, pattern);
+        }
+
+        private IEnumerable<int> AddOccurrences(int substringOccurrence, string pattern)
+        {
+            yield return SA[substringOccurrence];
+
+            // Check all suffixes that come after the first occurrence of the substring
+            for (int i = substringOccurrence + 1; i < n && LCP[i - 1] >= pattern.Length; i++)
+            {
+                yield return SA[i];
+            }
+
+            // Check all suffixes that come before the first occurrence of the substring
+            for (int i = substringOccurrence - 1; i >= 0 && LCP[i] >= pattern.Length; i--)
+            {
+                yield return SA[i];
+            }
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
         {
-            throw new NotImplementedException();
+            int substringOccurrence = FindIndexOfFirstOccurrence(pattern2);
+            if (substringOccurrence < 0) return Enumerable.Empty<(int, int)>();
+            List<(int, int)> occs = new List<(int, int)>();
+            var pattern1Occurrences = Matches(pattern1);
+            var pattern2Occurrences = new System.Collections.Generic.HashSet<int>(Matches(pattern2));
+            foreach (var occ1 in pattern1Occurrences)
+            {
+                if (pattern2Occurrences.Contains(occ1 + pattern1.Length + x))
+                {
+                    occs.Add((occ1, occ1 + pattern1.Length + x));
+                }
+            }
+            return occs;
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            throw new NotImplementedException();
+            int substringOccurrence = FindIndexOfFirstOccurrence(pattern2);
+            if (substringOccurrence < 0) return Enumerable.Empty<(int, int)>();
+            List<(int, int)> occs = new List<(int, int)>();
+            var pattern1Occurrences = Matches(pattern1);
+            var pattern2Occurrences = new SortedSet<int>(Matches(pattern2));
+            foreach (var occ1 in pattern1Occurrences)
+            {
+                int min = occ1 + y_min + pattern1.Length;
+                int max = occ1 + y_max + pattern1.Length;
+                foreach (var occ2 in pattern2Occurrences.GetViewBetween(min, max))
+                {
+                    occs.Add((occ1, occ2 - occ1 + pattern2.Length));
+                }
+            }
+            return occs;
         }
         #endregion
 
@@ -102,78 +145,175 @@ namespace ConsoleApp.DataStructures
             return 0;
         }
 
-        private void AddOccurrencesToTheLeftOfIndex(int idx, int lcp, LinkedList<int> occs)
+        private IEnumerable<int> AddOccurrencesToTheLeftOfIndex(int idx, int lcp)
         {
-            // Add an index i, if the index to the right has an lcp value higher than or equal to lcp
-            for (int i = idx - 1; i >= 0 && LCP[i + 1] >= lcp; i--)
+            // Add an index i, if the index to the right has an lcp value higher than or equal to lcp (And the first occ)
+            for (int i = idx; i >= 0 && LCP[i] >= lcp; i--)
             {
-                occs.AddLast(SA[i]);
+                yield return SA[i];
             }
         }
 
-        private void AddOccurrencesToTheRightOfIndex(int idx, int lcp, LinkedList<int> occs)
+        private IEnumerable<int> AddOccurrencesToTheRightOfIndex(int idx, int lcp)
         {
             // Add an index i, if the index to the right has an lcp value higher than or equal to lcp
-            for (int i = idx + 1; i < n && LCP[i] >= lcp; i++)
+            for (int i = idx + 1; i < n && LCP[i - 1] >= lcp; i++)
             {
-                occs.AddLast(SA[i]);
+                yield return SA[i];
             }
         }
         #endregion
 
 
         #region Base Construction
-        private int[] SuffixArray()
+        private const int EOC = int.MaxValue;
+        private C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
+        private List<Chain> m_chainStack = new List<Chain>();
+        private ArrayList<Chain> m_subChains = new ArrayList<Chain>();
+        private int m_nextRank = 1;
+        private void FormInitialChains()
         {
-            var SA = new Tuple<int, int>[n];
-
-            // Step 1: Populate SA with indices and temporary values
-            for (int i = 0; i < n; i++)
-            {
-                SA[i] = Tuple.Create(i, 0);
-            }
-
-            // Step 2-5: Sort suffixes using temporary values for each prefix length
-            for (int k = 1; k < n; k <<= 1)
-            {
-                Comparison<Tuple<int, int>> compare = (a, b) =>
-                {
-                    if (a.Item2 != b.Item2)
-                    {
-                        return a.Item2.CompareTo(b.Item2);
-                    }
-                    return a.Item1 + k < n && b.Item1 + k < n ?
-                        SA[a.Item1 + k].Item2.CompareTo(SA[b.Item1 + k].Item2) :
-                        (b.Item1 + k < n ? -1 : 1);
-                };
-
-                Array.Sort(SA, compare);
-
-                int rank = 0;
-                int[] temp = new int[n];
-
-                for (int i = 0; i < n; i++)
-                {
-                    if (i > 0 && compare(SA[i - 1], SA[i]) != 0)
-                    {
-                        rank++;
-                    }
-                    temp[SA[i].Item1] = rank;
-                }
-
-                for (int i = 0; i < n; i++)
-                {
-                    SA[i] = Tuple.Create(i, temp[i]);
-                }
-            }
-
-            // Step 6: Return suffix array
-            return SA.Select(x => x.Item1).ToArray();
+            // Link all suffixes that have the same first character
+            FindInitialChains();
+            SortAndPushSubchains();
         }
 
-        private int[] LongestCommonPrefix()
+        private void FindInitialChains()
         {
-            var m_lcp = new int[n];
+            // Scan the string left to right, keeping rightmost occurences of characters as the chain heads
+            for (int i = 0; i < S.Length; i++)
+            {
+                if (m_chainHeadsDict.Contains(S[i]))
+                {
+                    ISA[i] = m_chainHeadsDict[S[i]];
+                }
+                else
+                {
+                    ISA[i] = EOC;
+                }
+                m_chainHeadsDict[S[i]] = i;
+            }
+
+            // Prepare chains to be pushed to stack
+            foreach (int headIndex in m_chainHeadsDict.Values)
+            {
+                Chain newChain = new Chain(S);
+                newChain.head = headIndex;
+                newChain.length = 1;
+                m_subChains.Add(newChain);
+            }
+        }
+
+        private void SortAndPushSubchains()
+        {
+            m_subChains.Sort();
+            for (int i = m_subChains.Count - 1; i >= 0; i--)
+            {
+                m_chainStack.Add(m_subChains[i]);
+            }
+        }
+
+        private void BuildSuffixArray()
+        {
+            while (m_chainStack.Count > 0)
+            {
+                // Pop chain
+                Chain chain = m_chainStack[m_chainStack.Count - 1];
+                m_chainStack.RemoveAt(m_chainStack.Count - 1);
+
+                if (ISA[chain.head] == EOC)
+                {
+                    // Singleton (A chain that contain only 1 suffix)
+                    RankSuffix(chain.head);
+                }
+                else
+                {
+                    //RefineChains(chain);
+                    RefineChainWithInductionSorting(chain);
+                }
+            }
+        }
+
+        private void ExtendChain(Chain chain)
+        {
+            char sym = S[chain.head + chain.length];
+            if (m_chainHeadsDict.Contains(sym))
+            {
+                // Continuation of an existing chain, this is the leftmost
+                // occurence currently known (others may come up later)
+                ISA[m_chainHeadsDict[sym]] = chain.head;
+                ISA[chain.head] = EOC;
+            }
+            else
+            {
+                // This is the beginning of a new subchain
+                ISA[chain.head] = EOC;
+                Chain newChain = new Chain(S);
+                newChain.head = chain.head;
+                newChain.length = chain.length + 1;
+                m_subChains.Add(newChain);
+            }
+            // Save index in case we find a continuation of this chain
+            m_chainHeadsDict[sym] = chain.head;
+        }
+
+        private void RefineChainWithInductionSorting(Chain chain)
+        {
+            // TODO - refactor/beautify some
+            ArrayList<SuffixRank> notedSuffixes = new ArrayList<SuffixRank>();
+            m_chainHeadsDict.Clear();
+            m_subChains.Clear();
+
+            while (chain.head != EOC)
+            {
+                int nextIndex = ISA[chain.head];
+                if (chain.head + chain.length > S.Length - 1)
+                {
+                    // If this substring reaches end of string it cannot be extended.
+                    // At this point it's the first in lexicographic order so it's safe
+                    // to just go ahead and rank it.
+                    RankSuffix(chain.head);
+                }
+                else if (ISA[chain.head + chain.length] < 0)
+                {
+                    SuffixRank sr = new SuffixRank();
+                    sr.head = chain.head;
+                    sr.rank = -ISA[chain.head + chain.length];
+                    notedSuffixes.Add(sr);
+                }
+                else
+                {
+                    ExtendChain(chain);
+                }
+                chain.head = nextIndex;
+            }
+            // Keep stack sorted
+            SortAndPushSubchains();
+            SortAndRankNotedSuffixes(notedSuffixes);
+        }
+
+        private void SortAndRankNotedSuffixes(ArrayList<SuffixRank> notedSuffixes)
+        {
+            notedSuffixes.Sort(new SuffixRankComparer());
+            // Rank sorted noted suffixes 
+            for (int i = 0; i < notedSuffixes.Count; ++i)
+            {
+                RankSuffix(notedSuffixes[i].head);
+            }
+        }
+
+        private void RankSuffix(int index)
+        {
+            // We use the ISA to hold both ranks and chain links, so we differentiate by setting
+            // the sign.
+            ISA[index] = -m_nextRank;
+            SA[m_nextRank - 1] = index;
+            m_nextRank++;
+        }
+
+        private void ComputeLCP()
+        {
+            int n = S.Length;
             int[] rank = new int[n];
 
             // Compute rank array
@@ -200,43 +340,57 @@ namespace ConsoleApp.DataStructures
                     k++;
                 }
 
-                m_lcp[rank[i]] = k;
+                LCP[rank[i]] = k;
 
                 if (k > 0)
                 {
                     k--;
                 }
             }
-            return m_lcp;
         }
 
-        public string BurrowsWheelersTransformation()
+        public void Traverse()
         {
-            var bwt = new char[n];
-
-            // Step 1: Initialize empty string
-            bwt[0] = S[n - 1];
-
-            // Step 2-3: Append characters from sorted suffixes
-            for (int i = 0; i < n - 1; i++)
+            Stack<Interval> stack = new();
+            Interval lastInterval = null;
+            stack.Push(new(0, 0, int.MaxValue, new()));
+            for (int i = 1; i < n; i++)
             {
-                bwt[i + 1] = SA[i] == 0 ? S[n - 1] : S[SA[i] - 1];
+                int leftBoundary = i - 1;
+                while (LCP[i] < stack.Peek().LCP)
+                {
+                    stack.Peek().RB = i - 1;
+                    lastInterval = stack.Pop();
+                    
+                }
             }
 
-            // Step 4: Return BWT as a string
-            return new string(bwt);
         }
 
-        public int[] InverseSuffixArray()
+        private void Process(Interval interval)
         {
-            var ISA = new int[n];
 
-            for (int i = 0; i < n; i++)
+        }
+
+        private class Interval
+        {
+            public int LCP { get; set; }
+            public int LB { get; set; }
+            public int RB { get; set; }
+            public List<int> Children { get; set; }
+
+            public Interval(int lCP, int lB, int rB, List<int> children)
             {
-                ISA[SA[i]] = i;
+                LCP = lCP;
+                LB = lB;
+                RB = rB;
+                Children = children;
             }
+        }
 
-            return ISA;
+        public void ConstructChildren()
+        {
+            
         }
         #endregion
 
