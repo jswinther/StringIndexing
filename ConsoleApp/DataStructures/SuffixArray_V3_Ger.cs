@@ -42,6 +42,7 @@ namespace ConsoleApp.DataStructures
         #region PatternMatcher
         public override IEnumerable<int> Matches(string pattern)
         {
+            var a = GetInterval(0, n, pattern[0]);
             int substringOccurrence = FindIndexOfFirstOccurrence(pattern);
             if (substringOccurrence < 0) return Enumerable.Empty<int>();
             return AddOccurrences(substringOccurrence, pattern);
@@ -396,8 +397,38 @@ namespace ConsoleApp.DataStructures
                 intervals.Add((i1, i2 - 1));
                 i1 = i2;
             }
-            intervals.Add(i1, j);
-            return intervals; 
+            intervals.Add((i1, j));
+            return intervals;
+        }
+
+        private (int, int) GetInterval(int i, int j, char c)
+        {
+            int i1;
+            if (i < Children[j + 1].Up && Children[j + 1].Up <= j)
+            {
+                i1 = Children[j + 1].Up;
+            }
+            else
+            {
+                i1 = Children[(j + 1)].Down;
+            }
+            if (S[SA[i]] == c)
+            {
+                return (i, i1 - 1);
+            }
+            //intervals.Add((i, i1 - 1));
+            while (Children[i1].Next != -1)
+            {
+                var i2 = Children[i1].Next;
+                if (S[SA[i1]] == c)
+                {
+                    return (i1, i2 - 1);
+                }
+                //intervals.Add((i1, i2 - 1));
+                i1 = i2;
+            }
+            //intervals.Add((i1, j));
+            return (i1, j);
         }
 
         public void Traverse()
@@ -462,7 +493,7 @@ namespace ConsoleApp.DataStructures
 
         public void ConstructChildren()
         {
-            
+
         }
         #endregion
 
