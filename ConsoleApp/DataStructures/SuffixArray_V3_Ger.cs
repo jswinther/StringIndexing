@@ -29,6 +29,7 @@ namespace ConsoleApp.DataStructures
             FormInitialChains();
             BuildSuffixArray();
             ComputeLCP();
+            BuildChildTable();
         }
 
         #region Building the LCP Intervals and Other Stuff
@@ -143,24 +144,6 @@ namespace ConsoleApp.DataStructures
                 }
             }
             return 0;
-        }
-
-        private IEnumerable<int> AddOccurrencesToTheLeftOfIndex(int idx, int lcp)
-        {
-            // Add an index i, if the index to the right has an lcp value higher than or equal to lcp (And the first occ)
-            for (int i = idx; i >= 0 && LCP[i] >= lcp; i--)
-            {
-                yield return SA[i];
-            }
-        }
-
-        private IEnumerable<int> AddOccurrencesToTheRightOfIndex(int idx, int lcp)
-        {
-            // Add an index i, if the index to the right has an lcp value higher than or equal to lcp
-            for (int i = idx + 1; i < n && LCP[i - 1] >= lcp; i++)
-            {
-                yield return SA[i];
-            }
         }
         #endregion
 
@@ -349,11 +332,52 @@ namespace ConsoleApp.DataStructures
             }
         }
 
+        public void BuildChildTable()
+        {
+            Stack<int> stack1 = new Stack<int>();
+            int lastIndex = -1;
+            stack1.Push(0);
+            for (int i = 1; i < n; i++)
+            {
+                int top = stack1.Peek();
+                while (LCP[i] < top)
+                {
+                    lastIndex = stack1.Pop();
+                    if (LCP[i] <= LCP[top] && LCP[top] != LCP[lastIndex])
+                    {
+                        Children[top].Down = lastIndex;
+                    }
+                }
+                if (lastIndex != -1)
+                {
+                    Children[i].Up = lastIndex;
+                    lastIndex = -1;
+                }
+                stack1.Push(i);
+            }
+            Stack<int> stack2 = new Stack<int>();
+            stack2.Push(0);
+            for (int i = 1; i < n; i++)
+            {
+                while (LCP[i] < LCP[stack2.Peek()])
+                {
+                    stack2.Pop();
+                }
+
+                if (LCP[i] == LCP[stack2.Peek()])
+                {
+                    lastIndex = stack2.Pop();
+                    Children[i].Next = i;
+                }
+                stack2.Push(i);
+            }
+        }
+
         public void Traverse()
         {
             Stack<Interval> stack = new();
             Interval lastInterval = null;
-            stack.Push(new(0, 0, int.MaxValue, new()));
+            stack.Push(new(0, 0, int.MaxValue, null));
             for (int i = 1; i < n; i++)
             {
                 int leftBoundary = i - 1;
@@ -361,7 +385,21 @@ namespace ConsoleApp.DataStructures
                 {
                     stack.Peek().RB = i - 1;
                     lastInterval = stack.Pop();
-                    
+                    Process(lastInterval);
+                    if (LCP[i] <= stack.Peek().LCP)
+                    {
+                        stack.Peek().Children.Add(lastInterval);
+                        lastInterval = null;
+                    }
+                }
+                if (LCP[i] <= stack.Peek().LCP)
+                {
+                    if (lastInterval == null) stack.Push(new(LCP[i], leftBoundary, int.MaxValue, null));
+                    else
+                    {
+                        stack.Push(new Interval(LCP[i], leftBoundary, int.MaxValue, lastInterval));
+                        lastInterval = null;
+                    }
                 }
             }
 
@@ -377,14 +415,21 @@ namespace ConsoleApp.DataStructures
             public int LCP { get; set; }
             public int LB { get; set; }
             public int RB { get; set; }
-            public List<int> Children { get; set; }
+            public List<Interval> Children { get; set; }
 
-            public Interval(int lCP, int lB, int rB, List<int> children)
+            public Interval(int lCP, int lB, int rB, params Interval[] children)
             {
                 LCP = lCP;
                 LB = lB;
                 RB = rB;
-                Children = children;
+                if (children != null)
+                {
+                    Children = new List<Interval>(children);
+                }
+                else
+                {
+                    Children = new List<Interval>();
+                }
             }
         }
 
