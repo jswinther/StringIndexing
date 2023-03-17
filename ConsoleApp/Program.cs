@@ -149,7 +149,6 @@ namespace ConsoleApp
                 BuildSuffixArray_V1,
                 BuildSuffixArray_V3,
                 //BuildPrecomputed,
-                BuildUkkonen
             };
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
