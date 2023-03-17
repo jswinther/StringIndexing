@@ -22,6 +22,11 @@ namespace ConsoleApp
             return new SuffixArray_V2(str);
         }
 
+        public static PatternMatcher BuildSuffixArray_V3(string str)
+        {
+            return new SuffixArray_V3_Ger(str);
+        }
+
         public static PatternMatcher BuildPrecomputed(string str)
         {
             return new PreCompSubs(str);
@@ -139,8 +144,10 @@ namespace ConsoleApp
 
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
-                BuildSuffixArray_V1,
+                BuildUkkonen,
                 //BuildSuffixArray_V2,
+                BuildSuffixArray_V1,
+                BuildSuffixArray_V3,
                 //BuildPrecomputed,
                 BuildUkkonen
             };

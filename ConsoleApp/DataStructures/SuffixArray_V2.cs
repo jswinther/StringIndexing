@@ -24,7 +24,8 @@ namespace ConsoleApp.DataStructures
         private int m_nextRank = 1;
         private string m_str;
         public IntervalTree IntervalTree;
-    
+        private SparseTable SparseTable;
+        public SuffixTree2 st2;
         public SuffixArray_V2(string str) : base(str)
         {
             m_str = str;
@@ -34,6 +35,9 @@ namespace ConsoleApp.DataStructures
             FormInitialChains();
             BuildSuffixArray();
             ComputeLCP();
+            IntervalTree = new IntervalTree(m_lcp);
+            SparseTable = new SparseTable(m_lcp);
+            //st2 = new SuffixTree2(str);
         }
 
         public override IEnumerable<int> Matches(string pattern)
@@ -52,8 +56,10 @@ namespace ConsoleApp.DataStructures
                 return occurrences;
             }
 
-            // Find all intervals of value pattern length
-            
+            var m = IntervalTree.Query(pattern.Length, substringIndex);
+
+            var xd = GetInterval(pattern);
+
 
             // Add the index of the first occurrence of the substring to the list of occurrences
             occurrences.Add(m_sa[substringIndex]);
@@ -118,58 +124,66 @@ namespace ConsoleApp.DataStructures
             return occs;
         }
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
+        public (int, int) GetInterval(string pattern)
         {
-            List<(int, int)> occs = new();
-            var occurrencesP1 = Matches(pattern1);
+            int N = m_lcp.Length;
+            int logn = (int)Math.Ceiling(Math.Log(N, 2));
+            int[,] st = new int[N, logn];
+            int left = 1, right = N;
+            int maxLength = 0, maxIntervalStart = 0;
 
-            SortedSet<int> occurencesP2 = new();
-
-            // Construct the suffix array for the text
-            int n = m_str.Length;
-
-            // Find the first occurrence of the substring in the text
-            int substringIndex = BinarySearch(pattern2);
-            
-            // If the substring is not found in the text, return an empty list
-            if (substringIndex == -1)
+            // Initialize the sparse table with the LCPArray values for intervals of length 1
+            for (int i = 0; i < N; i++)
             {
-                return occs;
+                st[i, 0] = m_lcp[i];
             }
 
-            occurencesP2 = IntervalTree.Query(pattern2.Length, substringIndex).MaxBy(s => s.end - s.start).ints;
-
-            /*
-            // Add the index of the first occurrence of the substring to the list of occurrences
-            occurencesP2.Add(m_sa[substringIndex]);
-
-            // Check all suffixes that come after the first occurrence of the substring
-            for (int i = substringIndex + 1; i < n && m_lcp[i - 1] >= pattern2.Length; i++)
+            // Compute the sparse table using dynamic programming
+            for (int j = 1; j < logn; j++)
             {
-                occurencesP2.Add(m_sa[i]);
-            }
-
-            // Check all suffixes that come before the first occurrence of the substring
-            for (int i = substringIndex - 1; i >= 0 && m_lcp[i] >= pattern2.Length; i--)
-            {
-                occurencesP2.Add(m_sa[i]);
-            }
-            */
-
-            foreach (var occ1 in occurrencesP1)
-            {
-                int min = occ1 + y_min + pattern1.Length;
-                int max1 = occ1 + y_max + pattern1.Length;
-                foreach (var occ2 in occurencesP2.GetViewBetween(min, max1))
+                for (int i = 0; i < N; i++)
                 {
-                    occs.Add((occ1, occ2 - occ1 + pattern2.Length));
+                    if (i + (1 << j) > N) break; // Out of range
+                    st[i, j] = Math.Min(st[i, j - 1], st[i + (1 << (j - 1)), j - 1]);
                 }
             }
 
-            
-            return occs;
-        }
 
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+                bool found = false;
+
+                // Check if there exists an interval of length mid with a maximum value of at least mid
+                for (int i = 0; i < N && !found; i++)
+                {
+                    int j = i + mid - 1;
+                    if (j < N)
+                    {
+                        int k = (int)Math.Log(j - i + 1, 2);
+                        int lcp = Math.Min(st[i + 1, k], st[j - (1 << k) + 1, k]);
+                        if (lcp >= mid)
+                        {
+                            found = true;
+                            maxLength = mid;
+                            maxIntervalStart = m_sa[i];
+                        }
+                    }
+                }
+
+                if (found)
+                {
+                    // Look for a longer interval
+                    left = mid + 1;
+                }
+                else
+                {
+                    // Look for a shorter interval
+                    right = mid - 1;
+                }
+            }
+            return (maxIntervalStart, maxIntervalStart + maxLength);
+        }
 
         int BinarySearch(string pattern)
         {
@@ -214,6 +228,225 @@ namespace ConsoleApp.DataStructures
         }
 
 
+            System.Collections.Generic.HashSet<int> occurencesP2 = new();
+
+            // Construct the suffix array for the text
+            int n = m_str.Length;
+
+            // Find the first occurrence of the substring in the text
+            int substringIndex = BinarySearch(pattern2);
+
+            // If the substring is not found in the text, return an empty list
+            if (substringIndex == -1)
+            {
+                return occs;
+            }
+
+            // Add the index of the first occurrence of the substring to the list of occurrences
+            occurencesP2.Add(m_sa[substringIndex]);
+
+            // Check all suffixes that come after the first occurrence of the substring
+            for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern2.Length; i++)
+            {
+                occurencesP2.Add(m_sa[i]);
+            }
+
+            // Check all suffixes that come before the first occurrence of the substring
+            for (int i = substringIndex - 1; i >= 0 && m_lcp[i] >= pattern2.Length; i--)
+            {
+                occurencesP2.Add(m_sa[i]);
+            }
+            int[] occs2 = occurencesP2.ToArray();
+            foreach (var occ1 in occurrencesP1)
+            {
+                if ( occurencesP2.Contains(occ1 + pattern1.Length + x))
+                {
+                   occs.Add((occ1, occ1 + pattern1.Length + x));
+                }
+            }
+
+            return occs;
+        }
+
+        public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
+        {
+            List<(int, int)> occs = new();
+            var occurrencesP1 = Matches(pattern1);
+
+            SortedSet<int> occurencesP2 = new();
+
+            // Construct the suffix array for the text
+            int n = m_str.Length;
+
+            // Find the first occurrence of the substring in the text
+            int substringIndex = BinarySearch(pattern2);
+            
+            // If the substring is not found in the text, return an empty list
+            if (substringIndex == -1)
+            {
+                return occs;
+            }
+
+            // Add the index of the first occurrence of the substring to the list of occurrences
+            occurencesP2.Add(m_sa[substringIndex]);
+
+            // Check all suffixes that come after the first occurrence of the substring
+            for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern2.Length; i++)
+            {
+                occurencesP2.Add(m_sa[i]);
+            }
+
+            // Check all suffixes that come before the first occurrence of the substring
+            for (int i = substringIndex - 1; i >= 0 && m_lcp[i] >= pattern2.Length; i--)
+            {
+                occurencesP2.Add(m_sa[i]);
+            }
+
+            foreach (var occ1 in occurrencesP1)
+            {
+                int min = occ1 + y_min + pattern1.Length;
+                int max = occ1 + y_max + pattern1.Length;
+                foreach (var occ2 in occurencesP2.GetViewBetween(min, max))
+                {
+                    occs.Add((occ1, occ2 - occ1 + pattern2.Length));
+                }
+            }
+
+            
+            return occs;
+        }
+
+        private void CrackheadEnergy(string p)
+        {
+            int index = BinarySearch(p);
+
+
+        }
+
+        private SortedSet<int> PrivateSortedSetMatches(string substring)
+        {
+            var suffixArray = m_sa;
+            var lcpArray = m_lcp;
+            int start = 0;
+            var text = str;
+            int end = text.Length - 1;
+            SortedSet<int> matchingIndices = new SortedSet<int>();
+            while (start <= end)
+            {
+                int mid = (start + end) / 2;
+                string suffix = text.Substring(suffixArray[mid]);
+                int lcp = lcpArray[mid];
+                if (suffix.StartsWith(substring))
+                {
+                    if (lcp >= substring.Length - 1)
+                    {
+                        matchingIndices.Add(suffixArray[mid]);
+                        int left = mid - 1;
+                        while (left >= start && lcpArray[left] >= substring.Length - 1)
+                        {
+                            matchingIndices.Add(suffixArray[left]);
+                            left--;
+                        }
+                        int right = mid + 1;
+                        while (right <= end && lcpArray[right] >= substring.Length - 1)
+                        {
+                            matchingIndices.Add(suffixArray[right]);
+                            right++;
+                        }
+                        return matchingIndices;
+                    }
+                    else
+                    {
+                        start = mid + 1;
+                    }
+                }
+                else if (substring.CompareTo(suffix) < 0)
+                {
+                    end = mid - 1;
+                }
+                else
+                {
+                    start = mid + 1;
+                }
+            }
+            return matchingIndices;
+        }
+
+        
+
+       
+
+
+       
+
+   
+
+        private const int EOC = int.MaxValue;
+        private int[] m_sa;
+        private int[] m_isa;
+        private int[] m_lcp;
+        private C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
+        private List<Chain> m_chainStack = new List<Chain>();
+        private ArrayList<Chain> m_subChains = new ArrayList<Chain>();
+        private int m_nextRank = 1;
+        private string m_str;
+
+        public int Length
+        {
+            get { return m_sa.Length; }
+        }
+
+        public int this[int index]
+        {
+            get { return m_sa[index]; }
+        }
+
+  
+
+
+
+
+    
+
+        /// 
+        /// <summary>Find the index of a substring </summary>
+        /// <param name="substr">Substring to look for</param>
+        /// <returns>First index in the original string. -1 if not found</returns>
+        public int IndexOf(string substr)
+        {
+            int l = 0;
+            int r = m_sa.Length;
+            int m = -1;
+
+            if ((substr == null) || (substr.Length == 0))
+            {
+                return -1;
+            }
+
+            // Binary search for substring
+            while (r > l)
+            {
+                m = (l + r) / 2;
+                if (m_str.Substring(m_sa[m]).CompareTo(substr) < 0)
+                {
+                    l = m + 1;
+                }
+                else
+                {
+                    r = m;
+                }
+            }
+            if ((l == r) && (l < m_str.Length) && (m_str.Substring(m_sa[l]).StartsWith(substr)))
+            {
+                return m_sa[l];
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+  
 
         private void FormInitialChains()
         {

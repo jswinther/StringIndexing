@@ -5,6 +5,8 @@
         private int[,] table;
         private int[] logTable;
 
+        public int this[int a, int b] => RMQ(a, b);
+
         public SparseTable(int[] arr) : base(arr)
         {
             int n = arr.Length;
@@ -36,7 +38,8 @@
 
         public override int RMQ(int left, int right)
         {
-            int length = right - left;
+            if (left > right) return 0;
+            int length = right - left + 1;
             int k = logTable[length];
             return Math.Min(table[left, k], table[right - (1 << k) + 1, k]);
         }
