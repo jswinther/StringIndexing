@@ -14,15 +14,7 @@ namespace ConsoleApp.DataStructures
     [Serializable]
     internal class SuffixArray_V2 : PatternMatcher
     {
-        private const int EOC = int.MaxValue;
-        private int[] m_sa;
-        private int[] m_isa;
-        private int[] m_lcp;
-        private C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
-        private List<Chain> m_chainStack = new List<Chain>();
-        private ArrayList<Chain> m_subChains = new ArrayList<Chain>();
-        private int m_nextRank = 1;
-        private string m_str;
+  
         public IntervalTree IntervalTree;
         private SparseTable SparseTable;
         public SuffixTree2 st2;
@@ -35,7 +27,7 @@ namespace ConsoleApp.DataStructures
             FormInitialChains();
             BuildSuffixArray();
             ComputeLCP();
-            IntervalTree = new IntervalTree(m_lcp);
+            IntervalTree = new IntervalTree();
             SparseTable = new SparseTable(m_lcp);
             //st2 = new SuffixTree2(str);
         }
@@ -81,8 +73,9 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
         {
+            var occurrencesP1 = Matches(pattern1);
             System.Collections.Generic.HashSet<int> occurencesP2 = new();
-
+            List<(int, int)> occs = new List<(int, int)>();
             // Construct the suffix array for the text
             int n = m_str.Length;
 
