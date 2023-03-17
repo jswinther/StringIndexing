@@ -291,7 +291,20 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<int> Matches(string pattern)
         {
-            throw new NotImplementedException();
+            Node currNode = RootNode;
+            int matchingIndex = 0;
+            if (currNode.Edges.TryGetValue(pattern[0], out Edge edge))
+            {
+                int min = Math.Min(pattern.Length, edge.Length);
+                for (int i = 0; i < min; i++)
+                {
+                    if (pattern[matchingIndex + i] != edge.String[i])
+                    {
+
+                    }
+                }
+            }
+            return new List<int>();
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
