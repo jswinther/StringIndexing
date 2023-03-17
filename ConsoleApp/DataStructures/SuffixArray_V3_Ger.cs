@@ -332,6 +332,7 @@ namespace ConsoleApp.DataStructures
             }
         }
 
+        // 6.2, 6.5
         public void BuildChildTable()
         {
             Stack<int> stack1 = new Stack<int>();
@@ -339,10 +340,12 @@ namespace ConsoleApp.DataStructures
             stack1.Push(0);
             for (int i = 1; i < n; i++)
             {
+                Children[i].Next = -1;
                 int top = stack1.Peek();
                 while (LCP[i] < top)
                 {
                     lastIndex = stack1.Pop();
+                    top = stack1.Peek();
                     if (LCP[i] <= LCP[top] && LCP[top] != LCP[lastIndex])
                     {
                         Children[top].Down = lastIndex;
@@ -355,22 +358,45 @@ namespace ConsoleApp.DataStructures
                 }
                 stack1.Push(i);
             }
-            Stack<int> stack2 = new Stack<int>();
-            stack2.Push(0);
+            stack1.Push(0);
             for (int i = 1; i < n; i++)
             {
-                while (LCP[i] < LCP[stack2.Peek()])
+                while (LCP[i] < LCP[stack1.Peek()])
                 {
-                    stack2.Pop();
+                    stack1.Pop();
                 }
 
-                if (LCP[i] == LCP[stack2.Peek()])
+                if (LCP[i] == LCP[stack1.Peek()])
                 {
-                    lastIndex = stack2.Pop();
+                    lastIndex = stack1.Pop();
                     Children[i].Next = i;
                 }
-                stack2.Push(i);
+                stack1.Push(i);
             }
+        }
+
+        //6.7
+        private List<(int, int)> GetChildIntervals(int i, int j)
+        {
+            List<(int, int)> intervals = new List<(int, int)>();
+            int i1;
+            if (i < Children[j + 1].Up && Children[j + 1].Up <= j)
+            {
+                i1 = Children[j + 1].Up;
+            }
+            else
+            {
+                i1 = Children[(j + 1)].Down;
+            }
+            intervals.Add((i, i1 - 1));
+            while (Children[i1].Next != -1)
+            {
+                var i2 = Children[i1].Next;
+                intervals.Add((i1, i2 - 1));
+                i1 = i2;
+            }
+            intervals.Add(i1, j);
+            return intervals; 
         }
 
         public void Traverse()
