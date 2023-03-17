@@ -376,6 +376,7 @@ namespace ConsoleApp.DataStructures
         }
 
         //6.7
+
         private List<(int, int)> GetChildIntervals(int i, int j)
         {
             List<(int, int)> intervals = new List<(int, int)>();
