@@ -81,9 +81,6 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
         {
-            List<(int, int)> occs = new();
-            var occurrencesP1 = Matches(pattern1);
-
             System.Collections.Generic.HashSet<int> occurencesP2 = new();
 
             // Construct the suffix array for the text
@@ -102,7 +99,7 @@ namespace ConsoleApp.DataStructures
             occurencesP2.Add(m_sa[substringIndex]);
 
             // Check all suffixes that come after the first occurrence of the substring
-            for (int i = substringIndex + 1; i < n && m_lcp[i - 1] >= pattern2.Length; i++)
+            for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern2.Length; i++)
             {
                 occurencesP2.Add(m_sa[i]);
             }
@@ -115,9 +112,9 @@ namespace ConsoleApp.DataStructures
             int[] occs2 = occurencesP2.ToArray();
             foreach (var occ1 in occurrencesP1)
             {
-                if ( occurencesP2.Contains(occ1 + pattern1.Length + x))
+                if (occurencesP2.Contains(occ1 + pattern1.Length + x))
                 {
-                   occs.Add((occ1, occ1 + pattern1.Length + x));
+                    occs.Add((occ1, occ1 + pattern1.Length + x));
                 }
             }
 
@@ -228,45 +225,7 @@ namespace ConsoleApp.DataStructures
         }
 
 
-            System.Collections.Generic.HashSet<int> occurencesP2 = new();
-
-            // Construct the suffix array for the text
-            int n = m_str.Length;
-
-            // Find the first occurrence of the substring in the text
-            int substringIndex = BinarySearch(pattern2);
-
-            // If the substring is not found in the text, return an empty list
-            if (substringIndex == -1)
-            {
-                return occs;
-            }
-
-            // Add the index of the first occurrence of the substring to the list of occurrences
-            occurencesP2.Add(m_sa[substringIndex]);
-
-            // Check all suffixes that come after the first occurrence of the substring
-            for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern2.Length; i++)
-            {
-                occurencesP2.Add(m_sa[i]);
-            }
-
-            // Check all suffixes that come before the first occurrence of the substring
-            for (int i = substringIndex - 1; i >= 0 && m_lcp[i] >= pattern2.Length; i--)
-            {
-                occurencesP2.Add(m_sa[i]);
-            }
-            int[] occs2 = occurencesP2.ToArray();
-            foreach (var occ1 in occurrencesP1)
-            {
-                if ( occurencesP2.Contains(occ1 + pattern1.Length + x))
-                {
-                   occs.Add((occ1, occ1 + pattern1.Length + x));
-                }
-            }
-
-            return occs;
-        }
+            
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
