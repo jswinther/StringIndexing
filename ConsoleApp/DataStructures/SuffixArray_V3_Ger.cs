@@ -16,16 +16,19 @@ namespace ConsoleApp.DataStructures
         public int[] LCP { get; }
         public string BWT { get; }
         public int[] ISA { get; }
+        public string[] Suffixes { get; }
         public (int Up, int Down, int Next)[] Children { get; }
 
         public SuffixArray_V3_Ger(string S) : base(S)
         {
+            S += "$";
             n = S.Length;
-            this.S = str;
-            SA = new int[n + 1];
-            ISA = new int[n + 1];
-            LCP = new int[n + 1];
-            Children = new (int Up, int Down, int Next)[n + 1];
+            this.S = S;
+            SA = new int[n];
+            ISA = new int[n];
+            LCP = new int[n];
+            Suffixes = new string[n];
+            Children = new (int Up, int Down, int Next)[n];
             FormInitialChains();
             BuildSuffixArray();
             ComputeLCP();
@@ -42,7 +45,7 @@ namespace ConsoleApp.DataStructures
         #region PatternMatcher
         public override IEnumerable<int> Matches(string pattern)
         {
-            var a = GetInterval(0, n, pattern[0]);
+            var a = GetInterval(0, n - 1, pattern[0]);
             int substringOccurrence = FindIndexOfFirstOccurrence(pattern);
             if (substringOccurrence < 0) return Enumerable.Empty<int>();
             return AddOccurrences(substringOccurrence, pattern);
@@ -292,12 +295,12 @@ namespace ConsoleApp.DataStructures
             // the sign.
             ISA[index] = -m_nextRank;
             SA[m_nextRank - 1] = index;
+            Suffixes[m_nextRank - 1] = S.Substring(index);
             m_nextRank++;
         }
 
         private void ComputeLCP()
         {
-            int n = S.Length;
             int[] rank = new int[n];
 
             // Compute rank array
@@ -306,30 +309,22 @@ namespace ConsoleApp.DataStructures
                 rank[SA[i]] = i;
             }
 
-            int k = 0;
+            int h = 0;
 
             // Compute LCP array
+            LCP[0] = -1;
             for (int i = 0; i < n; i++)
             {
-                if (rank[i] == n - 1)
+                if (rank[i] > 0)
                 {
-                    k = 0;
-                    continue;
+                    int k = SA[rank[i] - 1];
+                    while (S[i + h] == S[k + h])
+                    {
+                        h++;
+                    }
+                    LCP[rank[i]] = h;
                 }
-
-                int j = SA[rank[i] + 1];
-
-                while (i + k < n && j + k < n && S[i + k] == S[j + k])
-                {
-                    k++;
-                }
-
-                LCP[rank[i]] = k;
-
-                if (k > 0)
-                {
-                    k--;
-                }
+                if (h > 0) h--;
             }
         }
 
@@ -339,11 +334,13 @@ namespace ConsoleApp.DataStructures
             Stack<int> stack1 = new Stack<int>();
             int lastIndex = -1;
             stack1.Push(0);
-            for (int i = 1; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
                 Children[i].Next = -1;
+                Children[i].Up = -1;
+                Children[i].Down = -1;
                 int top = stack1.Peek();
-                while (LCP[i] < top)
+                while (LCP[i] < top && LCP[i] != -1)
                 {
                     lastIndex = stack1.Pop();
                     top = stack1.Peek();
@@ -360,7 +357,7 @@ namespace ConsoleApp.DataStructures
                 stack1.Push(i);
             }
             stack1.Push(0);
-            for (int i = 1; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
                 while (LCP[i] < LCP[stack1.Peek()])
                 {
@@ -370,7 +367,7 @@ namespace ConsoleApp.DataStructures
                 if (LCP[i] == LCP[stack1.Peek()])
                 {
                     lastIndex = stack1.Pop();
-                    Children[i].Next = i;
+                    Children[i].Next = SA[i];
                 }
                 stack1.Push(i);
             }
@@ -401,20 +398,23 @@ namespace ConsoleApp.DataStructures
             return intervals;
         }
 
+        
+
+
         private (int, int) GetInterval(int i, int j, char c)
         {
             int i1;
-            if (i < Children[j + 1].Up && Children[j + 1].Up <= j)
+            if (i < Children[j].Up && Children[j].Up <= j)
             {
-                i1 = Children[j + 1].Up;
+                i1 = Math.Abs(ISA[Children[j].Up]) - 1;
             }
             else
             {
-                i1 = Children[(j + 1)].Down;
+                i1 = Math.Abs(ISA[Children[j].Down]) - 1;
             }
             if (S[SA[i]] == c)
             {
-                return (i, i1 - 1);
+                return (i, i1);
             }
             //intervals.Add((i, i1 - 1));
             while (Children[i1].Next != -1)
@@ -422,7 +422,7 @@ namespace ConsoleApp.DataStructures
                 var i2 = Children[i1].Next;
                 if (S[SA[i1]] == c)
                 {
-                    return (i1, i2 - 1);
+                    return (i1, i2);
                 }
                 //intervals.Add((i1, i2 - 1));
                 i1 = i2;

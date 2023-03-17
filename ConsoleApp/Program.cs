@@ -27,6 +27,11 @@ namespace ConsoleApp
             return new SuffixArray_V3_Ger(str);
         }
 
+        public static PatternMatcher BuildSuffixTree(string str)
+        {
+            return SuffixTree.Create(str);
+        }
+
         public static PatternMatcher BuildPrecomputed(string str)
         {
             return new PreCompSubs(str);
@@ -130,8 +135,8 @@ namespace ConsoleApp
             string[] dnaSequences = new string[]
             {
                 //DummyData.Dummy,
-                //DummyData.DNA("TEST"),
-                DummyData.DNA("DNA_512"),
+                DummyData.DNA("TEST"),
+                //DummyData.DNA("DNA_512"),
                 //DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
                 //DummyData.DNA("DNA_1048576"),
@@ -147,6 +152,7 @@ namespace ConsoleApp
                 //BuildUkkonen,
                 //BuildSuffixArray_V2,
                 //BuildSuffixArray_V1,
+                BuildSuffixTree,
                 BuildSuffixArray_V3,
                 //BuildPrecomputed,
             };
