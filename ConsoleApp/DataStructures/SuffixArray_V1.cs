@@ -26,6 +26,8 @@ namespace ConsoleApp.DataStructures
         private string m_str;
         public SuffixArray_V1(string str) : base(str)
         {
+            str += "|";
+            
             m_str = str;
             m_sa = new int[str.Length];
             m_isa = new int[m_str.Length];
@@ -524,7 +526,23 @@ namespace ConsoleApp.DataStructures
 
         public int CompareTo(Chain other)
         {
-            return m_str.Substring(head, length).CompareTo(m_str.Substring(other.head, other.length));
+            return HomemadeCompare(head, other.head);
+            //return m_str.Substring(head, length).CompareTo(m_str.Substring(other.head, other.length));
+        }
+
+        private int HomemadeCompare(int x, int y)
+        {
+            int i = x, j = y;
+            while (i < m_str.Length && j < m_str.Length)
+            {
+                if (m_str[i] != m_str[j])
+                {
+                    return m_str[i].CompareTo(m_str[j]);
+                }
+                i++;
+                j++;
+            }
+            return i - j;
         }
 
         public override string ToString()

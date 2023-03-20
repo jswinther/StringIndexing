@@ -28,11 +28,11 @@ namespace ConsoleApp.DataStructures
             ISA = new int[n];
             Suffixes = new string[n];
             Children = new (int Up, int Down, int Next)[n];
-            VeryDumbSuffixArrayConstruction();
-            //FormInitialChains();
-            //BuildSuffixArray();
+            //VeryDumbSuffixArrayConstruction();
+            FormInitialChains();
+            BuildSuffixArray();
             BuildLcpArray();
-            BuildChildTable();
+            //BuildChildTable();
         }
 
         public void VeryDumbSuffixArrayConstruction()

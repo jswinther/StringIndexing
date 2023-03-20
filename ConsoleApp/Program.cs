@@ -135,9 +135,9 @@ namespace ConsoleApp
             string[] dnaSequences = new string[]
             {
                 //DummyData.Dummy,
-                DummyData.DNA("TEST")
+                DummyData.DNA("TEST"),
                 //DummyData.DNA("DNA_512"),
-                //DummyData.DNA("DNA_262144"),
+                DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
                 //DummyData.DNA("DNA_1048576"),
                 //DummyData.DNA("DNA_2097152"),
@@ -150,10 +150,10 @@ namespace ConsoleApp
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
                 //BuildUkkonen,
-                //BuildSuffixArray_V2,
-                //BuildSuffixArray_V1,
+                BuildSuffixArray_V2,
+                BuildSuffixArray_V1,
                 //BuildSuffixTree,
-                BuildSuffixArray_V3,
+                //BuildSuffixArray_V3,
                 //BuildPrecomputed,
             };
             
