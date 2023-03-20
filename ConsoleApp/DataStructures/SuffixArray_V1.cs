@@ -29,12 +29,12 @@ namespace ConsoleApp.DataStructures
             str += "|";
             
             m_str = str;
-            m_sa = new int[str.Length];
+            Sa = new int[str.Length];
             m_isa = new int[m_str.Length];
 
             FormInitialChains();
             BuildSuffixArray();
-            ComputeLCP();
+            BuildLcpArray();
         }
 
         public override IEnumerable<int> Matches(string pattern)
@@ -43,7 +43,7 @@ namespace ConsoleApp.DataStructures
 
             // Construct the suffix array for the text
             int n = m_str.Length;
-            int[] suffixArray = m_sa;
+            int[] suffixArray = Sa;
 
             // Find the first occurrence of the substring in the text
             int substringIndex = BinarySearch(pattern, m_str, suffixArray);
@@ -58,13 +58,13 @@ namespace ConsoleApp.DataStructures
             occurrences.Add(suffixArray[substringIndex]);
 
             // Check all suffixes that come after the first occurrence of the substring
-            for (int i = substringIndex + 1; i < n && m_lcp[i - 1] >= pattern.Length; i++)
+            for (int i = substringIndex + 1; i < n && Lcp1[i - 1] >= pattern.Length; i++)
             {
                 occurrences.Add(suffixArray[i]);
             }
 
             // Check all suffixes that come before the first occurrence of the substring
-            for (int i = substringIndex - 1; i >= 0 && m_lcp[i] >= pattern.Length; i--)
+            for (int i = substringIndex - 1; i >= 0 && Lcp1[i] >= pattern.Length; i--)
             {
                 occurrences.Add(suffixArray[i]);
             }
@@ -136,7 +136,7 @@ namespace ConsoleApp.DataStructures
 
             // Construct the suffix array for the text
             int n = m_str.Length;
-            int[] suffixArray = m_sa;
+            int[] suffixArray = Sa;
 
             // Find the first occurrence of the substring in the text
             int substringIndex = BinarySearch(pattern2, m_str, suffixArray);
@@ -151,13 +151,13 @@ namespace ConsoleApp.DataStructures
             occurencesP2.Add(suffixArray[substringIndex]);
 
             // Check all suffixes that come after the first occurrence of the substring
-            for (int i = substringIndex + 1; i < n && m_lcp[i - 1] >= pattern2.Length; i++)
+            for (int i = substringIndex + 1; i < n && Lcp1[i - 1] >= pattern2.Length; i++)
             {
                 occurencesP2.Add(suffixArray[i]);
             }
 
             // Check all suffixes that come before the first occurrence of the substring
-            for (int i = substringIndex - 1; i >= 0 && m_lcp[i] >= pattern2.Length; i--)
+            for (int i = substringIndex - 1; i >= 0 && Lcp1[i] >= pattern2.Length; i--)
             {
                 occurencesP2.Add(suffixArray[i]);
             }
@@ -182,7 +182,7 @@ namespace ConsoleApp.DataStructures
 
             // Construct the suffix array for the text
             int n = m_str.Length;
-            int[] suffixArray = m_sa;
+            int[] suffixArray = Sa;
 
             // Find the first occurrence of the substring in the text
             int substringIndex = BinarySearch(pattern2, m_str, suffixArray);
@@ -197,13 +197,13 @@ namespace ConsoleApp.DataStructures
             occurencesP2.Add(suffixArray[substringIndex]);
 
             // Check all suffixes that come after the first occurrence of the substring
-            for (int i = substringIndex + 1; i < n && m_lcp[i - 1] >= pattern2.Length; i++)
+            for (int i = substringIndex + 1; i < n && Lcp1[i - 1] >= pattern2.Length; i++)
             {
                 occurencesP2.Add(suffixArray[i]);
             }
 
             // Check all suffixes that come before the first occurrence of the substring
-            for (int i = substringIndex - 1; i >= 0 && m_lcp[i] >= pattern2.Length; i--)
+            for (int i = substringIndex - 1; i >= 0 && Lcp1[i] >= pattern2.Length; i--)
             {
                 occurencesP2.Add(suffixArray[i]);
             }
@@ -234,12 +234,16 @@ namespace ConsoleApp.DataStructures
 
         public int Length
         {
-            get { return m_sa.Length; }
+            get { return Sa.Length; }
         }
+
+        public int[] Sa { get => m_sa; set => m_sa = value; }
+        public int[] Lcp1 { get => m_lcp; set => m_lcp = value; }
+        public string S { get => m_str; }
 
         public int this[int index]
         {
-            get { return m_sa[index]; }
+            get { return Sa[index]; }
         }
 
   
@@ -256,7 +260,7 @@ namespace ConsoleApp.DataStructures
         public int IndexOf(string substr)
         {
             int l = 0;
-            int r = m_sa.Length;
+            int r = Sa.Length;
             int m = -1;
 
             if ((substr == null) || (substr.Length == 0))
@@ -268,7 +272,7 @@ namespace ConsoleApp.DataStructures
             while (r > l)
             {
                 m = (l + r) / 2;
-                if (m_str.Substring(m_sa[m]).CompareTo(substr) < 0)
+                if (m_str.Substring(Sa[m]).CompareTo(substr) < 0)
                 {
                     l = m + 1;
                 }
@@ -277,9 +281,9 @@ namespace ConsoleApp.DataStructures
                     r = m;
                 }
             }
-            if ((l == r) && (l < m_str.Length) && (m_str.Substring(m_sa[l]).StartsWith(substr)))
+            if ((l == r) && (l < m_str.Length) && (m_str.Substring(Sa[l]).StartsWith(substr)))
             {
-                return m_sa[l];
+                return Sa[l];
             }
             else
             {
@@ -446,20 +450,20 @@ namespace ConsoleApp.DataStructures
             // We use the ISA to hold both ranks and chain links, so we differentiate by setting
             // the sign.
             m_isa[index] = -m_nextRank;
-            m_sa[m_nextRank - 1] = index;
+            Sa[m_nextRank - 1] = index;
             m_nextRank++;
         }
 
         public void ComputeLCP()
         {
             int n = m_str.Length;
-            m_lcp = new int[n];
+            Lcp1 = new int[n];
             int[] rank = new int[n];
 
             // Compute rank array
             for (int i = 0; i < n; i++)
             {
-                rank[m_sa[i]] = i;
+                rank[Sa[i]] = i;
             }
 
             int k = 0;
@@ -473,14 +477,14 @@ namespace ConsoleApp.DataStructures
                     continue;
                 }
 
-                int j = m_sa[rank[i] + 1];
+                int j = Sa[rank[i] + 1];
 
                 while (i + k < n && j + k < n && m_str[i + k] == m_str[j + k])
                 {
                     k++;
                 }
 
-                m_lcp[rank[i]] = k;
+                Lcp1[rank[i]] = k;
 
                 if (k > 0)
                 {
@@ -493,12 +497,12 @@ namespace ConsoleApp.DataStructures
 
         private void BuildLcpArray()
         {
-            m_lcp = new int[m_sa.Length + 1];
-            m_lcp[0] = m_lcp[m_sa.Length] = 0;
+            Lcp1 = new int[Sa.Length + 1];
+            Lcp1[0] = Lcp1[Sa.Length] = 0;
 
-            for (int i = 1; i < m_sa.Length; i++)
+            for (int i = 1; i < Sa.Length; i++)
             {
-                m_lcp[i] = CalcLcp(m_sa[i - 1], m_sa[i]);
+                Lcp1[i] = CalcLcp(Sa[i - 1], Sa[i]);
             }
         }
 
