@@ -12,31 +12,80 @@ namespace ConsoleApp.DataStructures
     {
         public string S { get; }
         public int n { get; }
-        public int[] SA { get; }
+        public int[] SA { get; private set; }
         public int[] LCP { get; private set; }
         public string BWT { get; }
         public int[] ISA { get; }
-        public string[] Suffixes { get; }
+        public string[] Suffixes { get; private set; }
         public (int Up, int Down, int Next)[] Children { get; }
 
         public SuffixArray_V3_Ger(string S) : base(S)
         {
-            S += "$";
+            S += "|";
             n = S.Length;
             this.S = S;
             SA = new int[n];
             ISA = new int[n];
             Suffixes = new string[n];
             Children = new (int Up, int Down, int Next)[n];
-            FormInitialChains();
-            BuildSuffixArray();
+            VeryDumbSuffixArrayConstruction();
+            //FormInitialChains();
+            //BuildSuffixArray();
             BuildLcpArray();
             BuildChildTable();
         }
 
+        public void VeryDumbSuffixArrayConstruction()
+        {
+            // Step 1: Initialize SA with all possible suffixes
+            for (int i = 0; i < n; i++) SA[i] = i;
+
+            // Step 2: Sort SA lexicographically using the built-in Array.Sort method
+            Array.Sort(SA, (x, y) =>
+            {
+                int i = x, j = y;
+                while (i < n && j < n)
+                {
+                    if (S[i] != S[j])
+                    {
+                        return S[i].CompareTo(S[j]);
+                    }
+                    i++;
+                    j++;
+                }
+                return i - j;
+            });
+            Suffixes = SA.Select(s => S.Substring(s)).ToArray();
+        }
+
         #region Building the LCP Intervals and Other Stuff
 
+        private class CompareSuffixes : IComparer<string?>
+        {
+            public int Compare(string? x, string? y)
+            {
+                return CompareStrings(x, y);
+            }
 
+            public int CompareStrings(string x, string y)
+            {
+                int min = Math.Min(x.Length, y.Length);
+                int i = 0;
+                while (i < min)
+                {
+                    if (x[i] < y[i])
+                        return 1;
+                    if (x[i] > y[i])
+                        return -1;
+                    i++;
+                }
+                if (x.Length > y.Length)
+                    return -1;
+                if (y.Length > x.Length)
+                    return 1;
+                return 0;
+            }
+        }
 
         #endregion
 
@@ -300,8 +349,8 @@ namespace ConsoleApp.DataStructures
 
         private void BuildLcpArray()
         {
-            LCP = new int[SA.Length + 1];
-            LCP[0] = LCP[SA.Length] = 0;
+            LCP = new int[SA.Length];
+            LCP[0] = LCP[SA.Length - 1] = 0;
 
             for (int i = 1; i < SA.Length; i++)
             {
