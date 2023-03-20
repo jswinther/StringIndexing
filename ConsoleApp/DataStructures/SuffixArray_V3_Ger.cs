@@ -1,5 +1,6 @@
 ﻿using C5;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -28,35 +29,13 @@ namespace ConsoleApp.DataStructures
             ISA = new int[n];
             Suffixes = new string[n];
             Children = new (int Up, int Down, int Next)[n];
-            //VeryDumbSuffixArrayConstruction();
             FormInitialChains();
             BuildSuffixArray();
             BuildLcpArray();
-            //BuildChildTable();
+            BuildChildTable();
         }
 
-        public void VeryDumbSuffixArrayConstruction()
-        {
-            // Step 1: Initialize SA with all possible suffixes
-            for (int i = 0; i < n; i++) SA[i] = i;
-
-            // Step 2: Sort SA lexicographically using the built-in Array.Sort method
-            Array.Sort(SA, (x, y) =>
-            {
-                int i = x, j = y;
-                while (i < n && j < n)
-                {
-                    if (S[i] != S[j])
-                    {
-                        return S[i].CompareTo(S[j]);
-                    }
-                    i++;
-                    j++;
-                }
-                return i - j;
-            });
-            Suffixes = SA.Select(s => S.Substring(s)).ToArray();
-        }
+    
 
         #region Building the LCP Intervals and Other Stuff
 
@@ -93,10 +72,17 @@ namespace ConsoleApp.DataStructures
         #region PatternMatcher
         public override IEnumerable<int> Matches(string pattern)
         {
-            //var a = ExactStringMatchingWithESA(pattern);
-            int substringOccurrence = FindIndexOfFirstOccurrence(pattern);
-            if (substringOccurrence < 0) return Enumerable.Empty<int>();
-            return AddOccurrences(substringOccurrence, pattern);
+            var a = ExactStringMatchingWithESA(pattern);
+            if (a == (-1, -1)) return Enumerable.Empty<int>();
+            List<int> occs = new List<int>();
+            for (int i = a.i; i <= a.j; i++)
+            {
+                occs.Add(SA[i]);
+            }
+            //int substringOccurrence = FindIndexOfFirstOccurrence(pattern);
+            //if (substringOccurrence < 0) return Enumerable.Empty<int>();
+            //return AddOccurrences(substringOccurrence, pattern);
+            return occs;
         }
 
         private IEnumerable<int> AddOccurrences(int substringOccurrence, string pattern)
@@ -347,6 +333,45 @@ namespace ConsoleApp.DataStructures
             m_nextRank++;
         }
 
+        public void ComputeLCP()
+        {
+            int n = S.Length;
+            LCP = new int[n];
+            int[] rank = new int[n];
+
+            // Compute rank array
+            for (int i = 0; i < n; i++)
+            {
+                rank[SA[i]] = i;
+            }
+
+            int k = 0;
+
+            // Compute LCP array
+            for (int i = 0; i < n; i++)
+            {
+                if (rank[i] == n - 1)
+                {
+                    k = 0;
+                    continue;
+                }
+
+                int j = SA[rank[i] + 1];
+
+                while (i + k < n && j + k < n && S[i + k] == S[j + k])
+                {
+                    k++;
+                }
+
+                LCP[rank[i]] = k;
+
+                if (k > 0)
+                {
+                    k--;
+                }
+            }
+        }
+
         private void BuildLcpArray()
         {
             LCP = new int[SA.Length];
@@ -369,45 +394,45 @@ namespace ConsoleApp.DataStructures
         // 6.2, 6.5
         public void BuildChildTable()
         {
-            Stack<int> stack1 = new Stack<int>();
+            Stack<int> stack = new Stack<int>();
             int lastIndex = -1;
-            stack1.Push(0);
-            for (int i = 0; i < n; i++)
+            stack.Push(0);
+            for (int i = 1; i < n; i++)
             {
                 Children[i].Next = -1;
                 Children[i].Up = -1;
                 Children[i].Down = -1;
-                int top = stack1.Peek();
-                while (LCP[i] < top && LCP[i] != -1)
+                while (LCP[i] < LCP[stack.Peek()])
                 {
-                    lastIndex = stack1.Pop();
-                    top = stack1.Peek();
-                    if (LCP[i] <= LCP[top] && LCP[top] != LCP[lastIndex])
+                    lastIndex = stack.Pop();
+                    if ((LCP[i] <= LCP[stack.Peek()]) && (LCP[stack.Peek()] != LCP[lastIndex]))
                     {
-                        Children[top].Down = lastIndex;
+                        Children[stack.Peek()].Down = lastIndex;
                     }
                 }
+
                 if (lastIndex != -1)
                 {
                     Children[i].Up = lastIndex;
                     lastIndex = -1;
                 }
-                stack1.Push(i);
+                stack.Push(i);
             }
-            stack1.Push(0);
-            for (int i = 0; i < n; i++)
+            Stack<int> stack2 = new Stack<int>();
+            stack2.Push(0);
+            for (int i = 1; i < n; i++)
             {
-                while (LCP[i] < LCP[stack1.Peek()])
+                while (LCP[i] < LCP[stack2.Peek()])
                 {
-                    stack1.Pop();
+                    stack2.Pop();
                 }
 
-                if (LCP[i] == LCP[stack1.Peek()])
+                if (LCP[i] == LCP[stack2.Peek()])
                 {
-                    lastIndex = stack1.Pop();
-                    Children[i].Next = SA[i];
+                    lastIndex = stack2.Pop();
+                    Children[lastIndex].Next = i;
                 }
-                stack1.Push(i);
+                stack2.Push(i);
             }
         }
 
@@ -439,28 +464,29 @@ namespace ConsoleApp.DataStructures
         
 
 
-        private (int, int) GetInterval(int i, int j, char c)
+        private (int, int) GetInterval(int i, int j, char c, int ci)
         {
             int i1;
             if (i < Children[j].Up && Children[j].Up <= j)
             {
-                i1 = Math.Abs(ISA[Children[j].Up]) - 1;
+                i1 = Children[i].Next;
+
             }
             else
             {
-                i1 = Math.Abs(ISA[Children[j].Down]) - 1;
+                i1 = Children[i].Down;
             }
-            if (S[SA[i]] == c)
+            if (S[SA[i] + ci] == c)
             {
-                return (i, i1);
+                return (i, i1 - 1);
             }
             //intervals.Add((i, i1 - 1));
             while (Children[i1].Next != -1)
             {
                 var i2 = Children[i1].Next;
-                if (S[SA[i1]] == c)
+                if (S[SA[i1] + ci] == c)
                 {
-                    return (i1, i2);
+                    return (i1, i2 - 1);
                 }
                 //intervals.Add((i1, i2 - 1));
                 i1 = i2;
@@ -473,7 +499,7 @@ namespace ConsoleApp.DataStructures
         {
             int c = 0;
             bool queryFound = true;
-            (int i, int j) = GetInterval(0, n - 1, pattern[c]);
+            (int i, int j) = GetInterval(0, n - 1, pattern[c], c);
             while (i != -1 && j != -1 && c < pattern.Length && queryFound)
             {
                 int idx = SA[i];
@@ -481,9 +507,10 @@ namespace ConsoleApp.DataStructures
                 {
                     int l = GetLcp(i, j);
                     int min = Math.Min(l, pattern.Length);
-                    queryFound = pattern.Equals(S.Substring(SA[i], min));
+                    queryFound = (i, j) != (-1, -1);
                     c = min;
-                    (i, j) = GetInterval(i, j, pattern[c - 1]);
+                    if (c == pattern.Length) return (i, j);
+                    (i, j) = GetInterval(i, j, pattern[c], c);
                 }
                 else
                 {
