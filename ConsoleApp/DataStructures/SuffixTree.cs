@@ -1,4 +1,5 @@
-﻿using System;
+﻿using C5;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ConsoleApp.DataStructures
     public class SuffixTree : PatternMatcher
     {
         public char? CanonizationChar { get; set; }
-        public string Word { get; private set; }
+        public string S { get; private set; }
         private int CurrentSuffixStartIndex { get; set; }
         private int CurrentSuffixEndIndex { get; set; }
         private Node LastCreatedNodeInCurrentIteration { get; set; }
@@ -21,12 +22,25 @@ namespace ConsoleApp.DataStructures
         private char LastCharacterOfCurrentSuffix { get; set; }
         private int NextNodeNumber { get; set; }
         private int NextEdgeNumber { get; set; }
+        public int[] SA { get; }
+        public int[] LCP { get; }
+        public int[] ISA { get; private set; }
+        public string[] Suffixes { get; }
+        public int n { get; private set; }
 
         public SuffixTree(string word) : base(word)
         {
-            Word = word;
+            S = word + "$";
             RootNode = new Node(this);
             ActiveNode = RootNode;
+            n = S.Length;
+            SA = new int[n];
+            ISA = new int[n];
+            LCP = new int[n];
+            Suffixes = new string[n];
+            FormInitialChains();
+            BuildSuffixArray();
+            ComputeLCP();
         }
 
         public event Action<SuffixTree> Changed;
@@ -54,19 +68,19 @@ namespace ConsoleApp.DataStructures
 
         public void Build(char canonizationChar)
         {
-            var n = Word.IndexOf(Word[Word.Length - 1]);
-            var mustCanonize = n < Word.Length - 1;
+            var n = S.IndexOf(S[S.Length - 1]);
+            var mustCanonize = n < S.Length - 1;
             if (mustCanonize)
             {
                 CanonizationChar = canonizationChar;
-                Word = string.Concat(Word, canonizationChar);
+                S = string.Concat(S, canonizationChar);
             }
 
-            for (CurrentSuffixEndIndex = 0; CurrentSuffixEndIndex < Word.Length; CurrentSuffixEndIndex++)
+            for (CurrentSuffixEndIndex = 0; CurrentSuffixEndIndex < S.Length; CurrentSuffixEndIndex++)
             {
                 SendMessage("=== ITERATION {0} ===", CurrentSuffixEndIndex);
                 LastCreatedNodeInCurrentIteration = null;
-                LastCharacterOfCurrentSuffix = Word[CurrentSuffixEndIndex];
+                LastCharacterOfCurrentSuffix = S[CurrentSuffixEndIndex];
 
                 for (CurrentSuffixStartIndex = CurrentSuffixEndIndex - UnresolvedSuffixes; CurrentSuffixStartIndex <= CurrentSuffixEndIndex; CurrentSuffixStartIndex++)
                 {
@@ -84,8 +98,8 @@ namespace ConsoleApp.DataStructures
 
         private bool AddNextSuffix()
         {
-            var suffix = string.Concat(Word.Substring(CurrentSuffixStartIndex, CurrentSuffixEndIndex - CurrentSuffixStartIndex), "{", Word[CurrentSuffixEndIndex], "}");
-            SendMessage("The next suffix of '{0}' to add is '{1}' at indices {2},{3}", Word, suffix, CurrentSuffixStartIndex, CurrentSuffixEndIndex);
+            var suffix = string.Concat(S.Substring(CurrentSuffixStartIndex, CurrentSuffixEndIndex - CurrentSuffixStartIndex), "{", S[CurrentSuffixEndIndex], "}");
+            SendMessage("The next suffix of '{0}' to add is '{1}' at indices {2},{3}", S, suffix, CurrentSuffixStartIndex, CurrentSuffixEndIndex);
             SendMessage(" => ActiveNode:             {0}", ActiveNode);
             SendMessage(" => ActiveEdge:             {0}", ActiveEdge == null ? "none" : ActiveEdge.ToString());
             SendMessage(" => DistanceIntoActiveEdge: {0}", DistanceIntoActiveEdge);
@@ -129,7 +143,7 @@ namespace ConsoleApp.DataStructures
 
         private bool AddCurrentSuffixToActiveEdge()
         {
-            var nextCharacterOnEdge = Word[ActiveEdge.StartIndex + DistanceIntoActiveEdge];
+            var nextCharacterOnEdge = S[ActiveEdge.StartIndex + DistanceIntoActiveEdge];
             if (nextCharacterOnEdge == LastCharacterOfCurrentSuffix)
             {
                 SendMessage("The next character on the current edge is '{0}' (suffix added implicitly)", LastCharacterOfCurrentSuffix);
@@ -160,7 +174,7 @@ namespace ConsoleApp.DataStructures
                     SendMessage("New edge has been added and the active node is root. The active edge will now be updated.");
                     DistanceIntoActiveEdge--;
                     SendMessage(" => DistanceIntoActiveEdge decremented to: {0}", DistanceIntoActiveEdge);
-                    ActiveEdge = DistanceIntoActiveEdge == 0 ? null : ActiveNode.Edges[Word[CurrentSuffixStartIndex + 1]];
+                    ActiveEdge = DistanceIntoActiveEdge == 0 ? null : ActiveNode.Edges[S[CurrentSuffixStartIndex + 1]];
                     SendMessage(" => ActiveEdge is now: {0}", ActiveEdge);
                     TriggerChanged();
 
@@ -184,7 +198,7 @@ namespace ConsoleApp.DataStructures
                 else
                 {
                     walkDistance += ActiveEdge.Length;
-                    var c = Word[firstIndexOfOriginalActiveEdge + walkDistance];
+                    var c = S[firstIndexOfOriginalActiveEdge + walkDistance];
                     ActiveEdge = ActiveNode.Edges[c];
                 }
                 TriggerChanged();
@@ -223,7 +237,7 @@ namespace ConsoleApp.DataStructures
             if (ActiveEdge != null)
             {
                 var firstIndexOfOriginalActiveEdge = ActiveEdge.StartIndex;
-                ActiveEdge = ActiveNode.Edges[Word[ActiveEdge.StartIndex]];
+                ActiveEdge = ActiveNode.Edges[S[ActiveEdge.StartIndex]];
                 TriggerChanged();
                 NormalizeActivePointIfNowAtOrBeyondEdgeBoundary(firstIndexOfOriginalActiveEdge);
             }
@@ -250,14 +264,14 @@ namespace ConsoleApp.DataStructures
             return sb.ToString();
         }
 
-        public HashSet<string> ExtractAllSubstrings()
+        public System.Collections.Generic.HashSet<string> ExtractAllSubstrings()
         {
-            var set = new HashSet<string>();
+            var set = new System.Collections.Generic.HashSet<string>();
             ExtractAllSubstrings("", set, RootNode);
             return set;
         }
 
-        private void ExtractAllSubstrings(string str, HashSet<string> set, Node node)
+        private void ExtractAllSubstrings(string str, System.Collections.Generic.HashSet<string> set, Node node)
         {
             foreach (var edge in node.Edges.Values)
             {
@@ -273,7 +287,7 @@ namespace ConsoleApp.DataStructures
         public List<string> ExtractSubstringsForIndexing(int? maxLength = null)
         {
             var list = new List<string>();
-            ExtractSubstringsForIndexing("", list, maxLength ?? Word.Length, RootNode);
+            ExtractSubstringsForIndexing("", list, maxLength ?? S.Length, RootNode);
             return list;
         }
 
@@ -281,7 +295,7 @@ namespace ConsoleApp.DataStructures
         {
             foreach (var edge in node.Edges.Values)
             {
-                var newstr = string.Concat(str, Word.Substring(edge.StartIndex, Math.Min(len, edge.Length)));
+                var newstr = string.Concat(str, S.Substring(edge.StartIndex, Math.Min(len, edge.Length)));
                 if (len > edge.Length && edge.Tail != null)
                     ExtractSubstringsForIndexing(newstr, list, len - edge.Length, edge.Tail);
                 else
@@ -289,23 +303,45 @@ namespace ConsoleApp.DataStructures
             }
         }
 
+        
+
         public override IEnumerable<int> Matches(string pattern)
         {
             Node currNode = RootNode;
+            System.Collections.Generic.HashSet<int> indexes = new System.Collections.Generic.HashSet<int>();
             int matchingIndex = 0;
-            if (currNode.Edges.TryGetValue(pattern[0], out Edge edge))
+            Edge edge;
+            if (currNode.Edges.TryGetValue(pattern[matchingIndex], out edge))
             {
                 int min = Math.Min(pattern.Length, edge.Length);
                 for (int i = 0; i < min; i++)
                 {
                     if (pattern[matchingIndex + i] != edge.String[i])
                     {
-
+                        break;
                     }
                 }
             }
-            return new List<int>();
+
+            Stack<Edge> edges = new Stack<Edge>();
+            edges.Push(edge);
+            while (edges.Count > 0)
+            {
+                var edge1 = edges.Pop();
+                indexes.Add(edge1.StartIndex);
+                if (edge1.Tail != null)
+                {
+                    foreach (var edge2 in edge1.Tail.Edges.Values)
+                    {
+                        edges.Push(edge2);
+                    }
+                }
+            }
+
+            return indexes;
         }
+
+        
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
         {
@@ -334,11 +370,11 @@ namespace ConsoleApp.DataStructures
             public int StartIndex { get; private set; }
             public int? EndIndex { get; set; }
             public int EdgeNumber { get; private set; }
-            public int Length { get { return (EndIndex ?? _tree.Word.Length - 1) - StartIndex + 1; } }
+            public int Length { get { return (EndIndex ?? _tree.S.Length - 1) - StartIndex + 1; } }
 
             public Edge SplitAtIndex(int index)
             {
-                _tree.SendMessage("Splitting edge {0} at index {1} ('{2}')", this, index, _tree.Word[index]);
+                _tree.SendMessage("Splitting edge {0} at index {1} ('{2}')", this, index, _tree.S[index]);
                 var newEdge = new Edge(_tree, Head);
                 var newNode = new Node(_tree);
                 newEdge.Tail = newNode;
@@ -346,31 +382,31 @@ namespace ConsoleApp.DataStructures
                 newEdge.EndIndex = index - 1;
                 Head = newNode;
                 StartIndex = index;
-                newNode.Edges.Add(_tree.Word[StartIndex], this);
-                newEdge.Head.Edges[_tree.Word[newEdge.StartIndex]] = newEdge;
+                newNode.Edges.Add(_tree.S[StartIndex], this);
+                newEdge.Head.Edges[_tree.S[newEdge.StartIndex]] = newEdge;
                 _tree.SendMessage(" => Hierarchy is now: {0} --> {1} --> {2} --> {3}", newEdge.Head, newEdge, newNode, this);
                 return newEdge;
             }
 
             public override string ToString()
             {
-                return string.Concat(_tree.Word.Substring(StartIndex, (EndIndex ?? _tree.CurrentSuffixEndIndex) - StartIndex + 1), "(",
+                return string.Concat(_tree.S.Substring(StartIndex, (EndIndex ?? _tree.CurrentSuffixEndIndex) - StartIndex + 1), "(",
                     StartIndex, ",", EndIndex.HasValue ? EndIndex.ToString() : "#", ")");
             }
 
             public string StringWithoutCanonizationChar
             {
-                get { return _tree.Word.Substring(StartIndex, (EndIndex ?? _tree.CurrentSuffixEndIndex - (_tree.CanonizationChar.HasValue ? 1 : 0)) - StartIndex + 1); }
+                get { return _tree.S.Substring(StartIndex, (EndIndex ?? _tree.CurrentSuffixEndIndex - (_tree.CanonizationChar.HasValue ? 1 : 0)) - StartIndex + 1); }
             }
 
             public string String
             {
-                get { return _tree.Word.Substring(StartIndex, (EndIndex ?? _tree.CurrentSuffixEndIndex) - StartIndex + 1); }
+                get { return _tree.S.Substring(StartIndex, (EndIndex ?? _tree.CurrentSuffixEndIndex) - StartIndex + 1); }
             }
 
             public void RenderTree(TextWriter writer, string prefix, int maxEdgeLength)
             {
-                var strEdge = _tree.Word.Substring(StartIndex, (EndIndex ?? _tree.CurrentSuffixEndIndex) - StartIndex + 1);
+                var strEdge = _tree.S.Substring(StartIndex, (EndIndex ?? _tree.CurrentSuffixEndIndex) - StartIndex + 1);
                 writer.Write(strEdge);
                 if (Tail == null)
                     writer.WriteLine();
@@ -429,12 +465,14 @@ namespace ConsoleApp.DataStructures
             public Dictionary<char, Edge> Edges { get; private set; }
             public Node LinkedNode { get; set; }
             public int NodeNumber { get; private set; }
+            public int StartIndexLCP { get; set; }
+            public int EndIndexLCP { get; set; }
 
             public void AddNewEdge()
             {
                 _tree.SendMessage("Adding new edge to {0}", this);
                 var edge = new Edge(_tree, this);
-                Edges.Add(_tree.Word[_tree.CurrentSuffixEndIndex], edge);
+                Edges.Add(_tree.S[_tree.CurrentSuffixEndIndex], edge);
                 _tree.SendMessage(" => {0} --> {1}", this, edge);
             }
 
@@ -442,7 +480,7 @@ namespace ConsoleApp.DataStructures
             {
                 var strNode = string.Concat("(", NodeNumber.ToString(new string('0', _tree.NextNodeNumber.ToString().Length)), ")");
                 writer.Write(strNode);
-                var edges = Edges.Select(kvp => kvp.Value).OrderBy(e => _tree.Word[e.StartIndex]).ToArray();
+                var edges = Edges.Select(kvp => kvp.Value).OrderBy(e => _tree.S[e.StartIndex]).ToArray();
                 if (edges.Any())
                 {
                     var prefixWithNodePadding = prefix + new string(' ', strNode.Length);
@@ -499,6 +537,181 @@ namespace ConsoleApp.DataStructures
             public const char VerticalLine = '│';
             public const char TJunctionRight = '├';
             public const char CornerRight = '└';
+        }
+
+        private const int EOC = int.MaxValue;
+        private C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
+        private List<Chain> m_chainStack = new List<Chain>();
+        private ArrayList<Chain> m_subChains = new ArrayList<Chain>();
+        private int m_nextRank = 1;
+        private void FormInitialChains()
+        {
+            // Link all suffixes that have the same first character
+            FindInitialChains();
+            SortAndPushSubchains();
+        }
+
+        private void FindInitialChains()
+        {
+            // Scan the string left to right, keeping rightmost occurences of characters as the chain heads
+            for (int i = 0; i < S.Length; i++)
+            {
+                if (m_chainHeadsDict.Contains(S[i]))
+                {
+                    ISA[i] = m_chainHeadsDict[S[i]];
+                }
+                else
+                {
+                    ISA[i] = EOC;
+                }
+                m_chainHeadsDict[S[i]] = i;
+            }
+
+            // Prepare chains to be pushed to stack
+            foreach (int headIndex in m_chainHeadsDict.Values)
+            {
+                Chain newChain = new Chain(S);
+                newChain.head = headIndex;
+                newChain.length = 1;
+                m_subChains.Add(newChain);
+            }
+        }
+
+        private void SortAndPushSubchains()
+        {
+            m_subChains.Sort();
+            for (int i = m_subChains.Count - 1; i >= 0; i--)
+            {
+                m_chainStack.Add(m_subChains[i]);
+            }
+        }
+
+        private void BuildSuffixArray()
+        {
+            while (m_chainStack.Count > 0)
+            {
+                // Pop chain
+                Chain chain = m_chainStack[m_chainStack.Count - 1];
+                m_chainStack.RemoveAt(m_chainStack.Count - 1);
+
+                if (ISA[chain.head] == EOC)
+                {
+                    // Singleton (A chain that contain only 1 suffix)
+                    RankSuffix(chain.head);
+                }
+                else
+                {
+                    //RefineChains(chain);
+                    RefineChainWithInductionSorting(chain);
+                }
+            }
+        }
+
+        private void ExtendChain(Chain chain)
+        {
+            char sym = S[chain.head + chain.length];
+            if (m_chainHeadsDict.Contains(sym))
+            {
+                // Continuation of an existing chain, this is the leftmost
+                // occurence currently known (others may come up later)
+                ISA[m_chainHeadsDict[sym]] = chain.head;
+                ISA[chain.head] = EOC;
+            }
+            else
+            {
+                // This is the beginning of a new subchain
+                ISA[chain.head] = EOC;
+                Chain newChain = new Chain(S);
+                newChain.head = chain.head;
+                newChain.length = chain.length + 1;
+                m_subChains.Add(newChain);
+            }
+            // Save index in case we find a continuation of this chain
+            m_chainHeadsDict[sym] = chain.head;
+        }
+
+        private void RefineChainWithInductionSorting(Chain chain)
+        {
+            // TODO - refactor/beautify some
+            ArrayList<SuffixRank> notedSuffixes = new ArrayList<SuffixRank>();
+            m_chainHeadsDict.Clear();
+            m_subChains.Clear();
+
+            while (chain.head != EOC)
+            {
+                int nextIndex = ISA[chain.head];
+                if (chain.head + chain.length > S.Length - 1)
+                {
+                    // If this substring reaches end of string it cannot be extended.
+                    // At this point it's the first in lexicographic order so it's safe
+                    // to just go ahead and rank it.
+                    RankSuffix(chain.head);
+                }
+                else if (ISA[chain.head + chain.length] < 0)
+                {
+                    SuffixRank sr = new SuffixRank();
+                    sr.head = chain.head;
+                    sr.rank = -ISA[chain.head + chain.length];
+                    notedSuffixes.Add(sr);
+                }
+                else
+                {
+                    ExtendChain(chain);
+                }
+                chain.head = nextIndex;
+            }
+            // Keep stack sorted
+            SortAndPushSubchains();
+            SortAndRankNotedSuffixes(notedSuffixes);
+        }
+
+        private void SortAndRankNotedSuffixes(ArrayList<SuffixRank> notedSuffixes)
+        {
+            notedSuffixes.Sort(new SuffixRankComparer());
+            // Rank sorted noted suffixes 
+            for (int i = 0; i < notedSuffixes.Count; ++i)
+            {
+                RankSuffix(notedSuffixes[i].head);
+            }
+        }
+
+        private void RankSuffix(int index)
+        {
+            // We use the ISA to hold both ranks and chain links, so we differentiate by setting
+            // the sign.
+            ISA[index] = -m_nextRank;
+            SA[m_nextRank - 1] = index;
+            Suffixes[m_nextRank - 1] = S.Substring(index);
+            m_nextRank++;
+        }
+
+        private void ComputeLCP()
+        {
+            int[] rank = new int[n];
+
+            // Compute rank array
+            for (int i = 0; i < n; i++)
+            {
+                rank[SA[i]] = i;
+            }
+
+            int h = 0;
+
+            // Compute LCP array
+            LCP[0] = -1;
+            for (int i = 0; i < n; i++)
+            {
+                if (rank[i] > 0)
+                {
+                    int k = SA[rank[i] - 1];
+                    while (S[i + h] == S[k + h])
+                    {
+                        h++;
+                    }
+                    LCP[rank[i]] = h;
+                }
+                if (h > 0) h--;
+            }
         }
     }
 }

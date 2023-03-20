@@ -45,7 +45,7 @@ namespace ConsoleApp.DataStructures
         #region PatternMatcher
         public override IEnumerable<int> Matches(string pattern)
         {
-            var a = GetInterval(0, n - 1, pattern[0]);
+            var a = ExactStringMatchingWithESA(pattern);
             int substringOccurrence = FindIndexOfFirstOccurrence(pattern);
             if (substringOccurrence < 0) return Enumerable.Empty<int>();
             return AddOccurrences(substringOccurrence, pattern);
@@ -429,6 +429,49 @@ namespace ConsoleApp.DataStructures
             }
             //intervals.Add((i1, j));
             return (i1, j);
+        }
+
+        public (int i, int j) ExactStringMatchingWithESA(string pattern)
+        {
+            int c = 0;
+            bool queryFound = true;
+            (int i, int j) = GetInterval(0, n - 1, pattern[c]);
+            while (i != -1 && j != -1 && c < pattern.Length && queryFound)
+            {
+                int idx = SA[i];
+                if (i != j)
+                {
+                    int l = GetLcp(i, j);
+                    int min = Math.Min(l, pattern.Length);
+                    queryFound = pattern.Equals(S.Substring(SA[i], min));
+                    c = min;
+                    (i, j) = GetInterval(i, j, pattern[c - 1]);
+                }
+                else
+                {
+                    queryFound = ComparePrefix(pattern, S.Substring(SA[i])) == 0;
+                }
+            }
+            if (queryFound)
+            {
+                return (i, j);
+            }
+            else
+            {
+                return (-1, -1);
+            }
+        }
+
+        public int GetLcp(int i, int j)
+        {
+            var sufi = S.Substring(SA[i]);
+            var sufj = S.Substring(SA[j]);
+            int k = 0;
+            while (sufi[k] == sufj[k])
+            {
+                ++k;
+            }
+            return k;
         }
 
         public void Traverse()
