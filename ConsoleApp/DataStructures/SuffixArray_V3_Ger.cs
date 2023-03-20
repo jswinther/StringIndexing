@@ -13,7 +13,7 @@ namespace ConsoleApp.DataStructures
         public string S { get; }
         public int n { get; }
         public int[] SA { get; }
-        public int[] LCP { get; }
+        public int[] LCP { get; private set; }
         public string BWT { get; }
         public int[] ISA { get; }
         public string[] Suffixes { get; }
@@ -26,12 +26,11 @@ namespace ConsoleApp.DataStructures
             this.S = S;
             SA = new int[n];
             ISA = new int[n];
-            LCP = new int[n];
             Suffixes = new string[n];
             Children = new (int Up, int Down, int Next)[n];
             FormInitialChains();
             BuildSuffixArray();
-            ComputeLCP();
+            BuildLcpArray();
             BuildChildTable();
         }
 
@@ -45,7 +44,7 @@ namespace ConsoleApp.DataStructures
         #region PatternMatcher
         public override IEnumerable<int> Matches(string pattern)
         {
-            var a = ExactStringMatchingWithESA(pattern);
+            //var a = ExactStringMatchingWithESA(pattern);
             int substringOccurrence = FindIndexOfFirstOccurrence(pattern);
             if (substringOccurrence < 0) return Enumerable.Empty<int>();
             return AddOccurrences(substringOccurrence, pattern);
@@ -299,33 +298,23 @@ namespace ConsoleApp.DataStructures
             m_nextRank++;
         }
 
-        private void ComputeLCP()
+        private void BuildLcpArray()
         {
-            int[] rank = new int[n];
+            LCP = new int[SA.Length + 1];
+            LCP[0] = LCP[SA.Length] = 0;
 
-            // Compute rank array
-            for (int i = 0; i < n; i++)
+            for (int i = 1; i < SA.Length; i++)
             {
-                rank[SA[i]] = i;
+                LCP[i] = CalcLcp(SA[i - 1], SA[i]);
             }
+        }
 
-            int h = 0;
-
-            // Compute LCP array
-            LCP[0] = -1;
-            for (int i = 0; i < n; i++)
-            {
-                if (rank[i] > 0)
-                {
-                    int k = SA[rank[i] - 1];
-                    while (S[i + h] == S[k + h])
-                    {
-                        h++;
-                    }
-                    LCP[rank[i]] = h;
-                }
-                if (h > 0) h--;
-            }
+        private int CalcLcp(int i, int j)
+        {
+            int lcp;
+            int maxIndex = S.Length - Math.Max(i, j);       // Out of bounds prevention
+            for (lcp = 0; (lcp < maxIndex) && (S[i + lcp] == S[j + lcp]); lcp++) ;
+            return lcp;
         }
 
         // 6.2, 6.5
