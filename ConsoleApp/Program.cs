@@ -135,7 +135,7 @@ namespace ConsoleApp
             string[] dnaSequences = new string[]
             {
                 //DummyData.Dummy,
-                DummyData.DNA("TEST"),
+                DummyData.DNA("TEST")
                 //DummyData.DNA("DNA_512"),
                 //DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
