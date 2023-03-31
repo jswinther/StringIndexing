@@ -209,6 +209,14 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<int> Matches(string pattern)
         {
+            /* Den rigtige med GetInterval og Childtable!!!!
+            (int start, int end) = ExactStringMatchingWithESA(pattern);
+            if ((start, end) == (-1, -1)) { return Enumerable.Empty<int>(); }
+            if (start == -1) start = 0;
+            if (end == -1) end = 0;
+            return Sa.Take(new Range(start, end + 1));
+            */
+            /*Den fake med precomputed intervaller */
             IntervalFinder = new IntervalFinder(pattern, S);
             (int start, int end) = IntervalFinder.GetInterval();
             return Sa.Take(new Range(start, end));
