@@ -51,7 +51,7 @@ namespace ConsoleApp.DataStructures
             Dictionary<(int, int), SortedSet<int>> dic = new();
             foreach (var interval in hashSet)
             {
-                var originalPlacesOfSuffixes = SA.Take(new Range(new Index(interval.Item1), new Index(interval.Item2 + 1)));
+                var originalPlacesOfSuffixes = SA.Take(new Range(new Index(interval.Item1 == -1 ? 0 : interval.Item1), new Index(interval.Item2 + 1)));
                 dic.Add(interval, new SortedSet<int>(originalPlacesOfSuffixes));
             }
             sorted = dic;
@@ -63,12 +63,9 @@ namespace ConsoleApp.DataStructures
         #region PatternMatcher
         public override IEnumerable<int> Matches(string pattern)
         {
-            var a = ExactStringMatchingWithESA(pattern);
-            (int i, int j) = a;
-            if (i == -1 && j == -1) return Enumerable.Empty<int>();
-            if (i == -1) i = 0;
-            if (j == -1) j = 0;
-            return sorted[(i, j)];
+            IntervalFinder intervalFinder = new IntervalFinder(pattern, S);
+            (int start, int end) = intervalFinder.GetInterval();
+            return sorted[(start, end)];
         }
 
         private IEnumerable<int> AddOccurrences(int substringOccurrence, string pattern)
@@ -212,13 +209,16 @@ namespace ConsoleApp.DataStructures
             {
                 i1 = Children[i].Down;
             }
+            i = i == -1 ? 0 : i;
             intervals.Add((i, i1 - 1));
             while (i1 != -1 && Children[i1].Next != -1)
             {
                 var i2 = Children[i1].Next;
+                i1 = i1 == -1 ? 0 : i1;
                 intervals.Add((i1, i2 - 1));
                 i1 = i2;
             }
+            i1 = i1 == -1 ? 0 : i1;
             intervals.Add((i1, j));
             return intervals;
         }

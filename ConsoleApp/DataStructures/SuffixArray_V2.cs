@@ -21,6 +21,7 @@ namespace ConsoleApp.DataStructures
         public int[] Sa { get => m_sa; }
         public int MyProperty { get; set; }
         public int N { get => n; }
+        private IntervalFinder IntervalFinder { get; set; }
         public SuffixArray_V2(string str) : base(str)
         {
             
@@ -144,7 +145,7 @@ namespace ConsoleApp.DataStructures
                 i1 = Children[i].Down;
             }
             if (S[Sa[i] + ci] == c)
-            {
+            { 
                 return (i, i1 - 1);
             }
             //intervals.Add((i, i1 - 1));
@@ -208,11 +209,9 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<int> Matches(string pattern)
         {
-            (int start, int end) = ExactStringMatchingWithESA(pattern);
-            if ((start, end) == (-1, -1)) { return Enumerable.Empty<int>(); }
-            if (start == -1) start = 0;
-            if (end == -1) end = 0;
-            return Sa.Take(new Range(start, end+1));
+            IntervalFinder = new IntervalFinder(pattern, S);
+            (int start, int end) = IntervalFinder.GetInterval();
+            return Sa.Take(new Range(start, end));
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
@@ -340,6 +339,7 @@ namespace ConsoleApp.DataStructures
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
             List<(int, int)> occs = new();
+
             var occurrencesP1 = Matches(pattern1);
 
             SortedSet<int> occurencesP2 = new(Matches(pattern2));

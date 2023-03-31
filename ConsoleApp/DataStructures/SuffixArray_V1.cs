@@ -37,6 +37,37 @@ namespace ConsoleApp.DataStructures
             BuildLcpArray();
         }
 
+        public (int, int) GetInterval(string pattern)
+        {
+            // Construct the suffix array for the text
+            int n = m_str.Length;
+            int[] suffixArray = Sa;
+
+            // Find the first occurrence of the substring in the text
+            int substringIndex = BinarySearch(pattern, m_str, suffixArray);
+
+            // If the substring is not found in the text, return an empty list
+            if (substringIndex == -1)
+            {
+                return (-1, -1);
+            }
+            int min = 0, max = 0;
+
+            // Check all suffixes that come after the first occurrence of the substring
+            for (int i = substringIndex + 1; i < n && Lcp1[i] >= pattern.Length; i++)
+            {
+                max = i;
+            }
+
+            // Check all suffixes that come before the first occurrence of the substring
+            for (int i = substringIndex - 1; i >= 0 && Lcp1[i + 1] >= pattern.Length; i--)
+            {
+                min = i;
+            }
+
+            return (min, max);
+        }
+
         public override IEnumerable<int> Matches(string pattern)
         {
             List<int> occurrences = new List<int>();
