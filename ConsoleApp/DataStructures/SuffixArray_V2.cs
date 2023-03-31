@@ -163,11 +163,63 @@ namespace ConsoleApp.DataStructures
             return (i1, j);
         }
 
+        public (int, int) GetIntervalHack(int i, int j, char c, int ci)
+        {
+            int i1 = i;
+            int i2;
+            if(i == 0 && j == n-1)
+            {   
+                i2 = Children[i1].Next -1;
+                while (S[Sa[i1] + ci] != c && Children[i1].Next != -1)
+                {
+                    i1 = Children[i1].Next;
+                    i2 = Children[i1].Next - 1;
+                }
+                if (S[Sa[i1] + ci] == c)
+                {
+                    return (i1, i2);
+                } else
+                {
+                    return (-1, -1);
+                }
+
+            } else
+            {
+                i2 = Children[i1].Down - 1;
+                if (S[Sa[i1] + ci] != c && Children[i1].Down != -1)
+                {
+                    i1 = Children[i1].Down;
+                }
+                while (S[Sa[i1] + ci] != c && Children[i1].Next != -1)
+                {
+                    i1 = Children[i1].Next;
+                    i2 = Children[i1].Next - 1;
+                }
+                if (S[Sa[i1] + ci] == c)
+                {
+                    if (Children[i1].Next != -1)
+                    {
+                        return (i1, i2);
+                    }
+                    else
+                    {
+                        return (i1, j);
+                    }
+                }
+                else
+                {
+                    return (-1, -1);
+                }
+            }
+
+        }
+
         public (int i, int j) ExactStringMatchingWithESA(string pattern)
         {
             int c = 0;
             bool queryFound = true;
-            (int i, int j) = GetInterval(0, N - 1, pattern[c], c);
+            //(int i, int j) = GetInterval(0, N - 1, pattern[c], c);
+            (int i, int j) = GetIntervalHack(0, N - 1, pattern[c], c);
             while (i != -1 && j != -1 && c < pattern.Length && queryFound)
             {
                 int idx = Sa[i];
