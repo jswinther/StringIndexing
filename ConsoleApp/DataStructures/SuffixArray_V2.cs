@@ -181,7 +181,7 @@ namespace ConsoleApp.DataStructures
                 }
                 else
                 {
-                    queryFound = ComparePrefix(pattern, S.Substring(Sa[i])) == 0;
+                    queryFound = ComparePrefix(pattern, S.Substring(idx)) == 0;
                 }
             }
             if (queryFound)

@@ -136,8 +136,8 @@ namespace ConsoleApp
             {
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
-                //DummyData.DNA("DNA_512"),
-                DummyData.DNA("DNA_262144"),
+                DummyData.DNA("DNA_512"),
+                //DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
                 //DummyData.DNA("DNA_1048576"),
                 //DummyData.DNA("DNA_2097152"),
@@ -153,13 +153,13 @@ namespace ConsoleApp
                 //BuildSuffixArray_V2,
                 BuildSuffixArray_V1,
                 //BuildSuffixTree,
-                BuildSuffixArray_V3,
+                //BuildSuffixArray_V3,
                 //BuildPrecomputed,
             };
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
-            string p1 = "a";
+            string p1 = "aa";
             Random random = new Random();
             int x = 1;
             string p2 = "a";
