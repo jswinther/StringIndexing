@@ -58,13 +58,13 @@ namespace ConsoleApp.DataStructures
             occurrences.Add(suffixArray[substringIndex]);
 
             // Check all suffixes that come after the first occurrence of the substring
-            for (int i = substringIndex + 1; i < n && Lcp1[i - 1] >= pattern.Length; i++)
+            for (int i = substringIndex + 1; i < n && Lcp1[i] >= pattern.Length; i++)
             {
                 occurrences.Add(suffixArray[i]);
             }
 
             // Check all suffixes that come before the first occurrence of the substring
-            for (int i = substringIndex - 1; i >= 0 && Lcp1[i] >= pattern.Length; i--)
+            for (int i = substringIndex - 1; i >= 0 && Lcp1[i+1] >= pattern.Length; i--)
             {
                 occurrences.Add(suffixArray[i]);
             }
@@ -212,6 +212,7 @@ namespace ConsoleApp.DataStructures
             {
                 int min = occ1 + y_min + pattern1.Length;
                 int max = occ1 + y_max + pattern1.Length;
+                var getkekd = occurencesP2.GetViewBetween(min, max);
                 foreach (var occ2 in occurencesP2.GetViewBetween(min, max))
                 {
                     occs.Add((occ1, occ2 - occ1 + pattern2.Length));

@@ -212,7 +212,7 @@ namespace ConsoleApp.DataStructures
             if ((start, end) == (-1, -1)) { return Enumerable.Empty<int>(); }
             if (start == -1) start = 0;
             if (end == -1) end = 0;
-            return Sa.Take(new Range(start, end));
+            return Sa.Take(new Range(start, end+1));
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
