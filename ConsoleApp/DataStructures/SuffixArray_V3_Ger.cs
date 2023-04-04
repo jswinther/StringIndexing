@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel.Design.Serialization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,20 +28,34 @@ namespace ConsoleApp.DataStructures
             BuildChildTable();
 
             System.Collections.Generic.HashSet<(int, int)> hashSet = new();
-            Stack<(int, int)> intervals = new Stack<(int, int)> ();
-            intervals.Push((0, n - 1));
-            while(intervals.Count > 0)
+            Queue<(int, int)> intervals = new Queue<(int, int)> ();
+            intervals.Enqueue((0, n - 1));
+            // First add child intervals for the interval [0..n]
+            var Initinterval = intervals.Dequeue();
+            hashSet.Add((Initinterval.Item1, Initinterval.Item2));
+            foreach (var item in GetChildIntervalsInit(Initinterval.Item1, Initinterval.Item2))
             {
-                var interval = intervals.Pop();
+                if (item != (-1, -1) && item.Item2 - item.Item1 > 0)
+                {
+
+                    if (!hashSet.Contains(item)) intervals.Enqueue(item);
+                    hashSet.Add(item);
+
+                }
+            }
+            while (intervals.Count > 0)
+            {
+                var interval = intervals.Dequeue();
                 if (interval.Item1 == interval.Item2) hashSet.Add((interval.Item1, interval.Item2));
                 else
                 {
+                    hashSet.Add(interval);
                     foreach (var item in GetChildIntervals(interval.Item1, interval.Item2))
                     {
                         if (item != (-1, -1) && item.Item2 - item.Item1 > 0)
                         {
                             
-                            if (!hashSet.Contains(item)) intervals.Push(item);
+                            if (!hashSet.Contains(item)) intervals.Enqueue(item);
                             hashSet.Add(item);
 
                         }
@@ -194,16 +209,37 @@ namespace ConsoleApp.DataStructures
             }
         }
 
-        //6.7
 
-        private List<(int, int)> GetChildIntervals(int i, int j)
+        //Only works on interval [0..n]
+        private List<(int, int)> GetChildIntervalsInit(int i, int j)
+        {
+            if (j < i) return new List<(int, int)>();
+            List<(int, int)> intervals = new List<(int, int)>();
+            int i1 = Children[i].Next;
+            intervals.Add((i, i1 - 1));
+            while (Children[i1].Next != -1)
+            {
+                var i2 = Children[i1].Next;
+                intervals.Add((i1, i2 - 1));
+                i1 = i2;
+
+            }
+            intervals.Add((i1, j));
+            return intervals;
+
+        }
+
+
+            //6.7
+
+            private List<(int, int)> GetChildIntervals(int i, int j)
         {
             if (j < i) return new List<(int, int)>();
             List<(int, int)> intervals = new List<(int, int)>();
             int i1 = 0;
-            if (i != -1 && i < Children[j].Up && Children[j].Up <= j)
+            if (i != -1 && i < Children[j+1].Up && Children[j+1].Up <= j)
             {
-                i1 = Children[i].Next;
+                i1 = Children[j+1].Up;
             }
             else if (i != -1)
             {
