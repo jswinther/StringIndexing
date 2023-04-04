@@ -150,10 +150,10 @@ namespace ConsoleApp
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
                 //BuildUkkonen,
-                BuildSuffixArray_V2,
+                //BuildSuffixArray_V2,
                 //BuildSuffixArray_V1,
                 //BuildSuffixTree,
-                //BuildSuffixArray_V3,
+                BuildSuffixArray_V3,
                 //BuildPrecomputed,
             };
             
