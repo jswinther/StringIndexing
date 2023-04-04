@@ -24,7 +24,7 @@ namespace ConsoleApp
 
         public static PatternMatcher BuildSuffixArray_V3(string str)
         {
-            return new SuffixArray_V3_Ger(str);
+            return new SuffixArray_V3(str);
         }
 
         public static PatternMatcher BuildSuffixTree(string str)
@@ -138,7 +138,7 @@ namespace ConsoleApp
                 //DummyData.DNA("TEST"),
                 //DummyData.DNA("DNA_512"),
                 DummyData.DNA("DNA_262144"),
-                DummyData.DNA("DNA_524288"),
+                //DummyData.DNA("DNA_524288"),
                 //DummyData.DNA("DNA_1048576"),
                 //DummyData.DNA("DNA_2097152"),
                 //DummyData.DNA("DNA_4194304"),
