@@ -130,29 +130,23 @@ namespace ConsoleApp.DataStructures
         }
 
 
+        //Only works on interval [0..n]
 
-
-        public (int, int) GetInterval(int i, int j, char c, int ci)
+        public (int, int) GetIntervalInit(int i, int j, char c, int ci)
         {
-            int i1;
-            if (i < Children[j].Up && Children[j].Up <= j)
+            if (j < i) return (-1, -1);
+            int i1 = Children[i].Next;
+            
+            if (S[Sa[i] + ci] == c && S[Sa[i1-1] + ci] == c)
             {
-                i1 = Children[i].Next;
-
-            }
-            else
-            {
-                i1 = Children[i].Down;
-            }
-            if (S[Sa[i] + ci] == c)
-            { 
                 return (i, i1 - 1);
             }
             //intervals.Add((i, i1 - 1));
-            while (i1 != -1 && Children[i1].Next != -1)
+            int i2 = -1;
+            while (Children[i1].Next != -1)
             {
-                var i2 = Children[i1].Next;
-                if (S[Sa[i1] + ci] == c)
+                i2 = Children[i1].Next;
+                if (S[Sa[i1] + ci] == c && S[Sa[i2 - 1] + ci] == c)
                 {
                     return (i1, i2 - 1);
                 }
@@ -160,9 +154,53 @@ namespace ConsoleApp.DataStructures
                 i1 = i2;
             }
             //intervals.Add((i1, j));
-            return (i1, j);
+            if (S[Sa[i1] + ci] == c)
+            {
+                return (i1, j);
+            }
+            else return (-1, -1);
+                
         }
 
+
+        public (int, int) GetInterval(int i, int j, char c, int ci)
+        {
+            int i1;
+            if (i < Children[j+1].Up && Children[j+1].Up <= j)
+            {
+                i1 = Children[j+1].Up;
+
+            }
+            else
+            {
+                i1 = Children[i].Down;
+            }
+            if (S[Sa[i] + ci] == c && S[Sa[i1-1] + ci] == c)
+            { 
+                return (i, i1 - 1);
+            }
+            //intervals.Add((i, i1 - 1));
+            int i2 = -1;
+            while (Children[i1].Next != -1)
+            {
+                i2 = Children[i1].Next;
+                if (S[Sa[i1] + ci] == c && S[Sa[i2-1] + ci] == c)
+                {
+                    return (i1, i2 - 1);
+                }
+                //intervals.Add((i1, i2 - 1));
+                i1 = i2;
+            }
+            //intervals.Add((i1, j));
+            if (S[Sa[i1] + ci] == c && S[Sa[j] + ci] == c)
+            {
+                return (i1, j);
+            }
+            else return (-1, -1);
+        }
+
+
+        // This is poopy
         public (int, int) GetIntervalHack(int i, int j, char c, int ci)
         {
             int i1 = i;
@@ -219,7 +257,7 @@ namespace ConsoleApp.DataStructures
             int c = 0;
             bool queryFound = true;
             //(int i, int j) = GetInterval(0, N - 1, pattern[c], c);
-            (int i, int j) = GetIntervalHack(0, N - 1, pattern[c], c);
+            (int i, int j) = GetIntervalInit(0, N - 1, pattern[c], c);
             while (i != -1 && j != -1 && c < pattern.Length && queryFound)
             {
                 int idx = Sa[i];
@@ -261,17 +299,17 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<int> Matches(string pattern)
         {
-            /* Den rigtige med GetInterval og Childtable!!!!
+            /* Den rigtige med GetInterval og Childtable!!!! */
             (int start, int end) = ExactStringMatchingWithESA(pattern);
             if ((start, end) == (-1, -1)) { return Enumerable.Empty<int>(); }
             if (start == -1) start = 0;
             if (end == -1) end = 0;
             return Sa.Take(new Range(start, end + 1));
-            */
-            /*Den fake med precomputed intervaller */
+            
+            /*Den fake med precomputed intervaller 
             IntervalFinder = new IntervalFinder(pattern, S);
             (int start, int end) = IntervalFinder.GetInterval();
-            return Sa.Take(new Range(start, end));
+            return Sa.Take(new Range(start, end));*/
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)

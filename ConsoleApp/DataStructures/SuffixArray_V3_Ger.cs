@@ -15,14 +15,14 @@ namespace ConsoleApp.DataStructures
         public int n { get; }
         public string[] Suffixes { get; private set; }
         public (int Up, int Down, int Next)[] Children { get; }
-        private SuffixArray_V1 SuffixArray_V1 { get; set; }
+        private SuffixArray_V2 SuffixArray_V2 { get; set; }
         private Dictionary<(int, int), SortedSet<int>> sorted = new();
 
         public SuffixArray_V3_Ger(string S) : base(S)
         {
             
-            SuffixArray_V1 = new SuffixArray_V1 (S);
-            n = SuffixArray_V1.S.Length;
+            SuffixArray_V2 = new SuffixArray_V2 (S);
+            n = SuffixArray_V2.S.Length;
             
             Children = new (int Up, int Down, int Next)[n];
             BuildChildTable();
@@ -72,15 +72,14 @@ namespace ConsoleApp.DataStructures
             sorted = dic;
         }
 
-        public int[] LCP { get => SuffixArray_V1.Lcp1; }
-        public int[] SA { get => SuffixArray_V1.Sa; }
-        public string S { get => SuffixArray_V1.S; }
+        public int[] LCP { get => SuffixArray_V2.Lcp1; }
+        public int[] SA { get => SuffixArray_V2.Sa; }
+        public string S { get => SuffixArray_V2.S; }
         #region PatternMatcher
         public override IEnumerable<int> Matches(string pattern)
         {
-            IntervalFinder intervalFinder = new IntervalFinder(pattern, S);
-            (int start, int end) = intervalFinder.GetInterval();
-            return sorted[(start, end)];
+            var interval = SuffixArray_V2.ExactStringMatchingWithESA(pattern);
+            return sorted[interval];
         }
 
         private IEnumerable<int> AddOccurrences(int substringOccurrence, string pattern)
@@ -118,16 +117,8 @@ namespace ConsoleApp.DataStructures
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
             List<(int, int)> occs = new List<(int, int)>();
-            (int i, int j) = ExactStringMatchingWithESA(pattern1);
-            if (i == -1 && j == -1) return Enumerable.Empty<(int, int)>();
-            if (i == -1) i = 0;
-            if (j == -1) j = 0;
-            var pattern1Occurrences = sorted[(i, j)];
-            (i, j) = ExactStringMatchingWithESA(pattern2);
-            if (i == -1 && j == -1) return Enumerable.Empty<(int, int)>();
-            if (i == -1) i = 0;
-            if (j == -1) j = 0;
-            var pattern2Occurrences = sorted[(i, j)];
+            var pattern1Occurrences = Matches(pattern1);
+            var pattern2Occurrences = new SortedSet<int>(Matches(pattern2));
             foreach (var occ1 in pattern1Occurrences)
             {
                 int min = occ1 + y_min + pattern1.Length;
