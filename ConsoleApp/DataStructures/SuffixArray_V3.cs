@@ -18,8 +18,9 @@ namespace ConsoleApp.DataStructures
         public SuffixArray_V3(string S) : base(S)
         {
             Dictionary<(int, int), SortedSet<int>> dic = new();
+           
             GetAllLcpIntervals();
-            foreach (var interval in Nodes.Keys)
+            foreach (var interval in _nodes.Keys)
             {
                 var originalPlacesOfSuffixes = Sa.Take(new Range(new Index(interval.Item1 == -1 ? 0 : interval.Item1), new Index(interval.Item2 + 1)));
                 dic.Add(interval, new SortedSet<int>(originalPlacesOfSuffixes));

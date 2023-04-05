@@ -27,6 +27,11 @@ namespace ConsoleApp
             return new SuffixArray_V3(str);
         }
 
+        public static PatternMatcher BuildSuffixArray_V4(string str)
+        {
+            return new SuffixArray_V4(str);
+        }
+
         public static PatternMatcher BuildSuffixTree(string str)
         {
             return SuffixTree.Create(str);
@@ -153,13 +158,14 @@ namespace ConsoleApp
                 //BuildSuffixArray_V1,
                 //BuildSuffixArray_V2,
                 //BuildSuffixTree,
-                BuildSuffixArray_V3,
+                //BuildSuffixArray_V3,
+                BuildSuffixArray_V4,
                 //BuildPrecomputed,
             };
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
-            string p1 = "aa";
+            string p1 = "a";
             Random random = new Random();
             int x = 1;
             string p2 = "a";
