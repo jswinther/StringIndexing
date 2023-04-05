@@ -74,26 +74,29 @@ namespace ConsoleApp.DataStructures
 
         //6.7
 
-        public List<(int, int)> GetChildIntervals(int i, int j)
+        private List<(int, int)> GetChildIntervals(int i, int j)
         {
             if (j < i) return new List<(int, int)>();
             List<(int, int)> intervals = new List<(int, int)>();
             int i1 = 0;
-            if (i != -1 && i < Children[j].Up && Children[j].Up <= j)
+            if (i != -1 && i < Children[j + 1].Up && Children[j + 1].Up <= j)
             {
-                i1 = Children[i].Next;
+                i1 = Children[j + 1].Up;
             }
             else if (i != -1)
             {
                 i1 = Children[i].Down;
             }
+            i = i == -1 ? 0 : i;
             intervals.Add((i, i1 - 1));
             while (i1 != -1 && Children[i1].Next != -1)
             {
                 var i2 = Children[i1].Next;
+                i1 = i1 == -1 ? 0 : i1;
                 intervals.Add((i1, i2 - 1));
-                i1 = i2; 
+                i1 = i2;
             }
+            i1 = i1 == -1 ? 0 : i1;
             intervals.Add((i1, j));
             return intervals;
         }
@@ -348,9 +351,103 @@ namespace ConsoleApp.DataStructures
             return occs;
         }
 
-   
+        public class IntervalNode
+        {
+            public (int start, int end) Interval { get; set; }
+            public (int, int) Parent { get; set; }
+            public System.Collections.Generic.HashSet<(int, int)> Children { get; set; } = new();
+
+            public IntervalNode((int start, int end) interval, (int start, int end) parent)
+            {
+                Interval = interval;
+                Parent = parent;
+            }
+        }
+
+        public System.Collections.Generic.HashSet<(int, int)> Leaves { get; } = new();
+        public Dictionary<(int, int), IntervalNode> Nodes { get; } = new();
+
+        public void GetAllLcpIntervals()
+        {
+            System.Collections.Generic.HashSet<(int, int)> hashSet = new();
+            Queue<(int, int)> intervals = new Queue<(int, int)>();
+            intervals.Enqueue((0, n - 1));
+            // First add child intervals for the interval [0..n]
+            var Initinterval = intervals.Dequeue();
+            hashSet.Add((Initinterval.Item1, Initinterval.Item2));
+            Nodes.Add(Initinterval, new IntervalNode(Initinterval, (-1, -1)));
+            var currNode = Nodes[Initinterval];
+            foreach (var item in GetChildIntervalsInit(Initinterval.Item1, Initinterval.Item2))
+            {
+                if (item != (-1, -1) && item.Item2 - item.Item1 > 0)
+                {
+
+                    if (!hashSet.Contains(item)) intervals.Enqueue(item);
+                    hashSet.Add(item);
+                    currNode.Children.Add(item);
+                    Nodes.Add(item, new IntervalNode(item, currNode.Interval));
+                }
+            }
+            while (intervals.Count > 0)
+            {
+                var interval = intervals.Dequeue();
+                if (interval.Item1 == interval.Item2) hashSet.Add((interval.Item1, interval.Item2));
+                else
+                {
+                    hashSet.Add(interval);
+                    Nodes.TryGetValue(interval, out currNode);
+                    foreach (var item in GetChildIntervals(interval.Item1, interval.Item2))
+                    {
+                        if (item != (-1, -1) && item.Item2 - item.Item1 > 0)
+                        {
+
+                            if (!hashSet.Contains(item))
+                            {
+                                intervals.Enqueue(item);
+                                currNode.Children.Add(item);
+                                Nodes.Add(item, new IntervalNode(item, currNode.Interval));
+                            }
+                            hashSet.Add(item);
+
+                        }
+                    }
+
+                    if (currNode.Children.Count == 0)
+                    {
+                        Leaves.Add(currNode.Interval);
+                    }
+                }
+            }
+        }
+       
+
 
         
+        
+
+
+        //Only works on interval [0..n]
+        public List<(int, int)> GetChildIntervalsInit(int i, int j)
+        {
+            if (j < i) return new List<(int, int)>();
+            List<(int, int)> intervals = new List<(int, int)>();
+            int i1 = Children[i].Next;
+            intervals.Add((i, i1 - 1));
+            while (Children[i1].Next != -1)
+            {
+                var i2 = Children[i1].Next;
+                intervals.Add((i1, i2 - 1));
+                i1 = i2;
+
+            }
+            intervals.Add((i1, j));
+            return intervals;
+
+        }
+
+        
+
+
     }
 
     
