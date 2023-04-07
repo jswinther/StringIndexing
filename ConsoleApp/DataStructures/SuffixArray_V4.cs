@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,25 +16,17 @@ namespace ConsoleApp.DataStructures
         public SuffixArray_V4(string str) : base(str)
         {
             // Populates _nodes and _leaves
-            int logn = (int)Math.Floor(Math.Log2(n));
-            int minIntervalSize = logn;
+            //int logn = (int)Math.Floor(Math.Log2(n));
+            int minIntervalSize = (int)Math.Sqrt(n);
             GetAllLcpIntervals(minIntervalSize);
-            var leaf = Leaves.FirstOrDefault();
-            var dist = Tree.DistanceToRoot(leaf);
-            var siblings = Tree.SiblingIntervals(leaf);
-            var parent = Tree[leaf].Parent;
-            var grandParent = Tree[parent].Parent;
-            var children = Tree.GetLeafNodesForInterval(grandParent);
-            
+           
         }
 
+        #region Pattern Matching
         public override IEnumerable<int> Matches(string pattern)
         {
-            var _int = ExactStringMatchingWithESA(pattern);
-            var occs = Tree.GetSortedLeavesForInterval(_int);
-
-
-            return base.Matches(pattern);
+            (int start, int end) = ExactStringMatchingWithESA(pattern);
+            return Sa.Take(new Range(start, end + 1));
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
@@ -43,8 +36,13 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            return base.Matches(pattern1, y_min, y_max, pattern2);
+            var occs1 = Matches(pattern1);
+            var occs2 = GetSortedLeavesForInterval(ExactStringMatchingWithESA(pattern2));
+            return ReportOccurences(pattern1, y_min, y_max, pattern2, occs1, occs2);
         }
+        #endregion
+
+
 
 
         public void GetAllLcpIntervals(int minSize)
@@ -101,15 +99,18 @@ namespace ConsoleApp.DataStructures
                 }
             }
         }
-    }
 
-    internal static class ExtensionMethodsForSuffixArray_V4
-    {
-        public static int DistanceToRoot(this Dictionary<(int, int), IntervalNode> tree, (int, int) interval)
+
+
+
+        #region Query Methods
+
+
+        public int DistanceToRoot((int, int) interval)
         {
             int counter = 0;
             var tempInterval = interval;
-            while (tree.TryGetValue(tempInterval, out IntervalNode node))
+            while (Tree.TryGetValue(tempInterval, out IntervalNode node))
             {
                 // We are at root
                 if (node.Parent == (-1, -1)) return counter;
@@ -119,39 +120,71 @@ namespace ConsoleApp.DataStructures
             return -1;
         }
 
-        public static HashSet<(int, int)> SiblingIntervals(this Dictionary<(int, int), IntervalNode> tree, (int, int) interval)
+        public HashSet<(int, int)> SiblingIntervals((int, int) interval)
         {
-            if (!tree.TryGetValue(interval, out IntervalNode node)) return new();
+            if (!Tree.TryGetValue(interval, out IntervalNode node)) return new();
             if (node.Parent == (-1, -1)) return new();
-            var parentNode = tree[node.Parent];
+            var parentNode = Tree[node.Parent];
             return parentNode.Children;
         }
 
-        public static SortedSet<int> GetSortedLeavesForInterval(this Dictionary<(int, int), IntervalNode> tree, (int, int) interval)
+        public SortedSet<int> GetSortedLeavesForInterval((int, int) interval)
         {
-            var childIntervals = GetLeafNodesForInterval(tree, interval);
-            var mergedOccs = childIntervals.SelectMany(s => tree[s].SortedOccurrences);
-            var sortedOccs = new SortedSet<int>(mergedOccs);
+            var childIntervals = GetLeafNodesForInterval(interval);
+            var nonSortedIntervals = FindNonSortedIntervals(childIntervals.ToList(), interval);
+            var occurrencesOfNonSortedIntervalsSorted = nonSortedIntervals.SelectMany(tempInterval => Sa.Take(new Range(new Index(tempInterval.Item1 == -1 ? 0 : tempInterval.Item1), new Index(tempInterval.Item2 + 1)))).ToList();
+            var mergedOccs = childIntervals.SelectMany(s => Tree[s].SortedOccurrences);
+            var sortedOccs = new SortedSet<int>(mergedOccs.Concat(occurrencesOfNonSortedIntervalsSorted));
 
 
             return sortedOccs;
         }
 
-        public static HashSet<(int, int)> GetLeafNodesForInterval(this Dictionary<(int, int), IntervalNode> tree, (int, int) interval)
+        public List<(int, int)> FindNonSortedIntervals(List<(int, int)> preSortedLeafNodes, (int, int) interval)
+        {
+            (int min, int max) = interval;
+            List<(int, int)> nonSortedIntervals = new();
+            // From min in the original interval to the smallest interval start.
+            (int, int) firstInterval = (min, preSortedLeafNodes[0].Item1 - 1);
+            nonSortedIntervals.Add(firstInterval);
+            for (int i = 1; i < preSortedLeafNodes.Count; i++)
+            {
+                if (preSortedLeafNodes[i].Item1 - preSortedLeafNodes[i - 1].Item2 > 1)
+                {
+                    (int, int) tempInterval = (preSortedLeafNodes[i - 1].Item2 + 1, preSortedLeafNodes[i].Item1 - 1);
+                    nonSortedIntervals.Add(tempInterval);
+                }
+            }
+            (int, int) lastInterval = (preSortedLeafNodes[preSortedLeafNodes.Count - 1].Item2 + 1, max);
+            nonSortedIntervals.Add(lastInterval);
+
+            return nonSortedIntervals;
+        }
+
+        public HashSet<(int, int)> GetLeafNodesForInterval((int, int) interval)
         {
             Queue<(int, int)> intervals = new();
             HashSet<(int, int)> leaves = new();
             intervals.Enqueue(interval);
             while (intervals.TryDequeue(out (int, int) res))
             {
-                var childIntervals = tree[res].Children;
+                var childIntervals = Tree[res].Children;
                 foreach (var item in childIntervals)
                 {
-                    if (tree[item].IsLeaf) leaves.Add(item);
+                    if (Tree[item].IsLeaf) leaves.Add(item);
                     else intervals.Enqueue(item);
                 }
             }
             return leaves;
         }
+
+
+        #endregion
+
+
+
+
     }
+
+    
 }

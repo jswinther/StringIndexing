@@ -231,6 +231,22 @@ namespace ConsoleApp.DataStructures
             return Sa.Take(new Range(start, end));*/
         }
 
+        public int[] GetOccurrencesForPattern(string pattern)
+        {
+            (int start, int end) = ExactStringMatchingWithESA(pattern);
+            return GetOccurrencesForInterval(start, end);
+        }
+
+        public int[] GetOccurrencesForInterval(int start, int end)
+        {
+            int[] occurrences = new int[end + 1 - start];
+            for (int i = 0; i < occurrences.Length; i++)
+            {
+                occurrences[i] = Sa[i];
+            }
+            return occurrences;
+        }
+
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
         {
             var occurrencesP1 = Matches(pattern1);
@@ -332,11 +348,14 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            List<(int, int)> occs = new();
-
             var occurrencesP1 = Matches(pattern1);
+            SortedSet<int> occurrencesP2 = new(Matches(pattern2));
+            return ReportOccurences(pattern1, y_min, y_max, pattern2, occurrencesP1, occurrencesP2);
+        }
 
-            SortedSet<int> occurencesP2 = new(Matches(pattern2));
+        public IEnumerable<(int, int)> ReportOccurences(string pattern1, int y_min, int y_max, string pattern2, IEnumerable<int> occurrencesP1, SortedSet<int> occurencesP2)
+        {
+            List<(int, int)> occs = new();
             foreach (var occ1 in occurrencesP1)
             {
                 int min = occ1 + y_min + pattern1.Length;
@@ -344,10 +363,11 @@ namespace ConsoleApp.DataStructures
                 foreach (var occ2 in occurencesP2.GetViewBetween(min, max))
                 {
                     occs.Add((occ1, occ2 - occ1 + pattern2.Length));
+                    break;
                 }
             }
 
-            
+
             return occs;
         }
 

@@ -32,6 +32,16 @@ namespace ConsoleApp
             return new SuffixArray_V4(str);
         }
 
+        public static PatternMatcher BuildSuffixArray_V5(string str)
+        {
+            return new SuffixArray_V5_Radix(str);
+        }
+
+        public static PatternMatcher BuildSuffixArray_V6(string str)
+        {
+            return new SuffixArray_V6(str);
+        }
+
         public static PatternMatcher BuildSuffixTree(string str)
         {
             return SuffixTree.Create(str);
@@ -70,6 +80,7 @@ namespace ConsoleApp
             foreach (var query in queries)
             {
                 // Single Pattern
+                /*
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
@@ -83,7 +94,8 @@ namespace ConsoleApp
                 {
                     benchmark.SinglePatternMatchesQuery = -1;
                 }
-
+                */
+                /*
                 // Double Pattern + Fixed Gap
                 try
                 {
@@ -97,7 +109,7 @@ namespace ConsoleApp
                 {
                     benchmark.DoublePatternFixedMatchesQuery = -1;
                 }
-                
+                */
                 // Double Pattern + Variable Gap
                 try
                 {
@@ -141,10 +153,10 @@ namespace ConsoleApp
             {
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
-                DummyData.DNA("DNA_512"),
+                //DummyData.DNA("DNA_512"),
                 //DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
-                //DummyData.DNA("DNA_1048576"),
+                DummyData.DNA("DNA_1048576"),
                 //DummyData.DNA("DNA_2097152"),
                 //DummyData.DNA("DNA_4194304"),
                 //DummyData.DNA("DNA_8388608"),
@@ -156,10 +168,11 @@ namespace ConsoleApp
             {
                 //BuildUkkonen,
                 //BuildSuffixArray_V1,
-                //BuildSuffixArray_V2,
+                BuildSuffixArray_V2,
                 //BuildSuffixTree,
                 //BuildSuffixArray_V3,
-                BuildSuffixArray_V4,
+                //BuildSuffixArray_V5,
+                BuildSuffixArray_V6,
                 //BuildPrecomputed,
             };
             
