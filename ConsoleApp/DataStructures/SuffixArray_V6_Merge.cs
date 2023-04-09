@@ -33,23 +33,25 @@ namespace ConsoleApp.DataStructures
             Array.Sort(occs1);
             Array.Sort(occs2);
 
-            int j = 0;
+            int k = 0;
             for (int i = 0; i < occs1.Length; i++)
             {
                 int occ1 = occs1[i];
-                
-                while (true)
+
+                int min = occ1 + pattern1.Length + y_min;
+                int max = occ1 + pattern1.Length + y_max;
+
+                for (int j = k; j < occs2.Length; j++)
                 {
-                    if (j == occs2.Length) return occs;
-                    bool isInRange = (occ1 + pattern1.Length + y_min <= occs2[j] && occs2[j] <= occ1 + pattern1.Length + y_max);
-                    if (isInRange)
+                    int occ2 = occs2[j];
+                    if (min <= occ2 && occ2 <= max)
                     {
                         occs.Add((occ1, occs2[j] - occ1 + pattern2.Length));
                         break;
                     }
                     else
                     {
-                        j++;
+                        k++;
                     }
                 }
             }
