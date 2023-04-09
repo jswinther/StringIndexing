@@ -16,7 +16,7 @@ namespace ConsoleApp.DataStructures
         public SuffixArray_V4(string str) : base(str)
         {
             // Populates _nodes and _leaves
-            int logn = (int)Math.Floor(Math.Log2(n));
+            int logn = (int)Math.Floor(Math.Sqrt(n));
             int minIntervalSize = logn;
             GetAllLcpIntervals(minIntervalSize);
            

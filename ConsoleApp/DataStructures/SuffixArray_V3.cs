@@ -13,19 +13,17 @@ namespace ConsoleApp.DataStructures
     internal class SuffixArray_V3 : SuffixArray_V2
     {
 
-        private Dictionary<(int, int), SortedSet<int>> sorted = new();
+        private Dictionary<(int, int), int[]> sorted = new();
 
         public SuffixArray_V3(string S) : base(S)
         {
-            Dictionary<(int, int), SortedSet<int>> dic = new();
-           
             GetAllLcpIntervals();
             foreach (var interval in _nodes.Keys)
             {
-                var originalPlacesOfSuffixes = Sa.Take(new Range(new Index(interval.Item1 == -1 ? 0 : interval.Item1), new Index(interval.Item2 + 1)));
-                dic.Add(interval, new SortedSet<int>(originalPlacesOfSuffixes));
+                var originalPlacesOfSuffixes = GetOccurrencesForInterval(interval);
+                Array.Sort(originalPlacesOfSuffixes);
+                sorted.Add(interval, originalPlacesOfSuffixes);
             }
-            sorted = dic;
         }
 
 
@@ -56,8 +54,8 @@ namespace ConsoleApp.DataStructures
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
             List<(int, int)> occs = new List<(int, int)>();
-            var pattern1Occurrences = Matches(pattern1);
-            var pattern2Occurrences = new SortedSet<int>(Matches(pattern2));
+            var pattern1Occurrences = sorted[ExactStringMatchingWithESA(pattern1)];
+            var pattern2Occurrences = sorted[ExactStringMatchingWithESA(pattern2)];
             foreach (var occ1 in pattern1Occurrences)
             {
                 int min = occ1 + y_min + pattern1.Length;
