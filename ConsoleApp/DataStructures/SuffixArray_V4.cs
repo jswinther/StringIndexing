@@ -25,8 +25,7 @@ namespace ConsoleApp.DataStructures
         #region Pattern Matching
         public override IEnumerable<int> Matches(string pattern)
         {
-            (int start, int end) = ExactStringMatchingWithESA(pattern);
-            return Sa.Take(new Range(start, end + 1));
+            return base.Matches(pattern);
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
@@ -37,6 +36,9 @@ namespace ConsoleApp.DataStructures
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
             var occs1 = Matches(pattern1);
+            (int start, int end) = ExactStringMatchingWithESA(pattern2);
+
+
             var occs2 = GetSortedLeavesForInterval(ExactStringMatchingWithESA(pattern2));
             return ReportOccurences(pattern1, y_min, y_max, pattern2, occs1, occs2);
         }
@@ -93,8 +95,9 @@ namespace ConsoleApp.DataStructures
                     if (currNode.Children.Count == 0)
                     {
                         _leaves.Add(currNode.Interval);
-                        var originalPlacesOfSuffixes = Sa.Take(new Range(new Index(interval.Item1 == -1 ? 0 : interval.Item1), new Index(interval.Item2 + 1)));
-                        currNode.SortedOccurrences = new SortedSet<int>(originalPlacesOfSuffixes);
+                        var originalPlacesOfSuffixes = GetOccurrencesForInterval(interval.Item1, interval.Item2);
+                        Array.Sort(originalPlacesOfSuffixes);
+                        currNode.SortedOccurrences = originalPlacesOfSuffixes;
                     }
                 }
             }
@@ -135,7 +138,7 @@ namespace ConsoleApp.DataStructures
 
             var childIntervals = GetLeafNodesForInterval(interval);
             var nonSortedIntervals = FindNonSortedIntervals(childIntervals.ToList(), interval);
-            var occurrencesOfNonSortedIntervalsSorted = nonSortedIntervals.SelectMany(tempInterval => Sa.Take(new Range(new Index(tempInterval.Item1 == -1 ? 0 : tempInterval.Item1), new Index(tempInterval.Item2 + 1)))).ToList();
+            var occurrencesOfNonSortedIntervalsSorted = new SortedSet<int>(nonSortedIntervals.SelectMany(tempInterval => Sa.Take(new Range(new Index(tempInterval.Item1 == -1 ? 0 : tempInterval.Item1), new Index(tempInterval.Item2 + 1)))));
             mergedOccs.UnionWith(occurrencesOfNonSortedIntervalsSorted);
             foreach (var childInterval in childIntervals)
             {

@@ -384,7 +384,7 @@ namespace ConsoleApp.DataStructures
             }
 
             public bool IsLeaf { get => Children.Count == 0; }
-            public SortedSet<int> SortedOccurrences { get; set; }
+            public int[] SortedOccurrences { get; set; }
         }
 
         public System.Collections.Generic.HashSet<(int, int)> _leaves { get; } = new();
