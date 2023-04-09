@@ -168,10 +168,10 @@ namespace ConsoleApp.DataStructures
             return nonSortedIntervals;
         }
 
-        public HashSet<(int, int)> GetLeafNodesForInterval((int, int) interval)
+        public List<(int, int)> GetLeafNodesForInterval((int, int) interval)
         {
             Queue<(int, int)> intervals = new();
-            HashSet<(int, int)> leaves = new();
+            List<(int, int)> leaves = new();
             intervals.Enqueue(interval);
             while (intervals.TryDequeue(out (int, int) res))
             {
