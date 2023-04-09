@@ -9,6 +9,8 @@ namespace ConsoleApp
 {
     internal class Program
     {
+
+
         
 
         public delegate PatternMatcher BuildDataStructure(string str);
@@ -149,6 +151,7 @@ namespace ConsoleApp
 
         static void Main(string[] args)
         {
+
             string[] dnaSequences = new string[]
             {
                 //DummyData.Dummy,
@@ -177,6 +180,8 @@ namespace ConsoleApp
                 
                 //BuildPrecomputed,
             };
+
+            
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
@@ -198,6 +203,52 @@ namespace ConsoleApp
             table.Options.NumberAlignment = Alignment.Right;
             table.Write();
 
+        }
+
+        public static T[] KWayMerge<T>(T[][] arrays) where T : IComparable<T>
+        {
+            // Create a SortedSet to store the current minimum element from each array
+            SortedSet<(T value, int arrayIndex)> minHeap = new SortedSet<(T, int)>();
+
+            // Initialize the heap with the first element from each input array
+            for (int i = 0; i < arrays.Length; i++)
+            {
+                if (arrays[i].Length > 0)
+                {
+                    minHeap.Add((arrays[i][0], i));
+                }
+            }
+
+            // Calculate the total number of elements in all the input arrays
+            int totalElements = arrays.Sum(a => a.Length);
+
+            // Initialize the output array with the correct length
+            T[] result = new T[totalElements];
+            int index = 0;
+
+            // Merge the arrays using the k-way merge algorithm
+            while (minHeap.Count > 0)
+            {
+                // Extract the minimum element from the heap and add it to the output array
+                (T value, int arrayIndex) = minHeap.Min;
+                minHeap.Remove((value, arrayIndex));
+                result[index++] = value;
+
+                // If the array from which the minimum element was extracted is not empty, add the next element from that array to the heap
+                if (arrays[arrayIndex].Length > 1)
+                {
+                    T[] nextElements = new T[arrays[arrayIndex].Length - 1];
+                    Array.Copy(arrays[arrayIndex], 1, nextElements, 0, nextElements.Length);
+                    minHeap.Add((nextElements[0], arrayIndex));
+                    arrays[arrayIndex] = nextElements;
+                }
+                else if (arrays[arrayIndex].Length == 1)
+                {
+                    arrays[arrayIndex] = Array.Empty<T>(); // Mark the current array as empty so that we don't process it again
+                }
+            }
+
+            return result;
         }
     }
 }
