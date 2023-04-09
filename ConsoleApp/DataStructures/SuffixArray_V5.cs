@@ -7,9 +7,9 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleApp.DataStructures
 {
-    internal class SuffixArray_V6 : SuffixArray_V2
+    internal class SuffixArray_V5 : SuffixArray_V2
     {
-        public SuffixArray_V6(string str) : base(str)
+        public SuffixArray_V5(string str) : base(str)
         {
         }
 
@@ -79,7 +79,7 @@ namespace ConsoleApp.DataStructures
             }
             occs.AddLast(mid);
             return occs;
-            
+
             int i = mid, j = mid - 1;
             while (i < array.Length && array[i] <= y)
             {

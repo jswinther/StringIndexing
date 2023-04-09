@@ -16,8 +16,8 @@ namespace ConsoleApp.DataStructures
         public SuffixArray_V4(string str) : base(str)
         {
             // Populates _nodes and _leaves
-            //int logn = (int)Math.Floor(Math.Log2(n));
-            int minIntervalSize = (int)Math.Sqrt(n);
+            int logn = (int)Math.Floor(Math.Log2(n));
+            int minIntervalSize = logn;
             GetAllLcpIntervals(minIntervalSize);
            
         }
@@ -130,14 +130,18 @@ namespace ConsoleApp.DataStructures
 
         public SortedSet<int> GetSortedLeavesForInterval((int, int) interval)
         {
+
+            SortedSet<int> mergedOccs = new();
+
             var childIntervals = GetLeafNodesForInterval(interval);
             var nonSortedIntervals = FindNonSortedIntervals(childIntervals.ToList(), interval);
             var occurrencesOfNonSortedIntervalsSorted = nonSortedIntervals.SelectMany(tempInterval => Sa.Take(new Range(new Index(tempInterval.Item1 == -1 ? 0 : tempInterval.Item1), new Index(tempInterval.Item2 + 1)))).ToList();
-            var mergedOccs = childIntervals.SelectMany(s => Tree[s].SortedOccurrences);
-            var sortedOccs = new SortedSet<int>(mergedOccs.Concat(occurrencesOfNonSortedIntervalsSorted));
-
-
-            return sortedOccs;
+            mergedOccs.UnionWith(occurrencesOfNonSortedIntervalsSorted);
+            foreach (var childInterval in childIntervals)
+            {
+                mergedOccs.UnionWith(Tree[childInterval].SortedOccurrences);
+            }
+            return mergedOccs;
         }
 
         public List<(int, int)> FindNonSortedIntervals(List<(int, int)> preSortedLeafNodes, (int, int) interval)

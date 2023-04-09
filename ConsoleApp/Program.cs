@@ -34,12 +34,12 @@ namespace ConsoleApp
 
         public static PatternMatcher BuildSuffixArray_V5(string str)
         {
-            return new SuffixArray_V5_Radix(str);
+            return new SuffixArray_V5(str);
         }
 
         public static PatternMatcher BuildSuffixArray_V6(string str)
         {
-            return new SuffixArray_V6(str);
+            return new SuffixArray_V6_Merge(str);
         }
 
         public static PatternMatcher BuildSuffixTree(string str)
@@ -80,7 +80,7 @@ namespace ConsoleApp
             foreach (var query in queries)
             {
                 // Single Pattern
-                /*
+                
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
@@ -94,7 +94,7 @@ namespace ConsoleApp
                 {
                     benchmark.SinglePatternMatchesQuery = -1;
                 }
-                */
+                
                 /*
                 // Double Pattern + Fixed Gap
                 try
@@ -154,11 +154,11 @@ namespace ConsoleApp
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
                 //DummyData.DNA("DNA_512"),
-                //DummyData.DNA("DNA_262144"),
+                DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
-                DummyData.DNA("DNA_1048576"),
+                //DummyData.DNA("DNA_1048576"),
                 //DummyData.DNA("DNA_2097152"),
-                //DummyData.DNA("DNA_4194304"),
+                DummyData.DNA("DNA_4194304"),
                 //DummyData.DNA("DNA_8388608"),
                 //DummyData.DNA("DNA_16777216"),
                 //DummyData.DNA("DNA_33554432")
@@ -167,27 +167,29 @@ namespace ConsoleApp
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
                 //BuildUkkonen,
-                //BuildSuffixArray_V1,
+                BuildSuffixArray_V1,
                 BuildSuffixArray_V2,
                 //BuildSuffixTree,
-                //BuildSuffixArray_V3,
-                //BuildSuffixArray_V5,
+                BuildSuffixArray_V3,
+                BuildSuffixArray_V4,
+                BuildSuffixArray_V5,
                 BuildSuffixArray_V6,
+                
                 //BuildPrecomputed,
             };
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
-            string p1 = "a";
+            string p1 = "cactgaca";
             Random random = new Random();
             int x = 1;
-            string p2 = "a";
+            string p2 = "ttctcg";
             Query query = new Query(p1, x, p2);
-            query.Y = (1, 45);
+            query.Y = (5, 5000);
 
-            foreach (var dataStructure in dataStructures)
+            foreach (var sequence in dnaSequences)
             {
-                foreach (var sequence in dnaSequences)
+                foreach (var dataStructure in dataStructures)
                 {
                     var b = BenchDataStructure(dataStructure, sequence, query);
                     table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
