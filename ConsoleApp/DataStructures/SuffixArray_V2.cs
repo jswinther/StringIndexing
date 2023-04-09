@@ -363,7 +363,6 @@ namespace ConsoleApp.DataStructures
                 foreach (var occ2 in occurencesP2.GetViewBetween(min, max))
                 {
                     occs.Add((occ1, occ2 - occ1 + pattern2.Length));
-                    break;
                 }
             }
 
@@ -381,7 +380,6 @@ namespace ConsoleApp.DataStructures
                 foreach (var occ2 in occurencesP2.GetViewBetween(min, max))
                 {
                     occs.Add((occ1, occ2 - occ1 + pattern2.Length));
-                    break;
                 }
             }
 
