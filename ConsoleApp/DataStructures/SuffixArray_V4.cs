@@ -150,29 +150,29 @@ namespace ConsoleApp.DataStructures
 
         private IEnumerable<int> SortTwoSortedArrays(int[] A, int[] B)
         {
-            LinkedList<int> sorted = new();
+            List<int> sorted = new(A.Length + B.Length);
             int i = 0, j = 0, n = A.Length, m = B.Length;
             while (i < n || j < m)
             {
                 if (i >= n)
                 {
-                    sorted.AddLast(B[j]);
+                    sorted.Add(B[j]);
                     j++;
                 }
                 else if (j >= m)
                 {
-                    sorted.AddLast(A[i]);
+                    sorted.Add(A[i]);
                     i++;
                 }
                 else
                 {
                     if (A[i] < B[j])
                     {
-                        sorted.AddLast(A[i]);
+                        sorted.Add(A[i]);
                         i++;
                     } else
                     {
-                        sorted.AddLast(B[j]);
+                        sorted.Add(B[j]);
                         j++;
                     }
                 }
