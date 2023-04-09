@@ -237,12 +237,17 @@ namespace ConsoleApp.DataStructures
             return GetOccurrencesForInterval(start, end);
         }
 
+        public int[] GetOccurrencesForInterval((int start, int end) interval)
+        {
+            return GetOccurrencesForInterval(interval.start, interval.end);
+        }
+
         public int[] GetOccurrencesForInterval(int start, int end)
         {
             int[] occurrences = new int[end + 1 - start];
             for (int i = 0; i < occurrences.Length; i++)
             {
-                occurrences[i] = Sa[i];
+                occurrences[i] = Sa[i + start];
             }
             return occurrences;
         }

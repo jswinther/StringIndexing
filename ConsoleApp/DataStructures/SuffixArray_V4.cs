@@ -139,7 +139,7 @@ namespace ConsoleApp.DataStructures
             int[] sortedLeaves = MergeKSortedArrays(arrayOfSortedLeafOccurrences);
             var nonSortedIntervals = FindNonSortedIntervals(childIntervals, interval);
             var occurrencesOfNonSortedIntervalsSorted = nonSortedIntervals
-                .SelectMany(tempInterval => Sa.Take(new Range(tempInterval.Item1 == -1 ? 0 : tempInterval.Item1, tempInterval.Item2 + 1)))
+                .SelectMany(GetOccurrencesForInterval)
                 .ToArray();
 
             Array.Sort(occurrencesOfNonSortedIntervalsSorted);
