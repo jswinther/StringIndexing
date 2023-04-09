@@ -77,9 +77,7 @@ namespace ConsoleApp.DataStructures
                     break;
                 }
             }
-            occs.AddLast(mid);
-            return occs;
-
+            // TODO this is not sorted..
             int i = mid, j = mid - 1;
             while (i < array.Length && array[i] <= y)
             {
