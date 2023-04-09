@@ -137,7 +137,7 @@ namespace ConsoleApp.DataStructures
             SortedSet<int> mergedOccs = new();
 
             var childIntervals = GetLeafNodesForInterval(interval);
-            var arrayOfSortedLeafOccurrences = childIntervals.Select(ci => GetOccurrencesForInterval(ci.Item1, ci.Item2)).ToArray();
+            var arrayOfSortedLeafOccurrences = childIntervals.Select(ci => Tree[ci].SortedOccurrences).ToArray();
 
 
 
