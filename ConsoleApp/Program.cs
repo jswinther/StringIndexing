@@ -159,8 +159,8 @@ namespace ConsoleApp
                 //DummyData.DNA("DNA_512"),
                 DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
-                //DummyData.DNA("DNA_1048576"),
-                //DummyData.DNA("DNA_2097152"),
+                DummyData.DNA("DNA_1048576"),
+                DummyData.DNA("DNA_2097152"),
                 DummyData.DNA("DNA_4194304"),
                 //DummyData.DNA("DNA_8388608"),
                 //DummyData.DNA("DNA_16777216"),
@@ -170,13 +170,13 @@ namespace ConsoleApp
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
                 //BuildUkkonen,
-                BuildSuffixArray_V1,
+                //BuildSuffixArray_V1,
                 BuildSuffixArray_V2,
                 //BuildSuffixTree,
                 BuildSuffixArray_V3,
                 BuildSuffixArray_V4,
                 BuildSuffixArray_V5,
-                BuildSuffixArray_V6,
+                //BuildSuffixArray_V6,
                 
                 //BuildPrecomputed,
             };
@@ -185,12 +185,12 @@ namespace ConsoleApp
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
-            string p1 = "cactgaca";
+            string p1 = "a";
             Random random = new Random();
             int x = 1;
-            string p2 = "ttctcg";
+            string p2 = "a";
             Query query = new Query(p1, x, p2);
-            query.Y = (5, 5000);
+            query.Y = (1, 45);
 
             foreach (var sequence in dnaSequences)
             {
