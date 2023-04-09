@@ -137,6 +137,10 @@ namespace ConsoleApp.DataStructures
             SortedSet<int> mergedOccs = new();
 
             var childIntervals = GetLeafNodesForInterval(interval);
+            var arrayOfSortedLeafOccurrences = childIntervals.Select(ci => GetOccurrencesForInterval(ci.Item1, ci.Item2)).ToArray();
+
+
+
             var nonSortedIntervals = FindNonSortedIntervals(childIntervals.ToList(), interval);
             var occurrencesOfNonSortedIntervalsSorted = new SortedSet<int>(nonSortedIntervals.SelectMany(tempInterval => Sa.Take(new Range(new Index(tempInterval.Item1 == -1 ? 0 : tempInterval.Item1), new Index(tempInterval.Item2 + 1)))));
             mergedOccs.UnionWith(occurrencesOfNonSortedIntervalsSorted);
