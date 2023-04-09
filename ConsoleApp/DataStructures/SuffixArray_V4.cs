@@ -36,7 +36,6 @@ namespace ConsoleApp.DataStructures
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
             var occs1 = Matches(pattern1);
-            (int start, int end) = ExactStringMatchingWithESA(pattern2);
 
 
             var occs2 = GetSortedLeavesForInterval(ExactStringMatchingWithESA(pattern2));
@@ -131,24 +130,59 @@ namespace ConsoleApp.DataStructures
             return parentNode.Children;
         }
 
-        public SortedSet<int> GetSortedLeavesForInterval((int, int) interval)
+        public int[] GetSortedLeavesForInterval((int, int) interval)
         {
 
-            SortedSet<int> mergedOccs = new();
 
             var childIntervals = GetLeafNodesForInterval(interval);
             var arrayOfSortedLeafOccurrences = childIntervals.Select(ci => Tree[ci].SortedOccurrences).ToArray();
+            int[] sortedLeaves = MergeKSortedArrays(arrayOfSortedLeafOccurrences);
+            var nonSortedIntervals = FindNonSortedIntervals(childIntervals, interval);
+            var occurrencesOfNonSortedIntervalsSorted = nonSortedIntervals
+                .SelectMany(tempInterval => Sa.Take(new Range(tempInterval.Item1, tempInterval.Item2)))
+                .OrderBy(key => key).ToArray();
 
+            IEnumerable<int> sortedOccurrences = SortTwoSortedArrays(sortedLeaves, occurrencesOfNonSortedIntervalsSorted);
+            return sortedOccurrences.ToArray();
+        }
 
-
-            var nonSortedIntervals = FindNonSortedIntervals(childIntervals.ToList(), interval);
-            var occurrencesOfNonSortedIntervalsSorted = new SortedSet<int>(nonSortedIntervals.SelectMany(tempInterval => Sa.Take(new Range(new Index(tempInterval.Item1 == -1 ? 0 : tempInterval.Item1), new Index(tempInterval.Item2 + 1)))));
-            mergedOccs.UnionWith(occurrencesOfNonSortedIntervalsSorted);
-            foreach (var childInterval in childIntervals)
+        private IEnumerable<int> SortTwoSortedArrays(int[] A, int[] B)
+        {
+            LinkedList<int> sorted = new();
+            int i = 0, j = 0, n = A.Length, m = B.Length;
+            while (i < n || j < m)
             {
-                mergedOccs.UnionWith(Tree[childInterval].SortedOccurrences);
+                if (i >= n)
+                {
+                    sorted.AddLast(B[j]);
+                    j++;
+                }
+                else if (j >= m)
+                {
+                    sorted.AddLast(A[i]);
+                    i++;
+                }
+                else
+                {
+                    if (A[i] < B[j])
+                    {
+                        sorted.AddLast(A[i]);
+                        i++;
+                    } else
+                    {
+                        sorted.AddLast(B[j]);
+                        j++;
+                    }
+                }
             }
-            return mergedOccs;
+            return sorted;
+
+        }
+
+        private int[] MergeKSortedArrays(int[][] arrayOfSortedLeafOccurrences)
+        {
+            //return arrayOfSortedLeafOccurrences.SelectMany(s => s).OrderBy(key => key).ToArray();
+            return Program.KWayMerge(arrayOfSortedLeafOccurrences);
         }
 
         public List<(int, int)> FindNonSortedIntervals(List<(int, int)> preSortedLeafNodes, (int, int) interval)

@@ -371,6 +371,24 @@ namespace ConsoleApp.DataStructures
             return occs;
         }
 
+        public IEnumerable<(int, int)> ReportOccurences(string pattern1, int y_min, int y_max, string pattern2, IEnumerable<int> occurrencesP1, int[] occurencesP2)
+        {
+            List<(int, int)> occs = new();
+            foreach (var occ1 in occurrencesP1)
+            {
+                int min = occ1 + y_min + pattern1.Length;
+                int max = occ1 + y_max + pattern1.Length;
+                foreach (var occ2 in occurencesP2.GetViewBetween(min, max))
+                {
+                    occs.Add((occ1, occ2 - occ1 + pattern2.Length));
+                    break;
+                }
+            }
+
+
+            return occs;
+        }
+
         public class IntervalNode
         {
             public (int start, int end) Interval { get; set; }
