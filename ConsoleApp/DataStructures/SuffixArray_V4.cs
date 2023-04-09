@@ -11,7 +11,7 @@ namespace ConsoleApp.DataStructures
     internal class SuffixArray_V4 : SuffixArray_V2
     {
         public Dictionary<(int, int), IntervalNode> Tree { get => _nodes; }
-        public HashSet<(int, int)> Leaves { get => _leaves; }
+        public (int, int)[] Leaves { get; private set; }
 
         public SuffixArray_V4(string str) : base(str)
         {
@@ -19,7 +19,8 @@ namespace ConsoleApp.DataStructures
             int logn = (int)Math.Floor(Math.Sqrt(n));
             int minIntervalSize = logn;
             GetAllLcpIntervals(minIntervalSize);
-           
+            Leaves = _leaves.ToArray();
+
         }
 
         #region Pattern Matching
@@ -210,6 +211,10 @@ namespace ConsoleApp.DataStructures
 
         public List<(int, int)> GetLeafNodesForInterval((int, int) interval)
         {
+            int firstLeaf = GetStartLeaf(interval.Item1);
+            int lastLeaf = GetEndLeaf(interval.Item2);
+            var leaves = Leaves.Take(new Range(firstLeaf, lastLeaf + 1));
+            /*
             Queue<(int, int)> intervals = new();
             List<(int, int)> leaves = new();
             intervals.Enqueue(interval);
@@ -222,7 +227,38 @@ namespace ConsoleApp.DataStructures
                     else intervals.Enqueue(item);
                 }
             }
-            return leaves;
+            */
+            return leaves.ToList();
+        }
+
+        public int GetStartLeaf(int start)
+        {
+            return Array.BinarySearch(Leaves, start, new CompareStartInterval());
+        }
+
+        internal class CompareStartInterval : IComparer
+        {
+            public int Compare(object? x, object? y)
+            {
+                var v = ((int, int))x;
+                var u = ((int, int))y;
+                return v.Item1.CompareTo(u.Item1);
+            }
+        }
+
+        internal class CompareEndInterval : IComparer
+        {
+            public int Compare(object? x, object? y)
+            {
+                var v = ((int, int))x;
+                var u = ((int, int))y;
+                return v.Item2.CompareTo(u.Item2);
+            }
+        }
+
+        public int GetEndLeaf(int end)
+        {
+            return Array.BinarySearch(Leaves, end, new CompareEndInterval());
         }
 
 
