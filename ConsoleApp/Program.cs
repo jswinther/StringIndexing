@@ -113,6 +113,7 @@ namespace ConsoleApp
                 }
                 */
                 // Double Pattern + Variable Gap
+                
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
@@ -156,15 +157,15 @@ namespace ConsoleApp
             {
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
-                DummyData.DNA("DNA_512"),
-                //DummyData.DNA("DNA_262144"),
+                //DummyData.DNA("DNA_512"),
+                DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
-                //DummyData.DNA("DNA_1048576"),
+                DummyData.DNA("DNA_1048576"),
                 //DummyData.DNA("DNA_2097152"),
-                //DummyData.DNA("DNA_4194304"),
-                DummyData.DNA("DNA_8388608"),
-                //DummyData.DNA("DNA_16777216"),
-                //DummyData.DNA("DNA_33554432")
+                DummyData.DNA("DNA_4194304"),
+                //DummyData.DNA("DNA_8388608"),
+                DummyData.DNA("DNA_16777216"),
+                DummyData.DNA("DNA_33554432")
             };
 
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
@@ -175,8 +176,8 @@ namespace ConsoleApp
                 //BuildSuffixTree,
                 //BuildSuffixArray_V3,
                 BuildSuffixArray_V4,
-                BuildSuffixArray_V5,
-                //BuildSuffixArray_V6,
+                //BuildSuffixArray_V5,
+                BuildSuffixArray_V6,
                 
                 //BuildPrecomputed,
             };
@@ -209,7 +210,7 @@ namespace ConsoleApp
         {
             // Create a SortedSet to store the current minimum element from each array
             SortedSet<(T value, int arrayIndex)> minHeap = new SortedSet<(T, int)>();
-
+            int[] counters = new int[arrays.Length];
             // Initialize the heap with the first element from each input array
             for (int i = 0; i < arrays.Length; i++)
             {
@@ -227,25 +228,27 @@ namespace ConsoleApp
             int index = 0;
 
             // Merge the arrays using the k-way merge algorithm
-            while (minHeap.Count > 0)
+            while (minHeap.Count > 0 && index < totalElements)
             {
                 // Extract the minimum element from the heap and add it to the output array
                 (T value, int arrayIndex) = minHeap.Min;
                 minHeap.Remove((value, arrayIndex));
                 result[index++] = value;
-
+                if (arrays[arrayIndex].Length > counters[arrayIndex])
+                {
+                    minHeap.Add((arrays[arrayIndex][counters[arrayIndex]], arrayIndex));
+                    counters[arrayIndex]++;
+                }
+                
                 // If the array from which the minimum element was extracted is not empty, add the next element from that array to the heap
-                if (arrays[arrayIndex].Length > 1)
-                {
-                    T[] nextElements = new T[arrays[arrayIndex].Length - 1];
-                    Array.Copy(arrays[arrayIndex], 1, nextElements, 0, nextElements.Length);
-                    minHeap.Add((nextElements[0], arrayIndex));
-                    arrays[arrayIndex] = nextElements;
-                }
-                else if (arrays[arrayIndex].Length == 1)
-                {
-                    arrays[arrayIndex] = Array.Empty<T>(); // Mark the current array as empty so that we don't process it again
-                }
+
+                //T[] nextElements = ;
+                //Array.Copy(arrays[arrayIndex], 1, nextElements, 0, nextElements.Length);
+                //if (arrays[arrayIndex].Length < counters[arrayIndex]++)
+                        
+                    
+                
+                
             }
 
             return result;

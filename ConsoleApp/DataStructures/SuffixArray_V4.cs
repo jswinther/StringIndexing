@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ namespace ConsoleApp.DataStructures
         public SuffixArray_V4(string str) : base(str)
         {
             // Populates _nodes and _leaves
-            int logn = (int)Math.Floor(Math.Sqrt(n));
+            int logn = (int)(Math.Floor(Math.Sqrt(n)));
             int minIntervalSize = logn;
             GetAllLcpIntervals(minIntervalSize);
             Leaves = _leaves.ToArray();
@@ -26,7 +27,7 @@ namespace ConsoleApp.DataStructures
         #region Pattern Matching
         public override IEnumerable<int> Matches(string pattern)
         {
-            return base.Matches(pattern);
+            return GetOccurrencesForPattern(pattern);
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
@@ -36,9 +37,9 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            var occs1 = Matches(pattern1);
+            var occs1 = GetSortedLeavesForInterval(ExactStringMatchingWithESA(pattern1));
             var occs2 = GetSortedLeavesForInterval(ExactStringMatchingWithESA(pattern2));
-            return ReportOccurences(pattern1, y_min, y_max, pattern2, occs1, occs2);
+            return FindFirstOccurrenceForEachPattern1Occurrence(pattern1, y_min, y_max, pattern2, occs1, occs2);
         }
         #endregion
 
@@ -147,6 +148,7 @@ namespace ConsoleApp.DataStructures
                 return occs;
             }
             var node = Tree[interval];
+            if (node.IsLeaf) return node.SortedOccurrences;
             var childIntervals = Leaves.Take(new Range(node.LeftMostLeaf, node.RightMostLeaf + 1)).ToList();
             var arrayOfSortedLeafOccurrences = childIntervals.Select(ci => Tree[ci].SortedOccurrences).ToArray();
             int[] sortedLeaves = MergeKSortedArrays(arrayOfSortedLeafOccurrences);
@@ -196,8 +198,10 @@ namespace ConsoleApp.DataStructures
 
         private int[] MergeKSortedArrays(int[][] arrayOfSortedLeafOccurrences)
         {
+            
             //return arrayOfSortedLeafOccurrences.SelectMany(s => s).OrderBy(key => key).ToArray();
             return Program.KWayMerge(arrayOfSortedLeafOccurrences);
+            
         }
 
         public List<(int, int)> FindNonSortedIntervals(List<(int, int)> preSortedLeafNodes, (int, int) interval)

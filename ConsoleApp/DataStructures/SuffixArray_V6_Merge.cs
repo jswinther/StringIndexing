@@ -26,36 +26,13 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            List<(int, int)> occs = new List<(int, int)>();
+
             var occs1 = GetOccurrencesForPattern(pattern1);
             var occs2 = GetOccurrencesForPattern(pattern2);
-             
+
             Array.Sort(occs1);
             Array.Sort(occs2);
-
-            int k = 0;
-            for (int i = 0; i < occs1.Length; i++)
-            {
-                int occ1 = occs1[i];
-
-                int min = occ1 + pattern1.Length + y_min;
-                int max = occ1 + pattern1.Length + y_max;
-
-                for (int j = k; j < occs2.Length; j++)
-                {
-                    int occ2 = occs2[j];
-                    if (min <= occ2 && occ2 <= max)
-                    {
-                        occs.Add((occ1, occs2[j] - occ1 + pattern2.Length));
-                        break;
-                    }
-                    else
-                    {
-                        k++;
-                    }
-                }
-            }
-            return occs;
+            return FindFirstOccurrenceForEachPattern1Occurrence(pattern1, y_min, y_max, pattern2, occs1, occs2);
         }
 
         #endregion

@@ -217,17 +217,7 @@ namespace ConsoleApp.DataStructures
 
         public override IEnumerable<int> Matches(string pattern)
         {
-            /* Den rigtige med GetInterval og Childtable!!!! */
-            (int start, int end) = ExactStringMatchingWithESA(pattern);
-            if ((start, end) == (-1, -1)) { return Enumerable.Empty<int>(); }
-            if (start == -1) start = 0;
-            if (end == -1) end = 0;
-            return Sa.Take(new Range(start, end + 1));
-            
-            /*Den fake med precomputed intervaller 
-            IntervalFinder = new IntervalFinder(pattern, S);
-            (int start, int end) = IntervalFinder.GetInterval();
-            return Sa.Take(new Range(start, end));*/
+            return GetOccurrencesForPattern(pattern);
         }
 
         public int[] GetOccurrencesForPattern(string pattern)
@@ -488,6 +478,35 @@ namespace ConsoleApp.DataStructures
             intervals.Add((i1, j));
             return intervals;
 
+        }
+
+        // expects two sorted arrays
+        public IEnumerable<(int, int)> FindFirstOccurrenceForEachPattern1Occurrence(string pattern1, int y_min, int y_max, string pattern2, int[] occs1, int[] occs2)
+        {
+            List<(int, int)> occs = new List<(int, int)>();
+            int k = 0;
+            for (int i = 0; i < occs1.Length; i++)
+            {
+                int occ1 = occs1[i];
+
+                int min = occ1 + pattern1.Length + y_min;
+                int max = occ1 + pattern1.Length + y_max;
+
+                for (int j = k; j < occs2.Length; j++)
+                {
+                    int occ2 = occs2[j];
+                    if (min <= occ2 && occ2 <= max)
+                    {
+                        occs.Add((occ1, occs2[j] - occ1 + pattern2.Length));
+                        break;
+                    }
+                    else
+                    {
+                        k++;
+                    }
+                }
+            }
+            return occs;
         }
 
         
