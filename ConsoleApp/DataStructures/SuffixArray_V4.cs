@@ -20,7 +20,7 @@ namespace ConsoleApp.DataStructures
             int minIntervalSize = logn;
             GetAllLcpIntervals(minIntervalSize);
             Leaves = _leaves.ToArray();
-
+            ComputeLeafIntervals();
         }
 
         #region Pattern Matching
@@ -37,14 +37,27 @@ namespace ConsoleApp.DataStructures
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
             var occs1 = Matches(pattern1);
-
-
             var occs2 = GetSortedLeavesForInterval(ExactStringMatchingWithESA(pattern2));
             return ReportOccurences(pattern1, y_min, y_max, pattern2, occs1, occs2);
         }
         #endregion
 
-
+        public void ComputeLeafIntervals()
+        {
+            for (int i = 0; i < Leaves.Length; i++)
+            {
+                (int, int) leafInterval = Leaves[i];
+                var leaf = Tree[leafInterval];
+                var parentInterval = leaf.Parent;
+                while (Tree.ContainsKey(parentInterval))
+                {
+                    var parent = Tree[parentInterval];
+                    if (parent.LeftMostLeaf > i) Tree[parentInterval].LeftMostLeaf = i;
+                    if (parent.RightMostLeaf < i) Tree[parentInterval].RightMostLeaf = i;
+                    parentInterval = parent.Parent;
+                }
+            }
+        }
 
 
         public void GetAllLcpIntervals(int minSize)
@@ -123,19 +136,18 @@ namespace ConsoleApp.DataStructures
             return -1;
         }
 
-        public HashSet<(int, int)> SiblingIntervals((int, int) interval)
-        {
-            if (!Tree.TryGetValue(interval, out IntervalNode node)) return new();
-            if (node.Parent == (-1, -1)) return new();
-            var parentNode = Tree[node.Parent];
-            return parentNode.Children;
-        }
+
 
         public int[] GetSortedLeavesForInterval((int, int) interval)
         {
-
-
-            var childIntervals = GetLeafNodesForInterval(interval);
+            if (!Tree.ContainsKey(interval))
+            {
+                var occs = GetOccurrencesForInterval(interval);
+                Array.Sort(occs);
+                return occs;
+            }
+            var node = Tree[interval];
+            var childIntervals = Leaves.Take(new Range(node.LeftMostLeaf, node.RightMostLeaf + 1)).ToList();
             var arrayOfSortedLeafOccurrences = childIntervals.Select(ci => Tree[ci].SortedOccurrences).ToArray();
             int[] sortedLeaves = MergeKSortedArrays(arrayOfSortedLeafOccurrences);
             var nonSortedIntervals = FindNonSortedIntervals(childIntervals, interval);
@@ -209,57 +221,11 @@ namespace ConsoleApp.DataStructures
             return nonSortedIntervals;
         }
 
-        public List<(int, int)> GetLeafNodesForInterval((int, int) interval)
-        {
-            int firstLeaf = GetStartLeaf(interval.Item1);
-            int lastLeaf = GetEndLeaf(interval.Item2);
-            var leaves = Leaves.Take(new Range(firstLeaf, lastLeaf + 1));
-            /*
-            Queue<(int, int)> intervals = new();
-            List<(int, int)> leaves = new();
-            intervals.Enqueue(interval);
-            while (intervals.TryDequeue(out (int, int) res))
-            {
-                var childIntervals = Tree[res].Children;
-                foreach (var item in childIntervals)
-                {
-                    if (Tree[item].IsLeaf) leaves.Add(item);
-                    else intervals.Enqueue(item);
-                }
-            }
-            */
-            return leaves.ToList();
-        }
+        
 
-        public int GetStartLeaf(int start)
-        {
-            return Array.BinarySearch(Leaves, start, new CompareStartInterval());
-        }
+        
 
-        internal class CompareStartInterval : IComparer
-        {
-            public int Compare(object? x, object? y)
-            {
-                var v = ((int, int))x;
-                var u = ((int, int))y;
-                return v.Item1.CompareTo(u.Item1);
-            }
-        }
-
-        internal class CompareEndInterval : IComparer
-        {
-            public int Compare(object? x, object? y)
-            {
-                var v = ((int, int))x;
-                var u = ((int, int))y;
-                return v.Item2.CompareTo(u.Item2);
-            }
-        }
-
-        public int GetEndLeaf(int end)
-        {
-            return Array.BinarySearch(Leaves, end, new CompareEndInterval());
-        }
+      
 
 
         #endregion

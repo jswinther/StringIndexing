@@ -16,7 +16,6 @@ namespace ConsoleApp.DataStructures
     {
         
         public (int Up, int Down, int Next)[] Children { get; }
-        public int MyProperty { get; set; }
         public SuffixArray_V2(string str) : base(str)
         {
             
@@ -395,8 +394,10 @@ namespace ConsoleApp.DataStructures
         public class IntervalNode
         {
             public (int start, int end) Interval { get; set; }
+            public int LeftMostLeaf { get; set; } = int.MaxValue;
+            public int RightMostLeaf { get; set; } = int.MinValue;
             public (int, int) Parent { get; set; }
-            public System.Collections.Generic.HashSet<(int, int)> Children { get; set; } = new();
+            public List<(int, int)> Children { get; set; } = new();
 
             public IntervalNode((int start, int end) interval, (int start, int end) parent)
             {
