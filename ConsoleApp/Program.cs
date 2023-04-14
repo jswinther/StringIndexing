@@ -1,4 +1,5 @@
 ﻿using ConsoleApp.DataStructures;
+using ConsoleApp.DataStructures.Reporting;
 using Gma.DataStructures.StringSearch;
 using System;
 using System.Diagnostics;
@@ -9,10 +10,6 @@ namespace ConsoleApp
 {
     internal class Program
     {
-
-
-        
-
         public delegate PatternMatcher BuildDataStructure(string str);
         public static PatternMatcher BuildSuffixArray_V1(string str)
         {
@@ -32,16 +29,6 @@ namespace ConsoleApp
         public static PatternMatcher BuildSuffixArray_V4(string str)
         {
             return new SuffixArray_V4(str);
-        }
-
-        public static PatternMatcher BuildSuffixArray_V5(string str)
-        {
-            return new SuffixArray_V5(str);
-        }
-
-        public static PatternMatcher BuildSuffixArray_V6(string str)
-        {
-            return new SuffixArray_V6_Merge(str);
         }
 
         public static PatternMatcher BuildSuffixTree(string str)
@@ -158,11 +145,11 @@ namespace ConsoleApp
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
                 //DummyData.DNA("DNA_512"),
-                //DummyData.DNA("DNA_262144"),
-                //DummyData.DNA("DNA_524288"),
-                //DummyData.DNA("DNA_1048576"),
+                DummyData.DNA("DNA_262144"),
+                DummyData.DNA("DNA_524288"),
+                DummyData.DNA("DNA_1048576"),
                 DummyData.DNA("DNA_2097152"),
-                //DummyData.DNA("DNA_4194304"),
+                DummyData.DNA("DNA_4194304"),
                 //DummyData.DNA("DNA_8388608"),
                 //DummyData.DNA("DNA_16777216"),
                 //DummyData.DNA("DNA_33554432")
@@ -170,16 +157,10 @@ namespace ConsoleApp
 
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
-                //BuildUkkonen,
-                //BuildSuffixArray_V1,
-                //BuildSuffixArray_V2,
-                //BuildSuffixTree,
+                BuildSuffixArray_V1,
+                BuildSuffixArray_V2,
                 BuildSuffixArray_V3,
-                //BuildSuffixArray_V4,
-                BuildSuffixArray_V5,
-                //BuildSuffixArray_V6,
-                
-                //BuildPrecomputed,
+                BuildSuffixArray_V4
             };
 
             

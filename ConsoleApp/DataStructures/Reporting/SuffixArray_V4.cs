@@ -5,41 +5,64 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static ConsoleApp.DataStructures.SuffixArray_V2;
+using static ConsoleApp.DataStructures.Reporting.SuffixArray_V2;
+using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.DataStructures.Reporting
 {
-    internal class SuffixArray_V4 : SuffixArray_V2
+    internal class SuffixArray_V4 : PatternMatcher
     {
-        public Dictionary<(int, int), IntervalNode> Tree { get => _nodes; }
+        SuffixArrayFinal SA;
+        public Dictionary<(int, int), IntervalNode> Tree { get => SA._nodes; }
         public (int, int)[] Leaves { get; private set; }
 
         public SuffixArray_V4(string str) : base(str)
         {
+            SA = new SuffixArrayFinal(str);
             // Populates _nodes and _leaves
-            int logn = (int)(Math.Floor(Math.Sqrt(n)));
+            int logn = (int)Math.Floor(Math.Sqrt(SA.n));
             int minIntervalSize = logn;
+            SA.BuildChildTable();
             GetAllLcpIntervals(minIntervalSize);
-            Leaves = _leaves.ToArray();
+            Leaves = SA._leaves.ToArray();
             ComputeLeafIntervals();
         }
 
         #region Pattern Matching
         public override IEnumerable<int> Matches(string pattern)
         {
-            return GetOccurrencesForPattern(pattern);
+            return SA.GetOccurrencesForPattern(pattern);
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
         {
-            return base.Matches(pattern1, x, pattern2);
+            List<(int, int)> occs = new List<(int, int)>();
+            var occs1 = SA.GetOccurrencesForPattern(pattern1);
+            var occs2 = new HashSet<int>(SA.GetOccurrencesForPattern(pattern2));
+
+            foreach (var occ1 in occs1)
+            {
+                if (occs2.Contains(occ1 + pattern1.Length + x))
+                    occs.Add((occ1, occ1 + pattern2.Length + pattern2.Length + x));
+            }
+            return occs;
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            var occs1 = GetSortedLeavesForInterval(ExactStringMatchingWithESA(pattern1));
-            var occs2 = GetSortedLeavesForInterval(ExactStringMatchingWithESA(pattern2));
-            return FindFirstOccurrenceForEachPattern1Occurrence(pattern1, y_min, y_max, pattern2, occs1, occs2);
+            List<(int, int)> occs = new();
+            var occs1 = SA.GetOccurrencesForPattern(pattern1);
+            var occs2 = GetSortedLeavesForInterval(SA.ExactStringMatchingWithESA(pattern2));
+            foreach (var occ1 in occs1)
+            {
+                int min = occ1 + y_min + pattern1.Length;
+                int max = occ1 + y_max + pattern1.Length;
+                foreach (var occ2 in occs2.GetViewBetween(min, max))
+                {
+                    occs.Add((occ1, occ2 - occ1 + pattern2.Length));
+                }
+            }
+            return occs;
         }
         #endregion
 
@@ -65,13 +88,13 @@ namespace ConsoleApp.DataStructures
         {
             HashSet<(int, int)> hashSet = new();
             Queue<(int, int)> intervals = new Queue<(int, int)>();
-            intervals.Enqueue((0, n - 1));
+            intervals.Enqueue((0, SA.n - 1));
             // First add child intervals for the interval [0..n]
             var Initinterval = intervals.Dequeue();
             hashSet.Add((Initinterval.Item1, Initinterval.Item2));
-            _nodes.Add(Initinterval, new IntervalNode(Initinterval, (-1, -1)));
-            var currNode = _nodes[Initinterval];
-            foreach (var item in GetChildIntervalsInit(Initinterval.Item1, Initinterval.Item2))
+            SA._nodes.Add(Initinterval, new IntervalNode(Initinterval, (-1, -1)));
+            var currNode = SA._nodes[Initinterval];
+            foreach (var item in SA.GetChildIntervalsInit(Initinterval.Item1, Initinterval.Item2))
             {
                 if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize - 1)
                 {
@@ -79,7 +102,7 @@ namespace ConsoleApp.DataStructures
                     if (!hashSet.Contains(item)) intervals.Enqueue(item);
                     hashSet.Add(item);
                     currNode.Children.Add(item);
-                    _nodes.Add(item, new IntervalNode(item, currNode.Interval));
+                    SA._nodes.Add(item, new IntervalNode(item, currNode.Interval));
                 }
             }
             while (intervals.Count > 0)
@@ -89,8 +112,8 @@ namespace ConsoleApp.DataStructures
                 else
                 {
                     hashSet.Add(interval);
-                    _nodes.TryGetValue(interval, out currNode);
-                    foreach (var item in GetChildIntervals(interval.Item1, interval.Item2))
+                    SA._nodes.TryGetValue(interval, out currNode);
+                    foreach (var item in SA.GetChildIntervals(interval.Item1, interval.Item2))
                     {
                         if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize - 1)
                         {
@@ -99,7 +122,7 @@ namespace ConsoleApp.DataStructures
                             {
                                 intervals.Enqueue(item);
                                 currNode.Children.Add(item);
-                                _nodes.Add(item, new IntervalNode(item, currNode.Interval));
+                                SA._nodes.Add(item, new IntervalNode(item, currNode.Interval));
                             }
                             hashSet.Add(item);
 
@@ -108,8 +131,8 @@ namespace ConsoleApp.DataStructures
 
                     if (currNode.Children.Count == 0)
                     {
-                        _leaves.Add(currNode.Interval);
-                        var originalPlacesOfSuffixes = GetOccurrencesForInterval(interval.Item1, interval.Item2);
+                        SA._leaves.Add(currNode.Interval);
+                        var originalPlacesOfSuffixes = SA.GetOccurrencesForInterval(interval.Item1, interval.Item2);
                         Array.Sort(originalPlacesOfSuffixes);
                         currNode.SortedOccurrences = originalPlacesOfSuffixes;
                     }
@@ -143,7 +166,7 @@ namespace ConsoleApp.DataStructures
         {
             if (!Tree.ContainsKey(interval))
             {
-                var occs = GetOccurrencesForInterval(interval);
+                var occs = SA.GetOccurrencesForInterval(interval);
                 Array.Sort(occs);
                 return occs;
             }
@@ -154,7 +177,7 @@ namespace ConsoleApp.DataStructures
             int[] sortedLeaves = MergeKSortedArrays(arrayOfSortedLeafOccurrences);
             var nonSortedIntervals = FindNonSortedIntervals(childIntervals, interval);
             var occurrencesOfNonSortedIntervalsSorted = nonSortedIntervals
-                .SelectMany(GetOccurrencesForInterval)
+                .SelectMany(SA.GetOccurrencesForInterval)
                 .ToArray();
 
             Array.Sort(occurrencesOfNonSortedIntervalsSorted);
@@ -185,7 +208,8 @@ namespace ConsoleApp.DataStructures
                     {
                         sorted.Add(A[i]);
                         i++;
-                    } else
+                    }
+                    else
                     {
                         sorted.Add(B[j]);
                         j++;
@@ -198,10 +222,10 @@ namespace ConsoleApp.DataStructures
 
         private int[] MergeKSortedArrays(int[][] arrayOfSortedLeafOccurrences)
         {
-            
+
             //return arrayOfSortedLeafOccurrences.SelectMany(s => s).OrderBy(key => key).ToArray();
             return Program.KWayMerge(arrayOfSortedLeafOccurrences);
-            
+
         }
 
         public List<(int, int)> FindNonSortedIntervals(List<(int, int)> preSortedLeafNodes, (int, int) interval)
@@ -225,11 +249,11 @@ namespace ConsoleApp.DataStructures
             return nonSortedIntervals;
         }
 
-        
 
-        
 
-      
+
+
+
 
 
         #endregion
@@ -239,5 +263,5 @@ namespace ConsoleApp.DataStructures
 
     }
 
-    
+
 }
