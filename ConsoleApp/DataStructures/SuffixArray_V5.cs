@@ -35,8 +35,9 @@ namespace ConsoleApp.DataStructures
             //var sortedOccs2 = RadixSorter.Sort(occs2.ToArray(), n);
             //var sortedOccs2 = new SortedSet<int>(occs2);
             Array.Sort(occs2);
+            Array.Sort(occs1);
             //var set = new SortedSet<int>(occs2);
-
+            return FindFirstOccurrenceForEachPattern1Occurrence(pattern1, y_min, y_max, pattern2, occs1, occs2);
             foreach (var occ1 in occs1)
             {
                 int min = occ1 + y_min + pattern1.Length;
