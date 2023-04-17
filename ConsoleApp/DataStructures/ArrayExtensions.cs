@@ -2,45 +2,74 @@
 {
     public static class ArrayExtensions
     {
-        public static IEnumerable<int> GetViewBetween(this int[] array, int x, int y)
+        public static (int, int) BinarySearchOnRange(this int[] array, int min, int max)
         {
-            List<int> occs = new();
-            //var mid = Array.Find(array, element => x <= element && element <= y);
-            
-            int lo = 0;
-            int hi = array.Length - 1;
-            int mid = 0;
-            while (lo <= hi)
+            int minIndex = array.IndexOfSucessor(min);
+            int maxIndex = array.IndexOfPredecessor(max);
+            if (minIndex == -1 || array[minIndex] > max)
             {
-                mid = lo + (hi - lo) / 2;
-           
-                if (array[mid] > y)
+                return (-1, -1);
+            }
+            return (minIndex, maxIndex);
+        }
+
+        public static int IndexOfSucessor(this int[] array, int v)
+        {
+            int left = 0;
+            int right = array.Length - 1;
+            int result = -1;
+
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+
+                if (array[mid] <= v)
                 {
-                    hi = mid - 1;
-                }
-                else if (array[mid] < x)
-                {
-                    lo = mid + 1;
+                    left = mid + 1;
                 }
                 else
                 {
-                    break;
+                    result = mid;
+                    right = mid - 1;
                 }
             }
-            // TODO this is not sorted..
-            int i = mid, j = mid - 1;
-            while (i < array.Length && array[i] <= y)
+            return result;
+        }
+
+        public static int IndexOfPredecessor(this int[] array, int v)
+        {
+            int left = 0;
+            int right = array.Length - 1;
+            int result = -1;
+
+            while (left <= right)
             {
-                occs.Add(array[i]);
-                i++;
+                int mid = (left + right) / 2;
+
+                if (array[mid] >= v)
+                {
+                    right = mid - 1;
+                }
+                else
+                {
+                    result = mid;
+                    left = mid + 1;
+                }
             }
 
-            while (j > - 1 && array[j] >= x)
-            {
-                occs.Add(array[j]);
-                j--;
-            }
-            return occs;
+            return result;
         }
+
+        public static IEnumerable<int> GetViewBetween(this int[] array, int x, int y)
+        {
+            (int s, int e) = array.BinarySearchOnRange(x, y);
+            return array.Take(new Range(s, e + 1));
+        }
+
+        public static bool ContainsElementInRange(this int[] array, int x, int y)
+        {
+            return (array.BinarySearchOnRange(x, y) != (-1, -1));
+        }
+        
     }
 }

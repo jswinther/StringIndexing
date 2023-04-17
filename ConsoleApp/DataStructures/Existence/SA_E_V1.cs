@@ -26,7 +26,13 @@ namespace ConsoleApp.DataStructures.Existence
             MinGap = minGap;
             MaxGap = maxGap;
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals();
+            int minSizeForLcpIntervals = (int)Math.Sqrt(SA.n);
+            SA.GetAllLcpIntervals(minSizeForLcpIntervals);
+
+            ComputeSubSuffixArrays(minSize: (int)Math.Sqrt(SA.n));
+
+
+
             foreach (var int2 in Tree.Keys.Take(512))
             {
                 var occs2 = new HashSet<int>(SA.GetOccurrencesForInterval(int2));
@@ -39,7 +45,13 @@ namespace ConsoleApp.DataStructures.Existence
             }
         }
 
-        
+        private void ComputeSubSuffixArrays(int minSize)
+        {
+            foreach (var interval in Tree.Values)
+            {
+                
+            }
+        }
 
         public bool FixedExists(string pattern1, string pattern2)
         {

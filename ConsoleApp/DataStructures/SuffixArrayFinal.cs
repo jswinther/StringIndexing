@@ -428,7 +428,7 @@ namespace ConsoleApp.DataStructures
         public System.Collections.Generic.HashSet<(int, int)> _leaves { get; } = new();
         public Dictionary<(int, int), IntervalNode> _nodes { get; } = new();
 
-        public void GetAllLcpIntervals()
+        public void GetAllLcpIntervals(int minSize)
         {
             System.Collections.Generic.HashSet<(int, int)> hashSet = new();
             Queue<(int, int)> intervals = new Queue<(int, int)>();
@@ -440,7 +440,7 @@ namespace ConsoleApp.DataStructures
             var currNode = _nodes[Initinterval];
             foreach (var item in GetChildIntervalsInit(Initinterval.Item1, Initinterval.Item2))
             {
-                if (item != (-1, -1) && item.Item2 - item.Item1 > 0)
+                if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize)
                 {
 
                     if (!hashSet.Contains(item)) intervals.Enqueue(item);
@@ -459,7 +459,7 @@ namespace ConsoleApp.DataStructures
                     _nodes.TryGetValue(interval, out currNode);
                     foreach (var item in GetChildIntervals(interval.Item1, interval.Item2))
                     {
-                        if (item != (-1, -1) && item.Item2 - item.Item1 > 0)
+                        if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize)
                         {
 
                             if (!hashSet.Contains(item))

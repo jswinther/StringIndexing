@@ -20,7 +20,7 @@ namespace ConsoleApp.DataStructures.Reporting
         {
             SA = new SuffixArrayFinal(S);
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals();
+            SA.GetAllLcpIntervals(2);
             var keys = SA._nodes.Keys.ToList();
 
             for (int i = 1; i < keys.Count; i++)
@@ -37,11 +37,15 @@ namespace ConsoleApp.DataStructures.Reporting
         #region PatternMatcher
         public override IEnumerable<int> Matches(string pattern)
         {
-            var interval = SA.ExactStringMatchingWithESA(pattern);
-            return sorted[interval];
+            return ArrayOfPattern(pattern);
         }
 
-
+        private int[] ArrayOfPattern(string pattern)
+        {
+            var interval = SA.ExactStringMatchingWithESA(pattern);
+            if (interval.j - interval.i == 0) return new int[] { SA[interval.i] };
+            return sorted[interval];
+        }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
         {
@@ -61,8 +65,8 @@ namespace ConsoleApp.DataStructures.Reporting
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
             List<(int, int)> occs = new List<(int, int)>();
-            var pattern1Occurrences = sorted[SA.ExactStringMatchingWithESA(pattern1)];
-            var pattern2Occurrences = sorted[SA.ExactStringMatchingWithESA(pattern2)];
+            var pattern1Occurrences = ArrayOfPattern(pattern1);
+            var pattern2Occurrences = ArrayOfPattern(pattern2);
            
             foreach (var occ1 in pattern1Occurrences)
             {
