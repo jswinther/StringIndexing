@@ -2,6 +2,13 @@
 {
     public static class ArrayExtensions
     {
+        /// <summary>
+        /// Returns the index of successor of min and predecessor of max
+        /// </summary>
+        /// <param name="array"></param>
+        /// <param name="min"></param>
+        /// <param name="max"></param>
+        /// <returns></returns>
         public static (int, int) BinarySearchOnRange(this int[] array, int min, int max)
         {
             int minIndex = array.IndexOfSucessor(min);
