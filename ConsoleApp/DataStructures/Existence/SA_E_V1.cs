@@ -10,8 +10,8 @@ namespace ConsoleApp.DataStructures.Existence
     public class SA_E_V1
     {
         private SuffixArrayFinal SA;
-        private Dictionary<(int, int), IntervalNode> Tree { get => SA._nodes; }
-        private HashSet<(int, int)> Leaves { get => SA._leaves; }
+        private Dictionary<(int, int), IntervalNode> Tree;
+        private HashSet<(int, int)> Leaves;
         private int FixedGap { get; set; }
         private int MinGap { get; set; }
         private int MaxGap { get; set; }
@@ -27,7 +27,7 @@ namespace ConsoleApp.DataStructures.Existence
             MaxGap = maxGap;
             SA.BuildChildTable();
             int minSizeForLcpIntervals = (int)Math.Sqrt(SA.n);
-            SA.GetAllLcpIntervals(1);
+            SA.GetAllLcpIntervals(1, out Tree, out Leaves);
 
             ComputeSubSuffixArrays(minSize: (int)Math.Sqrt(SA.n));
 

@@ -13,7 +13,8 @@ namespace ConsoleApp.DataStructures.Reporting
     internal class SuffixArray_V4 : PatternMatcher
     {
         SuffixArrayFinal SA;
-        public Dictionary<(int, int), IntervalNode> Tree { get => SA._nodes; }
+        public Dictionary<(int, int), IntervalNode> Tree;
+        HashSet<(int, int)> Leaves1;
         public (int, int)[] Leaves { get; private set; }
 
         public SuffixArray_V4(string str) : base(str)
@@ -23,8 +24,8 @@ namespace ConsoleApp.DataStructures.Reporting
             int logn = (int)Math.Floor(Math.Sqrt(SA.n));
             int minIntervalSize = logn;
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(minIntervalSize);
-            Leaves = SA._leaves.ToArray();
+            SA.GetAllLcpIntervals(minIntervalSize, out Tree, out Leaves1);
+            Leaves = Leaves1.ToArray();
             ComputeLeafIntervals();
         }
 

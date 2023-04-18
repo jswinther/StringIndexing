@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
 namespace ConsoleApp.DataStructures
 {
@@ -428,10 +429,11 @@ namespace ConsoleApp.DataStructures
             public int[] SortedOccurrences { get; set; }
         }
 
-        public System.Collections.Generic.HashSet<(int, int)> _leaves { get; } = new();
-        public Dictionary<(int, int), IntervalNode> _nodes { get; } = new();
-        public void GetAllLcpIntervals(int minSize)
+    
+        public void GetAllLcpIntervals(int minSize, out Dictionary<(int, int), IntervalNode> _nodes, out System.Collections.Generic.HashSet<(int, int)> _leaves)
         {
+            _nodes = new();
+            _leaves = new();
             System.Collections.Generic.HashSet<(int, int)> hashSet = new();
             Queue<(int, int)> intervals = new Queue<(int, int)>();
             intervals.Enqueue((0, n - 1));
