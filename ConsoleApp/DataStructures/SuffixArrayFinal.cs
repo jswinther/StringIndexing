@@ -453,24 +453,22 @@ namespace ConsoleApp.DataStructures
             while (intervals.Count > 0)
             {
                 var interval = intervals.Dequeue();
-                if (interval.Item1 == interval.Item2) hashSet.Add((interval.Item1, interval.Item2));
+                hashSet.Add(interval);
+                _nodes.TryGetValue(interval, out currNode);
+                if (interval.Item1 == interval.Item2)
+                {
+                    _leaves.Add(interval);
+                }
                 else
                 {
-                    hashSet.Add(interval);
-                    _nodes.TryGetValue(interval, out currNode);
                     foreach (var item in GetChildIntervals(interval.Item1, interval.Item2))
                     {
                         if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize - 1)
                         {
 
-                            if (!hashSet.Contains(item))
-                            {
-                                intervals.Enqueue(item);
-                                currNode.Children.Add(item);
-                                _nodes.Add(item, new IntervalNode(item, currNode.Interval, currNode.DistanceToRoot + 1));
-                            }
-                            hashSet.Add(item);
-
+                            intervals.Enqueue(item);
+                            currNode.Children.Add(item);
+                            _nodes.Add(item, new IntervalNode(item, currNode.Interval, currNode.DistanceToRoot + 1));
                         }
                     }
 
@@ -479,6 +477,7 @@ namespace ConsoleApp.DataStructures
                         _leaves.Add(currNode.Interval);
                     }
                 }
+                
             }
         }
 

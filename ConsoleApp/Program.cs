@@ -31,6 +31,11 @@ namespace ConsoleApp
             return new SuffixArray_V4(str);
         }
 
+        public static PatternMatcher BuildSuffixArray_V5(string str)
+        {
+            return new SuffixArray_V5(str);
+        }
+
         public static PatternMatcher BuildSuffixTree(string str)
         {
             return SuffixTree.Create(str);
@@ -145,7 +150,7 @@ namespace ConsoleApp
             {
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
-                //DummyData.DNA("DNA_512"),
+                DummyData.DNA("DNA_512"),
                 //DummyData.DNA("DNA_262144"),
                 DummyData.DNA("DNA_524288"),
                 DummyData.DNA("DNA_1048576"),
@@ -159,9 +164,10 @@ namespace ConsoleApp
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
                 //BuildSuffixArray_V1,
-                BuildSuffixArray_V2,
+                //BuildSuffixArray_V2,
                 //BuildSuffixArray_V3,
-                BuildSuffixArray_V4
+                //BuildSuffixArray_V4,
+                BuildSuffixArray_V5
             };
 
             
