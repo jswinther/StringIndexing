@@ -23,7 +23,7 @@ namespace ConsoleApp.DataStructures.Reporting
             int logn = (int)Math.Floor(Math.Sqrt(SA.n));
             int minIntervalSize = logn;
             SA.BuildChildTable();
-            GetAllLcpIntervals(minIntervalSize);
+            SA.GetAllLcpIntervals(minIntervalSize);
             Leaves = SA._leaves.ToArray();
             ComputeLeafIntervals();
         }
@@ -84,61 +84,7 @@ namespace ConsoleApp.DataStructures.Reporting
         }
 
 
-        public void GetAllLcpIntervals(int minSize)
-        {
-            HashSet<(int, int)> hashSet = new();
-            Queue<(int, int)> intervals = new Queue<(int, int)>();
-            intervals.Enqueue((0, SA.n - 1));
-            // First add child intervals for the interval [0..n]
-            var Initinterval = intervals.Dequeue();
-            hashSet.Add((Initinterval.Item1, Initinterval.Item2));
-            SA._nodes.Add(Initinterval, new IntervalNode(Initinterval, (-1, -1)));
-            var currNode = SA._nodes[Initinterval];
-            foreach (var item in SA.GetChildIntervalsInit(Initinterval.Item1, Initinterval.Item2))
-            {
-                if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize - 1)
-                {
-
-                    if (!hashSet.Contains(item)) intervals.Enqueue(item);
-                    hashSet.Add(item);
-                    currNode.Children.Add(item);
-                    SA._nodes.Add(item, new IntervalNode(item, currNode.Interval));
-                }
-            }
-            while (intervals.Count > 0)
-            {
-                var interval = intervals.Dequeue();
-                if (interval.Item1 == interval.Item2) hashSet.Add((interval.Item1, interval.Item2));
-                else
-                {
-                    hashSet.Add(interval);
-                    SA._nodes.TryGetValue(interval, out currNode);
-                    foreach (var item in SA.GetChildIntervals(interval.Item1, interval.Item2))
-                    {
-                        if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize - 1)
-                        {
-
-                            if (!hashSet.Contains(item))
-                            {
-                                intervals.Enqueue(item);
-                                currNode.Children.Add(item);
-                                SA._nodes.Add(item, new IntervalNode(item, currNode.Interval));
-                            }
-                            hashSet.Add(item);
-
-                        }
-                    }
-
-                    if (currNode.Children.Count == 0)
-                    {
-                        SA._leaves.Add(currNode.Interval);
-                        var originalPlacesOfSuffixes = SA.GetOccurrencesForInterval(interval.Item1, interval.Item2);
-                        Array.Sort(originalPlacesOfSuffixes);
-                        currNode.SortedOccurrences = originalPlacesOfSuffixes;
-                    }
-                }
-            }
-        }
+      
 
 
 

@@ -139,6 +139,7 @@ namespace ConsoleApp
 
         static void Main(string[] args)
         {
+            
 
             string[] dnaSequences = new string[]
             {

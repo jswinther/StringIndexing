@@ -414,11 +414,13 @@ namespace ConsoleApp.DataStructures
             public int RightMostLeaf { get; set; } = int.MinValue;
             public (int, int) Parent { get; set; }
             public List<(int, int)> Children { get; set; } = new();
+            public int DistanceToRoot { get; set; }
 
-            public IntervalNode((int start, int end) interval, (int start, int end) parent)
+            public IntervalNode((int start, int end) interval, (int start, int end) parent, int distanceToRoot)
             {
                 Interval = interval;
                 Parent = parent;
+                DistanceToRoot = distanceToRoot;
             }
 
             public bool IsLeaf { get => Children.Count == 0; }
@@ -436,17 +438,16 @@ namespace ConsoleApp.DataStructures
             // First add child intervals for the interval [0..n]
             var Initinterval = intervals.Dequeue();
             hashSet.Add((Initinterval.Item1, Initinterval.Item2));
-            _nodes.Add(Initinterval, new IntervalNode(Initinterval, (-1, -1)));
+            _nodes.Add(Initinterval, new IntervalNode(Initinterval, (-1, -1), 0));
             var currNode = _nodes[Initinterval];
             foreach (var item in GetChildIntervalsInit(Initinterval.Item1, Initinterval.Item2))
             {
-                if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize)
+                if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize - 1)
                 {
-
                     if (!hashSet.Contains(item)) intervals.Enqueue(item);
                     hashSet.Add(item);
                     currNode.Children.Add(item);
-                    _nodes.Add(item, new IntervalNode(item, currNode.Interval));
+                    _nodes.Add(item, new IntervalNode(item, currNode.Interval, currNode.DistanceToRoot + 1));
                 }
             }
             while (intervals.Count > 0)
@@ -459,14 +460,14 @@ namespace ConsoleApp.DataStructures
                     _nodes.TryGetValue(interval, out currNode);
                     foreach (var item in GetChildIntervals(interval.Item1, interval.Item2))
                     {
-                        if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize)
+                        if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize - 1)
                         {
 
                             if (!hashSet.Contains(item))
                             {
                                 intervals.Enqueue(item);
                                 currNode.Children.Add(item);
-                                _nodes.Add(item, new IntervalNode(item, currNode.Interval));
+                                _nodes.Add(item, new IntervalNode(item, currNode.Interval, currNode.DistanceToRoot + 1));
                             }
                             hashSet.Add(item);
 
@@ -481,8 +482,7 @@ namespace ConsoleApp.DataStructures
             }
         }
 
-
-
+        
 
 
 
