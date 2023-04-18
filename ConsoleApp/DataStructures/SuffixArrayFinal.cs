@@ -410,13 +410,14 @@ namespace ConsoleApp.DataStructures
         public class IntervalNode
         {
             public (int start, int end) Interval { get; set; }
+            public int Size { get => Interval.end + 1 - Interval.start; }
             public int LeftMostLeaf { get; set; } = int.MaxValue;
             public int RightMostLeaf { get; set; } = int.MinValue;
-            public (int, int) Parent { get; set; }
-            public List<(int, int)> Children { get; set; } = new();
+            public IntervalNode Parent { get; set; }
+            public List<IntervalNode> Children { get; set; } = new();
             public int DistanceToRoot { get; set; }
 
-            public IntervalNode((int start, int end) interval, (int start, int end) parent, int distanceToRoot)
+            public IntervalNode((int start, int end) interval, IntervalNode parent, int distanceToRoot)
             {
                 Interval = interval;
                 Parent = parent;
@@ -429,7 +430,6 @@ namespace ConsoleApp.DataStructures
 
         public System.Collections.Generic.HashSet<(int, int)> _leaves { get; } = new();
         public Dictionary<(int, int), IntervalNode> _nodes { get; } = new();
-
         public void GetAllLcpIntervals(int minSize)
         {
             System.Collections.Generic.HashSet<(int, int)> hashSet = new();
@@ -438,7 +438,7 @@ namespace ConsoleApp.DataStructures
             // First add child intervals for the interval [0..n]
             var Initinterval = intervals.Dequeue();
             hashSet.Add((Initinterval.Item1, Initinterval.Item2));
-            _nodes.Add(Initinterval, new IntervalNode(Initinterval, (-1, -1), 0));
+            _nodes.Add(Initinterval, new IntervalNode(Initinterval, null, 0));
             var currNode = _nodes[Initinterval];
             foreach (var item in GetChildIntervalsInit(Initinterval.Item1, Initinterval.Item2))
             {
@@ -446,8 +446,9 @@ namespace ConsoleApp.DataStructures
                 {
                     if (!hashSet.Contains(item)) intervals.Enqueue(item);
                     hashSet.Add(item);
-                    currNode.Children.Add(item);
-                    _nodes.Add(item, new IntervalNode(item, currNode.Interval, currNode.DistanceToRoot + 1));
+                    var child = new IntervalNode(item, currNode, currNode.DistanceToRoot + 1);
+                    currNode.Children.Add(child);
+                    _nodes.Add(item, child);
                 }
             }
             while (intervals.Count > 0)
@@ -467,8 +468,9 @@ namespace ConsoleApp.DataStructures
                         {
 
                             intervals.Enqueue(item);
-                            currNode.Children.Add(item);
-                            _nodes.Add(item, new IntervalNode(item, currNode.Interval, currNode.DistanceToRoot + 1));
+                            var child = new IntervalNode(item, currNode, currNode.DistanceToRoot + 1);
+                            currNode.Children.Add(child);
+                            _nodes.Add(item, child);
                         }
                     }
 

@@ -15,6 +15,9 @@ namespace ConsoleApp.DataStructures.Reporting
             SA = new(str);
             SA.BuildChildTable();
             SA.GetAllLcpIntervals((int)Math.Log2(SA.n));
+
+            SA._nodes.Values.Where(s => s.Size > Math.Sqrt(SA.n) && s.Children.All(e => e.Size < Math.Sqrt(SA.n)));
+
             var nodes = SA._nodes.Values.ToArray();
             List<int[]> sortedLeaves = SA._leaves.AsParallel().Select(SA.GetOccurrencesForInterval).ToList();
             var t = SA._nodes;

@@ -73,11 +73,11 @@ namespace ConsoleApp.DataStructures.Reporting
                 (int, int) leafInterval = Leaves[i];
                 var leaf = Tree[leafInterval];
                 var parentInterval = leaf.Parent;
-                while (Tree.ContainsKey(parentInterval))
+                while (Tree.ContainsKey(parentInterval.Interval))
                 {
-                    var parent = Tree[parentInterval];
-                    if (parent.LeftMostLeaf > i) Tree[parentInterval].LeftMostLeaf = i;
-                    if (parent.RightMostLeaf < i) Tree[parentInterval].RightMostLeaf = i;
+                    var parent = Tree[parentInterval.Interval];
+                    if (parent.LeftMostLeaf > i) Tree[parentInterval.Interval].LeftMostLeaf = i;
+                    if (parent.RightMostLeaf < i) Tree[parentInterval.Interval].RightMostLeaf = i;
                     parentInterval = parent.Parent;
                 }
             }
@@ -92,19 +92,7 @@ namespace ConsoleApp.DataStructures.Reporting
         #region Query Methods
 
 
-        public int DistanceToRoot((int, int) interval)
-        {
-            int counter = 0;
-            var tempInterval = interval;
-            while (Tree.TryGetValue(tempInterval, out IntervalNode node))
-            {
-                // We are at root
-                if (node.Parent == (-1, -1)) return counter;
-                tempInterval = node.Parent;
-                ++counter;
-            }
-            return -1;
-        }
+     
 
 
 
