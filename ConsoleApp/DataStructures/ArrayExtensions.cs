@@ -70,6 +70,7 @@
         public static IEnumerable<int> GetViewBetween(this int[] array, int x, int y)
         {
             (int s, int e) = array.BinarySearchOnRange(x, y);
+            if (s < 0) return Enumerable.Empty<int>();
             return array.Take(new Range(s, e + 1));
         }
 

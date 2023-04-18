@@ -145,21 +145,21 @@ namespace ConsoleApp
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
                 //DummyData.DNA("DNA_512"),
-                DummyData.DNA("DNA_262144"),
+                //DummyData.DNA("DNA_262144"),
                 DummyData.DNA("DNA_524288"),
                 DummyData.DNA("DNA_1048576"),
                 DummyData.DNA("DNA_2097152"),
                 DummyData.DNA("DNA_4194304"),
-                //DummyData.DNA("DNA_8388608"),
-                //DummyData.DNA("DNA_16777216"),
-                //DummyData.DNA("DNA_33554432")
+                DummyData.DNA("DNA_8388608"),
+                DummyData.DNA("DNA_16777216"),
+                DummyData.DNA("DNA_33554432")
             };
 
             BuildDataStructure[] dataStructures = new BuildDataStructure[]
             {
-                BuildSuffixArray_V1,
+                //BuildSuffixArray_V1,
                 BuildSuffixArray_V2,
-                BuildSuffixArray_V3,
+                //BuildSuffixArray_V3,
                 BuildSuffixArray_V4
             };
 
@@ -190,14 +190,14 @@ namespace ConsoleApp
         public static T[] KWayMerge<T>(T[][] arrays) where T : IComparable<T>
         {
             // Create a SortedSet to store the current minimum element from each array
-            SortedSet<(T value, int arrayIndex)> minHeap = new SortedSet<(T, int)>();
+            PriorityQueue<int, T> minHeap = new PriorityQueue<int, T>();
             int[] counters = new int[arrays.Length];
             // Initialize the heap with the first element from each input array
             for (int i = 0; i < arrays.Length; i++)
             {
                 if (arrays[i].Length > 0)
                 {
-                    minHeap.Add((arrays[i][0], i));
+                    minHeap.Enqueue(i, arrays[i][counters[i]++]);
                 }
             }
 
@@ -209,29 +209,14 @@ namespace ConsoleApp
             int index = 0;
 
             // Merge the arrays using the k-way merge algorithm
-            while (minHeap.Count > 0 && index < totalElements)
+            while (minHeap.TryDequeue(out int arrayIndex, out T value) && index < totalElements)
             {
-                // Extract the minimum element from the heap and add it to the output array
-                (T value, int arrayIndex) = minHeap.Min;
-                minHeap.Remove((value, arrayIndex));
                 result[index++] = value;
                 if (arrays[arrayIndex].Length > counters[arrayIndex])
                 {
-                    minHeap.Add((arrays[arrayIndex][counters[arrayIndex]], arrayIndex));
-                    counters[arrayIndex]++;
+                    minHeap.Enqueue(arrayIndex, arrays[arrayIndex][counters[arrayIndex]++]);
                 }
-                
-                // If the array from which the minimum element was extracted is not empty, add the next element from that array to the heap
-
-                //T[] nextElements = ;
-                //Array.Copy(arrays[arrayIndex], 1, nextElements, 0, nextElements.Length);
-                //if (arrays[arrayIndex].Length < counters[arrayIndex]++)
-                        
-                    
-                
-                
             }
-
             return result;
         }
     }
