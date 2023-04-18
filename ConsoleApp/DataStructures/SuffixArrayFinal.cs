@@ -418,11 +418,14 @@ namespace ConsoleApp.DataStructures
             public List<IntervalNode> Children { get; set; } = new();
             public int DistanceToRoot { get; set; }
 
+            public bool Merged { get; set; }
+
             public IntervalNode((int start, int end) interval, IntervalNode parent, int distanceToRoot)
             {
                 Interval = interval;
                 Parent = parent;
                 DistanceToRoot = distanceToRoot;
+                Merged = false;
             }
 
             public bool IsLeaf { get => Children.Count == 0; }
