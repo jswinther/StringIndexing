@@ -364,3 +364,4 @@ FodyWeavers.xsd
 ConsoleApp/.vscode/launch.json
 .gitignore
 ConsoleApp/.vscode/tasks.json
+/ConsoleApp/DataStructures/Existence/SA_E_V2.cs

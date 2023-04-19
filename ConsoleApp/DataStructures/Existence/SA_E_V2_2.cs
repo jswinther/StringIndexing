@@ -62,8 +62,8 @@ namespace ConsoleApp.DataStructures.Existence
             }*/
 
             /*Precomputation 2 */
-
-            BotLevel = new List<IntervalNode>(findBotLevelRec(Tree.Values.First(), minSizeSaved));
+            BotLevel = new List<IntervalNode>();
+            findBotLevelRec(Tree.Values.First(), minSizeSaved);
 
             //var botLevel = Tree.Values.Where(s => s.Size >= minSizeSaved && s.Children.All(e => e.Size < minSizeSaved));
 
@@ -84,7 +84,7 @@ namespace ConsoleApp.DataStructures.Existence
                         {
                             ExistsForward.Add(interval1.Interval, new HashSet<(int, int)>(new (int, int)[] { interval2.Interval }));
                         }
-                        
+
                     }
                     if (occs2.Any(occ2 => occs1.Contains(occ2 + Tree[interval2.Interval].DistanceToRoot + FixedGap)))
                     {
@@ -96,21 +96,23 @@ namespace ConsoleApp.DataStructures.Existence
                         {
                             ExistsBackward.Add(interval1.Interval, new HashSet<(int, int)>(new (int, int)[] { interval2.Interval }));
                         }
-                        
+
                     }
                 }
                 interval1.Merged = true;
             }
-            RecurseMerge(Tree.Values.First());
+            RecurseMerge(Tree.Values.First(), minSizeSaved);
 
         }
 
-        private IEnumerable<IntervalNode> findBotLevelRec(IntervalNode node, int minSize)
+        private void findBotLevelRec(IntervalNode node, int minSize)
         {
-            if (node.Children.Any(child => child.Size < minSize))
+            //!SA.S.Substring(SA[child.Interval.start],1).Equals("|")
+            if (node.Children.Any(child => child.Size < minSize && child.Size != 1))
             {
-                yield return node;
-            } else
+                BotLevel.Add(node);
+            }
+            else
             {
                 foreach (var child in node.Children)
                 {
@@ -119,25 +121,26 @@ namespace ConsoleApp.DataStructures.Existence
             }
         }
 
-        private void RecurseMerge(IntervalNode root)
+        private void RecurseMerge(IntervalNode root, int minSize)
         {
             if (!root.Merged)
             {
                 foreach (var child in root.Children)
                 {
-                    if (child.Size < Math.Sqrt(SA.n))
+                    if (child.Size < minSize)
                     {
-                        return;
+                        continue;
                     }
-                    RecurseMerge(child);
-                    HashSet < (int, int) > rootExists = new();
+                    RecurseMerge(child, minSize);
+                    HashSet<(int, int)> rootExists = new();
                     if (ExistsForward.TryGetValue(root.Interval, out rootExists))
                     {
                         rootExists.UnionWith(ExistsForward[child.Interval]);
                         //ExistsForward[root.Interval].UnionWith(childExists);
-                    } else
+                    }
+                    else
                     {
-                        ExistsForward.Add(root.Interval, new HashSet<(int, int)> (ExistsForward[child.Interval]));
+                        ExistsForward.Add(root.Interval, new HashSet<(int, int)>(ExistsForward[child.Interval]));
                     }
 
                     if (ExistsBackward.TryGetValue(root.Interval, out rootExists))
@@ -152,7 +155,8 @@ namespace ConsoleApp.DataStructures.Existence
 
                 }
                 root.Merged = true;
-            } else
+            }
+            else
             {
                 return;
             }
@@ -173,12 +177,14 @@ namespace ConsoleApp.DataStructures.Existence
             if (ExistsForward[int1].Contains(int2) || ExistsBackward[int2].Contains(int1))
             {
                 return true;
-            } else if (int1.j - int1.i > int2.j - int2.i)
+            }
+            else if (int1.j - int1.i > int2.j - int2.i)
             {
                 var occs1 = new HashSet<int>(SA.GetOccurrencesForInterval(int1));
                 var occs2 = SA.GetOccurrencesForInterval(int2);
                 return occs2.Any(occ2 => occs1.Contains(occ2 - Tree[int1].DistanceToRoot - FixedGap));
-            } else
+            }
+            else
             {
                 var occs1 = SA.GetOccurrencesForInterval(int1);
                 var occs2 = new HashSet<int>(SA.GetOccurrencesForInterval(int2));

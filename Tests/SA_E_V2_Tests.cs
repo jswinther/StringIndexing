@@ -53,7 +53,7 @@ namespace Tests
         [TestMethod]
         public void D_Query_1048576()
         {
-            Assert.IsTrue(SA.FixedExists("a", "a"));
+            Assert.IsTrue(SA.FixedExists("acat", "gtag"));
         }
 
     }
