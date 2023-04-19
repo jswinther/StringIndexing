@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleApp.DataStructures.InitialSolutions.TrieNet.Ukkonen
+namespace Gma.DataStructures.StringSearch
 {
     internal class Node<K, T> where K : IComparable<K>
     {
@@ -16,13 +16,11 @@ namespace ConsoleApp.DataStructures.InitialSolutions.TrieNet.Ukkonen
             _data = new HashSet<T>();
         }
 
-        public IEnumerable<Node<K, T>> Children()
-        {
+        public IEnumerable<Node<K, T>> Children() {
             return _edges.Values.Select(e => e.Target);
         }
 
-        public long Size()
-        {
+        public long Size() {
             return Children().Sum(o => o.Size()) + 1;
         }
 
@@ -64,10 +62,8 @@ namespace ConsoleApp.DataStructures.InitialSolutions.TrieNet.Ukkonen
 
         public IEnumerable<Edge<K, T>> GetEdgesBetween(K min, K max)
         {
-            foreach (var ch in _edges.Keys)
-            {
-                if (ch.CompareTo(min) >= 0 && ch.CompareTo(max) <= 0)
-                {
+            foreach (var ch in _edges.Keys) {
+                if (ch.CompareTo(min) >= 0 && ch.CompareTo(max) <= 0) {
                     yield return _edges[ch];
                 }
             }

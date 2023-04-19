@@ -6,14 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures.Discarded
+namespace ConsoleApp.DataStructures
 {
     //Class implementing the Suffix Tree Problem, using Ukonnen's algorithm for construction
     internal class AlgoSuffixTreeProblem
     {
         public class STNode
         {
-            public string subst = ""; //The substring that this node represents (e.g. the string matched to get to this point)
+            public String subst = ""; //The substring that this node represents (e.g. the string matched to get to this point)
             public List<int> children = new List<int>(); //List of all children (e.g. longer suffixes with differing next chars)
         }
 
@@ -30,7 +30,7 @@ namespace ConsoleApp.DataStructures.Discarded
                 }
             }
 
-            private void addSuffix(string sub)
+            private void addSuffix(String sub)
             {
                 int n = 0; //Index of the node that we are looking at?
                 int i = 0; //index of next character to be matched
@@ -57,7 +57,7 @@ namespace ConsoleApp.DataStructures.Discarded
                         x++;
                     }
                     // This part finds the prefix of the remaining suffix in common with child node
-                    string subst2 = nodes[n2].subst;
+                    String subst2 = nodes[n2].subst;
                     int j = 0;
                     while (j < subst2.Length)
                     {
@@ -84,28 +84,25 @@ namespace ConsoleApp.DataStructures.Discarded
 
             public void print()
             {
-                if (nodes.Count == 0)
-                {
+                if (nodes.Count == 0) {
                     Console.WriteLine("");
                     return;
                 }
-                print_format(0, "");
+                print_format(0,"");
             }
 
-            public void print_format(int n, string t)
-            {
+            public void print_format(int n, String t) {
                 List<int> children = nodes[n].children;
-                if (children.Count == 0)
-                {
+                if(children.Count == 0) {
                     Console.WriteLine("- " + nodes[n].subst);
                     return;
                 }
                 Console.WriteLine("? " + nodes[n].subst);
-                for (int i = 0; i < children.Count - 1; i++)
+                for (int i = 0; i < children.Count -1; i++)
                 {
                     int c = children[i];
                     Console.Write(t + "??");
-                    print_format(c, t + "? ");
+                    print_format(c,t + "? ");
                 }
                 Console.Write(t + "??");
                 print_format(children[children.Count - 1], t + " ");

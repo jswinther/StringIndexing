@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures.Discarded
+namespace ConsoleApp.DataStructures
 {
     internal class Trie
     {

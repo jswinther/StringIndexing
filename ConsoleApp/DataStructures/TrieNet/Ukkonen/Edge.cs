@@ -1,13 +1,13 @@
 using System;
 
-namespace ConsoleApp.DataStructures.InitialSolutions.TrieNet.Ukkonen
+namespace Gma.DataStructures.StringSearch
 {
     internal class Edge<K, T> where K : IComparable<K>
     {
         public Edge(ReadOnlyMemory<K> label, Node<K, T> target)
         {
-            Label = label;
-            Target = target;
+            this.Label = label;
+            this.Target = target;
         }
 
         public ReadOnlyMemory<K> Label { get; set; }

@@ -4,13 +4,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures.InitialSolutions
+namespace ConsoleApp.DataStructures
 {
     internal class PreCompSubs : PatternMatcher
     {
         Dictionary<string, HashSet<int>> Substrings = new();
 
-        public PreCompSubs(string text) : base(text)
+
+        public PreCompSubs(string text): base(text)
         {
             for (int i = 1; i <= text.Length; i++)
             {
@@ -26,13 +27,11 @@ namespace ConsoleApp.DataStructures.InitialSolutions
             }
         }
 
-        public override IEnumerable<int> Matches(string pattern)
+        public IEnumerable<(int, int)> Report(Query query)
         {
-            return Substrings[pattern];
-        }
-
-        public override IEnumerable<(int, int)> Matches(string p1, int x, string p2)
-        {
+            string p1 = query.P1;
+            int x = query.X;
+            string p2 = query.P2;
             List<(int, int)> occs = new();
             if (Substrings.ContainsKey(p1))
             {
@@ -62,7 +61,32 @@ namespace ConsoleApp.DataStructures.InitialSolutions
                     }
                 }
             }
+
             return occs;
+        }
+
+        public void PrintHaram()
+        {
+            foreach (var key in Substrings.Keys)
+            {
+                Console.WriteLine(key);
+                foreach (var index in Substrings[key])
+                {
+                    Console.Write($"{index}\t");
+                }
+
+                Console.WriteLine("\n");
+            }
+        }
+
+        public override IEnumerable<int> Matches(string pattern)
+        {
+            return Substrings[pattern];
+        }
+
+        public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
+        {
+            return Report(new Query(pattern1, x, pattern2));
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)

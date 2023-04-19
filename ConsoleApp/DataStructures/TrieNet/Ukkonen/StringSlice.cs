@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace ConsoleApp.DataStructures.InitialSolutions.TrieNet.Ukkonen
+namespace Gma.DataStructures.StringSearch
 {
     [Serializable]
     [DebuggerDisplay(
@@ -44,19 +44,15 @@ namespace ConsoleApp.DataStructures.InitialSolutions.TrieNet.Ukkonen
             get { return m_Origin.Span[m_StartIndex + index]; }
         }
 
-        public int StartIndex
-        {
-            set
-            {
+        public int StartIndex {
+            set {
                 m_StartIndex = Math.Max(0, Math.Min(value, m_EndIndex));
             }
             get { return m_StartIndex; }
         }
 
-        public int EndIndex
-        {
-            set
-            {
+        public int EndIndex {
+            set {
                 m_EndIndex = Math.Max(StartIndex, Math.Min(value, m_Origin.Length));
             }
             get { return m_EndIndex; }
@@ -102,51 +98,42 @@ namespace ConsoleApp.DataStructures.InitialSolutions.TrieNet.Ukkonen
             unchecked
             {
                 int hashCode = m_Origin.GetHashCode();
-                hashCode = hashCode * 397 ^ m_EndIndex;
-                hashCode = hashCode * 397 ^ m_StartIndex;
+                hashCode = (hashCode*397) ^ m_EndIndex;
+                hashCode = (hashCode*397) ^ m_StartIndex;
                 return hashCode;
             }
         }
 
-        public StringSlice<K> Slice(int startIndex)
-        {
+        public StringSlice<K> Slice(int startIndex) {
             return Slice(startIndex, Length - startIndex);
         }
 
-        public StringSlice<K> Slice(int startIndex, int count)
-        {
+        public StringSlice<K> Slice(int startIndex, int count) {
             return new StringSlice<K>(m_Origin, m_StartIndex + startIndex, Math.Min(count, Length - startIndex));
         }
 
-        public bool StartsWith(StringSlice<K> other)
-        {
+        public bool StartsWith(StringSlice<K> other) {
             return StartsWith(other.AsSpan());
         }
 
-        public bool StartsWith(ReadOnlySpan<K> other)
-        {
-            if (Length < other.Length)
-            {
+        public bool StartsWith(ReadOnlySpan<K> other) {
+            if (Length < other.Length) {
                 return false;
             }
 
-            for (int i = 0; i < other.Length; i++)
-            {
-                if (!this[i].Equals(other[i]))
-                {
+            for (int i = 0; i < other.Length; i++) {
+                if (!this[i].Equals(other[i])) {
                     return false;
                 }
             }
             return true;
         }
 
-        public ReadOnlyMemory<K> AsMemory()
-        {
+        public ReadOnlyMemory<K> AsMemory() {
             return m_Origin.Slice(m_StartIndex, Length);
         }
 
-        public ReadOnlySpan<K> AsSpan()
-        {
+        public ReadOnlySpan<K> AsSpan() {
             return m_Origin.Span.Slice(m_StartIndex, Length);
         }
 
