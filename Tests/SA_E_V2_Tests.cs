@@ -16,10 +16,10 @@ namespace Tests
         [TestMethod]
         public void A_Query_512()
         {
-            Assert.IsTrue(SA.FixedExists("a", "a"));
+            Assert.IsTrue(SA.FixedExists("d", "dS"));
         }
-        
-        
+
+
         [TestMethod]
         public void B_DNA_262144()
         {
@@ -56,5 +56,41 @@ namespace Tests
             Assert.IsTrue(SA.FixedExists("acat", "gtag"));
         }
 
+        [TestMethod]
+        public void E_DNA_4194304()
+        {
+            SA = new SA_E_V2(DummyData.DNA("DNA_4194304"), 5, 1, 45);
+        }
+
+        [TestMethod]
+        public void E_Query_4194304()
+        {
+            Assert.IsTrue(SA.FixedExists("acat", "gtag"));
+        }
+
+        [TestMethod]
+        public void F_DNA_8388608()
+        {
+            SA = new SA_E_V2(DummyData.DNA("DNA_8388608"), 5, 1, 45);
+        }
+
+        [TestMethod]
+        public void F_Query_8388608()
+        {
+            Assert.IsTrue(SA.FixedExists("acat", "gtag"));
+        }
+
+        [TestMethod]
+        public void G_DNA_16777216()
+        {
+            SA = new SA_E_V2(DummyData.DNA("DNA_16777216"), 5, 1, 45);
+        }
+
+        [TestMethod]
+        public void G_Query_16777216()
+        {
+            Assert.IsTrue(SA.FixedExists("acat", "gtag"));
+
+        }
     }
 }
