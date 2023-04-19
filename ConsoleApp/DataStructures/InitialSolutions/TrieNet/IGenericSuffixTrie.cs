@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Gma.DataStructures.StringSearch
+namespace ConsoleApp.DataStructures.InitialSolutions.TrieNet
 {
     /// <summary>
     /// Interface to be implemented by a data structure 

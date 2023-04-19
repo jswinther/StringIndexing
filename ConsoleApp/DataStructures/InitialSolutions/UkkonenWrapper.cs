@@ -1,4 +1,5 @@
-﻿using Gma.DataStructures.StringSearch;
+﻿using ConsoleApp.DataStructures;
+using ConsoleApp.DataStructures.InitialSolutions.TrieNet.Ukkonen;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.DataStructures.InitialSolutions
 {
     internal class UkkonenWrapper : PatternMatcher
     {
@@ -48,10 +49,10 @@ namespace ConsoleApp.DataStructures
                 foreach (var item2 in occs2.GetViewBetween(item1 + pattern1.Length + y_min, item1 + pattern1.Length + y_max))
                 {
                     occs.Add((item1, item2 + pattern2.Length));
-                }                  
+                }
             }
             return occs;
         }
-        
+
     }
 }

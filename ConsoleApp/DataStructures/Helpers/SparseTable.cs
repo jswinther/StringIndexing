@@ -1,4 +1,4 @@
-﻿namespace ConsoleApp.DataStructures
+﻿namespace ConsoleApp.DataStructures.Helpers
 {
     internal class SparseTable : RangeMinimumQuery
     {
@@ -25,7 +25,7 @@
             {
                 for (int i = 0; i + (1 << j) <= n; i++)
                 {
-                    table[i, j] = Math.Min(table[i, j - 1], table[i + (1 << (j - 1)), j - 1]);
+                    table[i, j] = Math.Min(table[i, j - 1], table[i + (1 << j - 1), j - 1]);
                 }
             }
 
