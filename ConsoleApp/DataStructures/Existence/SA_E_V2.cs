@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using static ConsoleApp.DataStructures.SuffixArrayFinal;
@@ -10,8 +11,11 @@ namespace ConsoleApp.DataStructures.Existence
     public class SA_E_V2
     {
         private SuffixArrayFinal SA;
-        private Dictionary<(int, int), IntervalNode> Tree { get => SA._nodes; }
-        private HashSet<(int, int)> Leaves { get => SA._leaves; }
+        private Dictionary<(int, int), IntervalNode> Tree;
+        private HashSet<(int, int)> Leaves;
+        //private Dictionary<(int, int), IntervalNode> TreeSqrt;
+        //private HashSet<(int, int)> LeavesSqrt;
+        private List<IntervalNode> BotLevel;
         private int FixedGap { get; set; }
         private int MinGap { get; set; }
         private int MaxGap { get; set; }
@@ -30,9 +34,10 @@ namespace ConsoleApp.DataStructures.Existence
             MaxGap = maxGap;
             SA.BuildChildTable();
             int minSizeForLcpIntervals = 0;
-            SA.GetAllLcpIntervals(minSizeForLcpIntervals);
-
-            ComputeSubSuffixArrays(minSize: (int)Math.Sqrt(SA.n));
+            int minSizeSaved = (int)Math.Sqrt(SA.n);
+            SA.GetAllLcpIntervals(minSizeForLcpIntervals, out Tree, out Leaves);
+            //SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n), out TreeSqrt, out LeavesSqrt);
+            ComputeSubSuffixArrays(minSize: minSizeSaved);
 
 
             /*Precomputation 1
@@ -58,13 +63,15 @@ namespace ConsoleApp.DataStructures.Existence
 
             /*Precomputation 2 */
 
-            var botLevel = SA._nodes.Values.Where(s => s.Size > Math.Sqrt(SA.n) && s.Children.All(e => e.Size < Math.Sqrt(SA.n)));
+            BotLevel = new List<IntervalNode>(findBotLevelRec(Tree.Values.First(), minSizeSaved));
 
-            foreach (var interval1 in botLevel)
+            //var botLevel = Tree.Values.Where(s => s.Size >= minSizeSaved && s.Children.All(e => e.Size < minSizeSaved));
+
+            foreach (var interval1 in BotLevel)
             {
                 var occs1 = new HashSet<int>(SA.GetOccurrencesForInterval(interval1.Interval));
 
-                foreach (var interval2 in botLevel)
+                foreach (var interval2 in BotLevel)
                 {
                     var occs2 = SA.GetOccurrencesForInterval(interval2.Interval);
                     if (occs2.Any(occ2 => occs1.Contains(occ2 - Tree[interval1.Interval].DistanceToRoot - FixedGap)))
@@ -98,6 +105,20 @@ namespace ConsoleApp.DataStructures.Existence
 
         }
 
+        private IEnumerable<IntervalNode> findBotLevelRec(IntervalNode node, int minSize)
+        {
+            if (node.Children.Any(child => child.Size < minSize))
+            {
+                yield return node;
+            } else
+            {
+                foreach (var child in node.Children)
+                {
+                    findBotLevelRec(child, minSize);
+                }
+            }
+        }
+
         private void RecurseMerge(IntervalNode root)
         {
             if (!root.Merged)
@@ -109,17 +130,20 @@ namespace ConsoleApp.DataStructures.Existence
                         return;
                     }
                     RecurseMerge(child);
-                    if (ExistsForward.ContainsKey(root.Interval))
+                    HashSet < (int, int) > rootExists = new();
+                    if (ExistsForward.TryGetValue(root.Interval, out rootExists))
                     {
-                        ExistsForward[root.Interval].UnionWith(ExistsForward[child.Interval]);
+                        rootExists.UnionWith(ExistsForward[child.Interval]);
+                        //ExistsForward[root.Interval].UnionWith(childExists);
                     } else
                     {
                         ExistsForward.Add(root.Interval, new HashSet<(int, int)> (ExistsForward[child.Interval]));
                     }
 
-                    if (ExistsBackward.ContainsKey(root.Interval))
+                    if (ExistsBackward.TryGetValue(root.Interval, out rootExists))
                     {
-                        ExistsBackward[root.Interval].UnionWith(ExistsBackward[child.Interval]);
+                        rootExists.UnionWith(ExistsBackward[child.Interval]);
+                        //ExistsBackward[root.Interval].UnionWith(ExistsBackward[child.Interval]);
                     }
                     else
                     {
