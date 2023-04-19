@@ -11,7 +11,7 @@ namespace ConsoleApp.DataStructures.Existence
     {
         private SuffixArrayFinal SA;
         private Dictionary<(int, int), IntervalNode> Tree;
-        private HashSet<(int, int)> Leaves;
+        private Dictionary<(int, int), IntervalNode> Leaves;
         private int FixedGap { get; set; }
         private int MinGap { get; set; }
         private int MaxGap { get; set; }

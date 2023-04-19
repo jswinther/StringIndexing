@@ -16,7 +16,7 @@ namespace ConsoleApp.DataStructures.Reporting
 
         private Dictionary<(int, int), int[]> sorted = new();
         Dictionary<(int, int), IntervalNode> Tree;
-        System.Collections.Generic.HashSet<(int, int)> Leaves;
+        Dictionary<(int, int), IntervalNode> Leaves;
         SuffixArrayFinal SA;
         public SuffixArray_V3(string S) : base(S)
         {

@@ -12,7 +12,7 @@ namespace ConsoleApp.DataStructures.Existence
     {
         private SuffixArrayFinal SA;
         private Dictionary<(int, int), IntervalNode> Tree;
-        private HashSet<(int, int)> Leaves;
+        private Dictionary<(int, int), IntervalNode> Leaves;
         //private Dictionary<(int, int), IntervalNode> TreeSqrt;
         //private HashSet<(int, int)> LeavesSqrt;
         private List<IntervalNode> BotLevel;

@@ -11,27 +11,46 @@ namespace ConsoleApp.DataStructures.Reporting
     {
         SuffixArrayFinal SA;
         Dictionary<(int, int), IntervalNode> Tree;
-        System.Collections.Generic.HashSet<(int, int)> Leaves;
+        Dictionary<(int, int), IntervalNode> Leaves;
         public SuffixArray_V5(string str) : base(str)
         {
             SA = new(str);
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals((int)Math.Log2(SA.n), out Tree, out Leaves);
-
-            Tree.Values.Where(s => s.Size > Math.Sqrt(SA.n) && s.Children.All(e => e.Size < Math.Sqrt(SA.n)));
-
-            var nodes = Tree.Values.ToArray();
-            List<int[]> sortedLeaves = Leaves.AsParallel().Select(SA.GetOccurrencesForInterval).ToList();
-            var t = Tree;
-            sortedLeaves.AsParallel().ForAll(s => Array.Sort(s));
-            for (int i = 1; i < sortedLeaves.Count; i++)
+            SA.GetAllLcpIntervals(0, out Tree, out Leaves);
+            int x = 5;
+            foreach (((int start, int end), IntervalNode leafNode) in Leaves)
             {
-                var node1 = sortedLeaves[i];
-
-                for (int j = i + 1; j < sortedLeaves.Count; j++)
+                int depth = leafNode.DistanceToRoot;
+                int left = start - depth - x;
+                int right = start + depth + x;
+                if (left >= 0)
                 {
-                    var node2 = sortedLeaves[j];
+                    leafNode.MatchingIntervals.Add((left, left));
                 }
+                if (right < Leaves.Count)
+                {
+                    leafNode.MatchingIntervals.Add((right, right));
+                }
+            }
+
+            var a = ComputeMatchingIntervals(Tree.Values.First());
+        }
+
+        private HashSet<(int, int)> ComputeMatchingIntervals(IntervalNode node)
+        {
+            if (node.MatchingIntervals.Count > 0)
+            {
+                return node.MatchingIntervals;
+            }
+            else
+            {
+                HashSet<(int, int)> values = new HashSet<(int, int)>();
+                foreach (var child in node.Children)
+                {
+                    values.UnionWith(ComputeMatchingIntervals(child));
+                }
+                node.MatchingIntervals = values;
+                return values;
             }
         }
 

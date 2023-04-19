@@ -14,7 +14,7 @@ namespace ConsoleApp.DataStructures.Reporting
     {
         SuffixArrayFinal SA;
         public Dictionary<(int, int), IntervalNode> Tree;
-        HashSet<(int, int)> Leaves1;
+        Dictionary<(int, int), IntervalNode> Leaves1;
         public (int, int)[] Leaves { get; private set; }
 
         public SuffixArray_V4(string str) : base(str)
@@ -25,7 +25,7 @@ namespace ConsoleApp.DataStructures.Reporting
             int minIntervalSize = logn;
             SA.BuildChildTable();
             SA.GetAllLcpIntervals(minIntervalSize, out Tree, out Leaves1);
-            Leaves = Leaves1.ToArray();
+            Leaves = Leaves1.Keys.ToArray();
             ComputeLeafIntervals();
         }
 

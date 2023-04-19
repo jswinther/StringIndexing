@@ -417,6 +417,7 @@ namespace ConsoleApp.DataStructures
             public IntervalNode Parent { get; set; }
             public List<IntervalNode> Children { get; set; } = new();
             public int DistanceToRoot { get; set; }
+            public System.Collections.Generic.HashSet<(int, int)> MatchingIntervals { get; set; } = new();
 
             public bool Merged { get; set; }
 
@@ -433,7 +434,7 @@ namespace ConsoleApp.DataStructures
         }
 
     
-        public void GetAllLcpIntervals(int minSize, out Dictionary<(int, int), IntervalNode> _nodes, out System.Collections.Generic.HashSet<(int, int)> _leaves)
+        public void GetAllLcpIntervals(int minSize, out Dictionary<(int, int), IntervalNode> _nodes, out Dictionary<(int, int), IntervalNode> _leaves)
         {
             _nodes = new();
             _leaves = new();
@@ -463,7 +464,7 @@ namespace ConsoleApp.DataStructures
                 _nodes.TryGetValue(interval, out currNode);
                 if (interval.Item1 == interval.Item2)
                 {
-                    _leaves.Add(interval);
+                    _leaves.Add(interval, currNode);
                 }
                 else
                 {
@@ -481,7 +482,7 @@ namespace ConsoleApp.DataStructures
 
                     if (currNode.Children.Count == 0)
                     {
-                        _leaves.Add(currNode.Interval);
+                        _leaves.Add(currNode.Interval, currNode);
                     }
                 }
                 
