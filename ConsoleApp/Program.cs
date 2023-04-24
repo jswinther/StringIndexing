@@ -172,7 +172,7 @@ namespace ConsoleApp
             };
 
             var a = new SA_E_V4(DummyData.DNA("DNA_262144"), 5);
-            var c = a.PatternExists("a", "c");
+            var c = a.PatternExists("acgta", "cactga");
             
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
