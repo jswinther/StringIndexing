@@ -8,7 +8,7 @@ using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
 namespace ConsoleApp.DataStructures
 {
-    internal class SuffixArrayFinal
+    internal partial class SuffixArrayFinal
     {
         public const int EOC = int.MaxValue;
         public int[] m_sa;
@@ -555,6 +555,7 @@ namespace ConsoleApp.DataStructures
 
         public int[] GetOccurrencesForInterval(int start, int end)
         {
+            if (start == -1 && end == -1) return new int[] { };
             int[] occurrences = new int[end + 1 - start];
             for (int i = 0; i < occurrences.Length; i++)
             {

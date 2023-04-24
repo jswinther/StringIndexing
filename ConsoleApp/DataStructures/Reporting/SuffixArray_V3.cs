@@ -45,6 +45,7 @@ namespace ConsoleApp.DataStructures.Reporting
         private int[] ArrayOfPattern(string pattern)
         {
             var interval = SA.ExactStringMatchingWithESA(pattern);
+            if (interval == (-1, -1)) return new int[] { };
             if (interval.j - interval.i == 0) return new int[] { SA[interval.i] };
             return sorted[interval];
         }

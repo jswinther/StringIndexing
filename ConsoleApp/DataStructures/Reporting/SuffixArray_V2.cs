@@ -18,7 +18,9 @@ namespace ConsoleApp.DataStructures.Reporting
 
         public override IEnumerable<int> Matches(string pattern)
         {
-            return SA.GetOccurrencesForPattern(pattern);
+            var occs = SA.GetOccurrencesForPattern(pattern);
+            Array.Sort(occs);
+            return occs;
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)

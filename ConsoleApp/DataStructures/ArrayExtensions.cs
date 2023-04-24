@@ -78,6 +78,30 @@
         {
             return (array.BinarySearchOnRange(x, y) != (-1, -1));
         }
-        
+
+        public static int MinUnsorted(this int[] array)
+        {
+            return array.Min();
+        }
+
+        public static int MaxUnsorted(this int[] array)
+        {
+            return array.Max();
+        }
+
+        public static (int min, int max) MinMax(this int[] array)
+        {
+            return (array.MinUnsorted(), array.MaxUnsorted());
+        }
+
+        public static int MinSorted(this int[] array)
+        {
+            return array[0];
+        }
+
+        public static int MaxSorted(this int[] array)
+        {
+            return array[array.Length - 1];
+        }
     }
 }

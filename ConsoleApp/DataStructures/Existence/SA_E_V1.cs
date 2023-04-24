@@ -29,9 +29,15 @@ namespace ConsoleApp.DataStructures.Existence
             int minSizeForLcpIntervals = (int)Math.Sqrt(SA.n);
             SA.GetAllLcpIntervals(1, out Tree, out Leaves);
 
-            ComputeSubSuffixArrays(minSize: (int)Math.Sqrt(SA.n));
-
-
+            var tree = Tree.Skip(1);
+            foreach (var node in tree)
+            {
+                var n = node.Value;
+                foreach (var node2 in tree)
+                {
+                    
+                }
+            }
 
             foreach (var int2 in Tree.Keys.Take(512))
             {

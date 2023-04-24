@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static ConsoleApp.DataStructures.Reporting.SuffixArray_V2;
 using static ConsoleApp.DataStructures.SuffixArrayFinal;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
@@ -16,23 +17,103 @@ namespace ConsoleApp.DataStructures.Reporting
         public Dictionary<(int, int), IntervalNode> Tree;
         Dictionary<(int, int), IntervalNode> Leaves1;
         public (int, int)[] Leaves { get; private set; }
+        public IntervalNode[] Nodes { get; private set; }
+        public List<(int, int)> TopNodes { get; private set; }
+        public int Height { get; set; }
 
         public SuffixArray_V4(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
             // Populates _nodes and _leaves
-            int logn = (int)Math.Floor(Math.Sqrt(SA.n));
-            int minIntervalSize = logn;
+
+
+            
+
+
+
+
+            int logn = (int)Math.Floor(Math.Log2(SA.n));
             SA.BuildChildTable();
             SA.GetAllLcpIntervals(minIntervalSize, out Tree, out Leaves1);
             Leaves = Leaves1.Keys.ToArray();
             ComputeLeafIntervals();
+          
+            
+            BuildDataStructure();
+            //ComputeLeafIntervals();
+
+            
+
+        }
+
+        private void BuildDataStructure()
+        {
+            SortedTree = new();
+            Height = Tree.Last().Value.DistanceToRoot/2;
+            Nodes = Tree.Values.ToArray();
+            (int min, int max) = (Height - Height / 2, Height + Height / 2);
+
+            
+            TopNodes = new();
+            foreach (var intervalToBeSorted in Nodes.Where(n => n.DistanceToRoot >= min && n.DistanceToRoot <= max))
+            {
+                var occs = SA.GetOccurrencesForInterval(intervalToBeSorted.Interval);
+                if (intervalToBeSorted.DistanceToRoot == min) TopNodes.Add(intervalToBeSorted.Interval);
+                Array.Sort(occs);
+                SortedTree.Add(intervalToBeSorted.Interval, occs);
+            }
+            HashSet<IntervalNode> parents = new();
+            for (int i = 0; i < TopNodes.Count; i++)
+            {
+                (int, int) leafInterval = TopNodes[i];
+                var leaf = Tree[leafInterval];
+                var parentInterval = leaf.Parent;
+                while (Tree.ContainsKey(parentInterval))
+                {
+                    var parent = Tree[parentInterval];
+                    parents.Add(parent);
+                    if (parent.LeftMostLeaf > i) Tree[parentInterval].LeftMostLeaf = i;
+                    if (parent.RightMostLeaf < i) Tree[parentInterval].RightMostLeaf = i;
+                    parentInterval = parent.Parent;
+                }
+            }
+            
+        }
+
+        private int[] UnsortedOccurrencesForPattern(string pattern)
+        {
+            return SA.GetOccurrencesForPattern(pattern);
+        }
+
+        private int[] SortedOccurrencesForPattern(string pattern)
+        {
+            var interval = SA.ExactStringMatchingWithESA(pattern);
+            int log = (int)Math.Floor(Math.Log2(SA.n));
+            if (SortedTree.ContainsKey(interval)) return SortedTree[interval];
+            if (Tree.ContainsKey(interval) && Tree[interval].DistanceToRoot <= Height - Height / 2)
+            {
+                var intervalNode = Tree[interval];
+                int start = intervalNode.LeftMostLeaf;
+                int end = intervalNode.RightMostLeaf;
+                int[][] arr = new int[end - start + 1][];
+                for (int i = start; i < end + 1; i++)
+                {
+                    arr[i] = SortedTree[TopNodes[i]];
+                }
+                return MergeKSortedArrays(arr);
+            }
+            else
+            {
+                var occs = SA.GetOccurrencesForInterval(interval);
+                Array.Sort(occs);
+                return occs;
+            }
         }
 
         #region Pattern Matching
         public override IEnumerable<int> Matches(string pattern)
         {
-            return SA.GetOccurrencesForPattern(pattern);
+            return SortedOccurrencesForPattern(pattern);
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
@@ -52,8 +133,8 @@ namespace ConsoleApp.DataStructures.Reporting
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
             List<(int, int)> occs = new();
-            var occs1 = SA.GetOccurrencesForPattern(pattern1);
-            var occs2 = GetSortedLeavesForInterval(SA.ExactStringMatchingWithESA(pattern2));
+            var occs1 = UnsortedOccurrencesForPattern(pattern1);
+            var occs2 = SortedOccurrencesForPattern(pattern2);
             foreach (var occ1 in occs1)
             {
                 int min = occ1 + y_min + pattern1.Length;
