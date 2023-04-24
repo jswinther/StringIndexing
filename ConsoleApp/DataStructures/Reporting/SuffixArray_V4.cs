@@ -15,6 +15,7 @@ namespace ConsoleApp.DataStructures.Reporting
     {
         SuffixArrayFinal SA;
         public Dictionary<(int, int), IntervalNode> Tree;
+        public Dictionary<(int, int), int[]> SortedTree;
         Dictionary<(int, int), IntervalNode> Leaves1;
         public (int, int)[] Leaves { get; private set; }
         public IntervalNode[] Nodes { get; private set; }
@@ -25,20 +26,12 @@ namespace ConsoleApp.DataStructures.Reporting
         {
             SA = new SuffixArrayFinal(str);
             // Populates _nodes and _leaves
-
-
-            
-
-
-
-
-            int logn = (int)Math.Floor(Math.Log2(SA.n));
+            int minIntervalSize = (int)Math.Floor(Math.Log2(SA.n));
             SA.BuildChildTable();
             SA.GetAllLcpIntervals(minIntervalSize, out Tree, out Leaves1);
             Leaves = Leaves1.Keys.ToArray();
             ComputeLeafIntervals();
-          
-            
+         
             BuildDataStructure();
             //ComputeLeafIntervals();
 
@@ -67,14 +60,15 @@ namespace ConsoleApp.DataStructures.Reporting
             {
                 (int, int) leafInterval = TopNodes[i];
                 var leaf = Tree[leafInterval];
-                var parentInterval = leaf.Parent;
+                var parentInterval = leaf.Parent.Interval;
                 while (Tree.ContainsKey(parentInterval))
                 {
                     var parent = Tree[parentInterval];
                     parents.Add(parent);
                     if (parent.LeftMostLeaf > i) Tree[parentInterval].LeftMostLeaf = i;
                     if (parent.RightMostLeaf < i) Tree[parentInterval].RightMostLeaf = i;
-                    parentInterval = parent.Parent;
+                    if (parent.Parent == null) break;
+                    parentInterval = parent.Parent.Interval;
                 }
             }
             
@@ -90,7 +84,7 @@ namespace ConsoleApp.DataStructures.Reporting
             var interval = SA.ExactStringMatchingWithESA(pattern);
             int log = (int)Math.Floor(Math.Log2(SA.n));
             if (SortedTree.ContainsKey(interval)) return SortedTree[interval];
-            if (Tree.ContainsKey(interval) && Tree[interval].DistanceToRoot <= Height - Height / 2)
+            if (SortedTree.ContainsKey(interval) && Tree[interval].DistanceToRoot <= Height - Height / 2)
             {
                 var intervalNode = Tree[interval];
                 int start = intervalNode.LeftMostLeaf;
@@ -160,6 +154,7 @@ namespace ConsoleApp.DataStructures.Reporting
                     var parent = Tree[parentInterval.Interval];
                     if (parent.LeftMostLeaf > i) Tree[parentInterval.Interval].LeftMostLeaf = i;
                     if (parent.RightMostLeaf < i) Tree[parentInterval.Interval].RightMostLeaf = i;
+                    if (parent.Parent == null) break;
                     parentInterval = parent.Parent;
                 }
             }
@@ -180,7 +175,7 @@ namespace ConsoleApp.DataStructures.Reporting
 
         public int[] GetSortedLeavesForInterval((int, int) interval)
         {
-            if (!Tree.ContainsKey(interval))
+            if (!SortedTree.ContainsKey(interval))
             {
                 var occs = SA.GetOccurrencesForInterval(interval);
                 Array.Sort(occs);
