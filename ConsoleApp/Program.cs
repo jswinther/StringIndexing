@@ -171,7 +171,7 @@ namespace ConsoleApp
                 //BuildSuffixArray_V5
             };
 
-            var a = new SA_E_V4(DummyData.DNA("DNA_262144"), 5);
+            var a = new SA_E_V4(DummyData.DNA("DNA_33554432"), 5);
             var c = a.PatternExists("acgta", "cactga");
             
             
