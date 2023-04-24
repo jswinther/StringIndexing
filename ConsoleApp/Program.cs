@@ -1,4 +1,5 @@
 ﻿using ConsoleApp.DataStructures;
+using ConsoleApp.DataStructures.Existence;
 using ConsoleApp.DataStructures.Reporting;
 using Gma.DataStructures.StringSearch;
 using System;
@@ -170,6 +171,8 @@ namespace ConsoleApp
                 //BuildSuffixArray_V5
             };
 
+            var a = new SA_E_V4(DummyData.DNA("DNA_262144"), 5);
+            var c = a.PatternExists("a", "c");
             
             
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
