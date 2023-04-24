@@ -7,7 +7,6 @@ using System.Text;
 using System.Threading.Tasks;
 using static ConsoleApp.DataStructures.Reporting.SuffixArray_V2;
 using static ConsoleApp.DataStructures.SuffixArrayFinal;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
