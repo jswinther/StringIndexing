@@ -171,10 +171,15 @@ namespace ConsoleApp
                 //BuildSuffixArray_V5
             };
 
-            var a = new SA_E_V4(DummyData.DNA("DNA_33554432"), 5);
-            var c = a.PatternExists("acgta", "cactga");
-            
-            
+            Stopwatch sw = Stopwatch.StartNew();
+            var a = new SA_E_V5(DummyData.DNA("DNA_2097152"), 5);
+            sw.Stop();
+            Console.WriteLine(sw.ElapsedMilliseconds);
+            sw = Stopwatch.StartNew();
+            var c = a.PatternExists("a", "a");
+            sw.Stop();
+            Console.WriteLine(sw.ElapsedMilliseconds);
+            return;
             var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
             string p1 = "a";

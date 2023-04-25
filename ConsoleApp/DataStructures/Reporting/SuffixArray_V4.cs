@@ -83,7 +83,7 @@ namespace ConsoleApp.DataStructures.Reporting
             var interval = SA.ExactStringMatchingWithESA(pattern);
             int log = (int)Math.Floor(Math.Log2(SA.n));
             if (SortedTree.ContainsKey(interval)) return SortedTree[interval];
-            if (SortedTree.ContainsKey(interval) && Tree[interval].DistanceToRoot <= Height - Height / 2)
+            if (Tree.ContainsKey(interval) && Tree[interval].DistanceToRoot <= Height - Height / 2)
             {
                 var intervalNode = Tree[interval];
                 int start = intervalNode.LeftMostLeaf;
