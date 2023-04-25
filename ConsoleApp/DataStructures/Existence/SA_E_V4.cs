@@ -21,7 +21,7 @@ namespace ConsoleApp.DataStructures.Existence
             SA = new SuffixArrayFinal(str);
 
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals((int)Math.Sqrt(n), out Tree, out Leaves);
+            SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n), out Tree, out Leaves);
             var height = Tree.Values.Max(s => s.DistanceToRoot);
             foreach (var item in Tree.OrderBy(s => s.Value.Size).Take((int)Math.Sqrt(SA.n)))
             {
