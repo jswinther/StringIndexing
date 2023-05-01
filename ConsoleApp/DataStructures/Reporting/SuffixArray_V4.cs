@@ -25,14 +25,14 @@ namespace ConsoleApp.DataStructures.Reporting
         {
             SA = new SuffixArrayFinal(str);
             // Populates _nodes and _leaves
-            int minIntervalSize = (int)Math.Floor(Math.Log2(SA.n));
+            int minIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n));
             SA.BuildChildTable();
             SA.GetAllLcpIntervals(minIntervalSize, out Tree, out Leaves1);
             Leaves = Leaves1.Keys.ToArray();
-            ComputeLeafIntervals();
+
          
             BuildDataStructure();
-            //ComputeLeafIntervals();
+    
 
             
 
@@ -47,7 +47,7 @@ namespace ConsoleApp.DataStructures.Reporting
 
             
             TopNodes = new();
-            foreach (var intervalToBeSorted in Nodes.Where(n => n.DistanceToRoot >= min && n.DistanceToRoot <= max))
+            foreach (var intervalToBeSorted in Nodes.Where(n => n.DistanceToRoot >= min))
             {
                 var occs = SA.GetOccurrencesForInterval(intervalToBeSorted.Interval);
                 if (intervalToBeSorted.DistanceToRoot == min) TopNodes.Add(intervalToBeSorted.Interval);
@@ -81,7 +81,6 @@ namespace ConsoleApp.DataStructures.Reporting
         private int[] SortedOccurrencesForPattern(string pattern)
         {
             var interval = SA.ExactStringMatchingWithESA(pattern);
-            int log = (int)Math.Floor(Math.Log2(SA.n));
             if (SortedTree.ContainsKey(interval)) return SortedTree[interval];
             if (Tree.ContainsKey(interval) && Tree[interval].DistanceToRoot <= Height - Height / 2)
             {
