@@ -247,6 +247,7 @@ namespace ConsoleApp.DataStructures
         public List<(int, int)> GetChildIntervals(int i, int j)
         {
             if (j < i) return new List<(int, int)>();
+            if (j + 1 == Children.Length) return new List<(int, int)>();
             List<(int, int)> intervals = new List<(int, int)>();
             int i1 = 0;
             if (i != -1 && i < Children[j + 1].Up && Children[j + 1].Up <= j)

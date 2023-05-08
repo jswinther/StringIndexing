@@ -27,7 +27,7 @@ namespace ConsoleApp.DataStructures.Reporting
             // Populates _nodes and _leaves
             int minIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n));
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(minIntervalSize, out Tree, out Leaves1);
+            SA.GetAllLcpIntervals(1, out Tree, out Leaves1);
             Leaves = Leaves1.Keys.ToArray();
 
          
@@ -182,7 +182,7 @@ namespace ConsoleApp.DataStructures.Reporting
             var node = Tree[interval];
             if (node.IsLeaf) return node.SortedOccurrences;
             var childIntervals = Leaves.Take(new Range(node.LeftMostLeaf, node.RightMostLeaf + 1)).ToList();
-            var arrayOfSortedLeafOccurrences = childIntervals.Select(ci => Tree[ci].SortedOccurrences).ToArray();
+            var arrayOfSortedLeafOccurrences = childIntervals.Select(ci => SortedTree[ci]).ToArray();
             int[] sortedLeaves = MergeKSortedArrays(arrayOfSortedLeafOccurrences);
             var nonSortedIntervals = FindNonSortedIntervals(childIntervals, interval);
             var occurrencesOfNonSortedIntervalsSorted = nonSortedIntervals

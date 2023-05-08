@@ -169,9 +169,9 @@ namespace ConsoleApp
                 //DummyData.DNA("DNA_1048576"),
                 //DummyData.DNA("DNA_2097152"),
                 //DummyData.DNA("DNA_4194304"),
-                //DummyData.DNA("DNA_1048576"),
-                //DummyData.PCC("realDNA_1048576"),
-                //DummyData.PCC("proteins_1048576"),
+                DummyData.DNA("DNA_1048576"),
+                DummyData.PCC("realDNA_1048576"),
+                DummyData.PCC("proteins_1048576"),
                 DummyData.PCC("english_1048576"),
                 //DummyData.PCC("english_8388608"),
                 //DummyData.DNA("DNA_16777216"),
@@ -182,8 +182,8 @@ namespace ConsoleApp
                 {
                 //BuildSuffixArray_V1,
                 BuildSuffixArray_V2,
-                //BuildSuffixArray_V3,
-                BuildSuffixArray_V4,
+                BuildSuffixArray_V3,
+                //BuildSuffixArray_V4,
                     //BuildSuffixArray_V5
                 };
                 /*
