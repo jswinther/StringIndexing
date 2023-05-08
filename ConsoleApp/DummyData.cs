@@ -31,6 +31,19 @@ namespace ConsoleApp
             return (filename,lines);
         }
 
+        public static (string, string) ENG(string filename)
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            var workdir = Assembly.GetAssembly(typeof(Program)).Location; ;
+            var dir = Directory.GetParent(workdir).Parent.Parent.Parent.FullName;
+            var file = $"{dir}\\Data\\{filename}.txt";
+            var byteLines = System.Text.Encoding.GetEncoding(1252).GetBytes((string.Concat(File.ReadAllLines(file)).ToLower()));
+            var utf8Text = System.Text.Encoding.UTF8.GetString(byteLines);
+            return (filename, utf8Text);
+        }
+
+        
+
 
     }
 }
