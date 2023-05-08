@@ -22,6 +22,15 @@ namespace ConsoleApp
             return (filename, lines);
         }
 
-      
+        public static (string, string) PCC(string filename)
+        {
+            var workdir = Assembly.GetAssembly(typeof(Program)).Location; ;
+            var dir = Directory.GetParent(workdir).Parent.Parent.Parent.FullName;
+            var file = $"{dir}\\Data\\{filename}.txt";
+            var lines = string.Concat(File.ReadAllLines(file)).ToLower();
+            return (filename,lines);
+        }
+
+
     }
 }
