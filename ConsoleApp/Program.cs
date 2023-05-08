@@ -152,7 +152,7 @@ namespace ConsoleApp
                 var min = Convert.ToInt32(args[2]);
                 var max = Convert.ToInt32(args[3]);
                 var p2 = args[4];
-                string T = File.ReadAllText(path).Substring(0, 1_000_000);
+                string T = File.ReadAllText(path);
                 SuffixArray_V2 sa = new SuffixArray_V2(T);
                 var results = sa.Matches(p1, min, max, p2).Count();
                 Console.WriteLine(results);
