@@ -145,9 +145,21 @@ namespace ConsoleApp
 
         static void Main(string[] args)
         {
-            
-
-            string[] dnaSequences = new string[]
+            if (args.Length > 0)
+            {
+                var path = args[0];
+                var p1 = args[1];
+                var min = Convert.ToInt32(args[2]);
+                var max = Convert.ToInt32(args[3]);
+                var p2 = args[4];
+                string T = File.ReadAllText(path).Substring(0, 1_000_000);
+                SuffixArray_V2 sa = new SuffixArray_V2(T);
+                var results = sa.Matches(p1, min, max, p2).Count();
+                Console.WriteLine(results);
+            }
+            else
+            {
+                string[] dnaSequences = new string[]
             {
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
@@ -162,44 +174,49 @@ namespace ConsoleApp
                 DummyData.DNA("DNA_33554432")
             };
 
-            BuildDataStructure[] dataStructures = new BuildDataStructure[]
-            {
+                BuildDataStructure[] dataStructures = new BuildDataStructure[]
+                {
                 //BuildSuffixArray_V1,
                 BuildSuffixArray_V2,
                 //BuildSuffixArray_V3,
                 BuildSuffixArray_V4,
-                //BuildSuffixArray_V5
-            };
-            /*
-            Stopwatch sw = Stopwatch.StartNew();
-            var a = new SA_E_V5(DummyData.DNA("DNA_33554432"), 5);
-            sw.Stop();
-            Console.WriteLine(sw.ElapsedMilliseconds);
-            sw = Stopwatch.StartNew();
-            var c = a.PatternExists("a", "a");
-            sw.Stop();
-            Console.WriteLine(sw.ElapsedMilliseconds);
-            return;
-            */
-            var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
+                    //BuildSuffixArray_V5
+                };
+                /*
+                Stopwatch sw = Stopwatch.StartNew();
+                var a = new SA_E_V5(DummyData.DNA("DNA_33554432"), 5);
+                sw.Stop();
+                Console.WriteLine(sw.ElapsedMilliseconds);
+                sw = Stopwatch.StartNew();
+                var c = a.PatternExists("a", "a");
+                sw.Stop();
+                Console.WriteLine(sw.ElapsedMilliseconds);
+                return;
+                */
+                var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
-            string p1 = "a";
-            Random random = new Random();
-            int x = 1;
-            string p2 = "a";
-            Query query = new Query(p1, x, p2);
-            query.Y = (1, 45);
+                string p1 = "a";
+                Random random = new Random();
+                int x = 1;
+                string p2 = "a";
+                Query query = new Query(p1, x, p2);
+                query.Y = (1, 45);
 
-            foreach (var sequence in dnaSequences)
-            {
-                foreach (var dataStructure in dataStructures)
+                foreach (var sequence in dnaSequences)
                 {
-                    var b = BenchDataStructure(dataStructure, sequence, query);
-                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    foreach (var dataStructure in dataStructures)
+                    {
+                        var b = BenchDataStructure(dataStructure, sequence, query);
+                        table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    }
                 }
+                table.Options.NumberAlignment = Alignment.Right;
+                table.Write();
             }
-            table.Options.NumberAlignment = Alignment.Right;
-            table.Write();
+
+
+
+            
 
         }
 
