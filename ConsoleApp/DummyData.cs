@@ -13,13 +13,13 @@ namespace ConsoleApp
         
       
 
-        public static string DNA(string filename)
+        public static (string, string) DNA(string filename)
         {
             var workdir = Assembly.GetAssembly(typeof(Program)).Location; ;
             var dir = Directory.GetParent(workdir).Parent.Parent.Parent.FullName;
             var file = $"{dir}\\Data\\{filename}.txt";
             var lines = string.Concat(File.ReadAllLines(file).Skip(2));
-            return lines;
+            return (filename, lines);
         }
 
       

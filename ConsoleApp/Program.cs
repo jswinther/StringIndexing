@@ -63,7 +63,7 @@ namespace ConsoleApp
             return new BaratgaborSuffixTree(str);
         }
 
-        public static Benchmark BenchDataStructure(BuildDataStructure matcher, string str, params Query[] queries) 
+        public static Benchmark BenchDataStructure(BuildDataStructure matcher, string name, string str, params Query[] queries) 
         { 
             Benchmark benchmark = new Benchmark();
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -124,7 +124,7 @@ namespace ConsoleApp
             stopwatch.Stop();
             benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
             benchmark.DataStructureName = patternMatcher.GetType().Name;
-            benchmark.DataName = $"DNA_{str.Length}";
+            benchmark.DataName = name;
             
             return benchmark;
         }
@@ -159,7 +159,7 @@ namespace ConsoleApp
             }
             else
             {
-                string[] dnaSequences = new string[]
+                (string, string)[] dnaSequences = new (string, string)[]
             {
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
@@ -206,7 +206,7 @@ namespace ConsoleApp
                 {
                     foreach (var dataStructure in dataStructures)
                     {
-                        var b = BenchDataStructure(dataStructure, sequence, query);
+                        var b = BenchDataStructure(dataStructure, sequence.Item1, sequence.Item2, query);
                         table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
                     }
                 }
