@@ -159,6 +159,25 @@ namespace ConsoleApp.DataStructures.Reporting
                     parentInterval = parent.Parent;
                 }
             }
+            List<IntervalNode> nodes = new List<IntervalNode> ();
+            
+            Queue<IntervalNode> intervalNodes = new Queue<IntervalNode>();
+            var root = Tree.Values.First();
+            foreach (var node in root.Children) intervalNodes.Enqueue(node);
+            while (intervalNodes.Count > 0)
+            {
+                IntervalNode node = intervalNodes.Dequeue();
+                if (node.DistanceToRoot == 1 && node.IsLeaf) nodes.Add(node);
+                if (node.DistanceToRoot >= 0.25 * node.DeepestLeaf) nodes.Add(node);
+                else {
+                    foreach (var child in node.Children)
+                    {
+                        intervalNodes.Enqueue(child);
+                    }
+                }
+            }
+
+            var non = nodes.OrderBy(s => s.Interval.start).Select(s => s.Interval);
         }
 
 

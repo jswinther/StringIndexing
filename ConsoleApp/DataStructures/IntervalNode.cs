@@ -1,5 +1,8 @@
-﻿namespace ConsoleApp.DataStructures
+﻿using System.Diagnostics;
+
+namespace ConsoleApp.DataStructures
 {
+    [DebuggerDisplay("Interval = {Interval}, Depth = {DistanceToRoot}, DeepestLeaf = {DeepestLeaf}, Children = {Children.Count}")]
     public class IntervalNode
     {
         public (int start, int end) Interval { get; set; }
