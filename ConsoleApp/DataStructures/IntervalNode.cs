@@ -9,6 +9,7 @@
         public IntervalNode Parent { get; set; }
         public List<IntervalNode> Children { get; set; } = new();
         public int DistanceToRoot { get; set; }
+        public int DeepestLeaf { get; set; } = int.MinValue;
         public System.Collections.Generic.HashSet<(int, int)> MatchingIntervals { get; set; } = new();
 
         public bool Merged { get; set; }

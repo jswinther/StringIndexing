@@ -29,8 +29,9 @@ namespace ConsoleApp.DataStructures.Reporting
             SA.BuildChildTable();
             SA.GetAllLcpIntervals(minIntervalSize, out Tree, out Leaves1);
             Leaves = Leaves1.Keys.ToArray();
+            UpdateDeepestLeaf();
 
-         
+
             BuildDataStructure();
     
 
@@ -43,14 +44,14 @@ namespace ConsoleApp.DataStructures.Reporting
             SortedTree = new();
             Height = Tree.Last().Value.DistanceToRoot/2;
             Nodes = Tree.Values.ToArray();
-            (int min, int max) = (Height - Height / 2, Height + Height / 2);
+           
 
             
             TopNodes = new();
-            foreach (var intervalToBeSorted in Nodes.Where(n => n.DistanceToRoot >= min))
+            foreach (var intervalToBeSorted in Nodes.Where(n => n.DistanceToRoot >= (int)Math.Ceiling(0.75 * n.DeepestLeaf)))
             {
                 var occs = SA.GetOccurrencesForInterval(intervalToBeSorted.Interval);
-                if (intervalToBeSorted.DistanceToRoot == min) TopNodes.Add(intervalToBeSorted.Interval);
+                if (intervalToBeSorted.DistanceToRoot == intervalToBeSorted.DeepestLeaf || intervalToBeSorted.DistanceToRoot == (int)Math.Ceiling(0.75 * intervalToBeSorted.DeepestLeaf)) TopNodes.Add(intervalToBeSorted.Interval);
                 Array.Sort(occs);
                 SortedTree.Add(intervalToBeSorted.Interval, occs);
             }
@@ -83,7 +84,7 @@ namespace ConsoleApp.DataStructures.Reporting
         {
             var interval = SA.ExactStringMatchingWithESA(pattern);
             if (SortedTree.ContainsKey(interval)) return SortedTree[interval];
-            if (Tree[interval].LeftMostLeaf < int.MaxValue)
+            if (Tree.ContainsKey(interval) && Tree[interval].LeftMostLeaf < int.MaxValue)
             {
                 var intervalNode = Tree[interval];
                 int start = intervalNode.LeftMostLeaf;
@@ -91,7 +92,7 @@ namespace ConsoleApp.DataStructures.Reporting
                 int[][] arr = new int[end - start + 1][];
                 for (int i = start; i < end + 1; i++)
                 {
-                    arr[i] = SortedTree[TopNodes[i]];
+                    arr[i - start] = SortedTree[TopNodes[i]];
                 }
                 return MergeKSortedArrays(arr);
             }
@@ -141,7 +142,7 @@ namespace ConsoleApp.DataStructures.Reporting
         }
         #endregion
 
-        public void ComputeLeafIntervals()
+        public void UpdateDeepestLeaf()
         {
             for (int i = 0; i < Leaves.Length; i++)
             {
@@ -151,8 +152,7 @@ namespace ConsoleApp.DataStructures.Reporting
                 while (Tree.ContainsKey(parentInterval.Interval))
                 {
                     var parent = Tree[parentInterval.Interval];
-                    if (parent.LeftMostLeaf > i) Tree[parentInterval.Interval].LeftMostLeaf = i;
-                    if (parent.RightMostLeaf < i) Tree[parentInterval.Interval].RightMostLeaf = i;
+                    if (parent.DeepestLeaf < leaf.DistanceToRoot) parent.DeepestLeaf = leaf.DistanceToRoot;
                     if (parent.Parent == null) break;
                     parentInterval = parent.Parent;
                 }
