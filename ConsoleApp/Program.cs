@@ -181,7 +181,7 @@ namespace ConsoleApp
                 BuildDataStructure[] dataStructures = new BuildDataStructure[]
                 {
                 //BuildSuffixArray_V1,
-                //BuildSuffixArray_V2,
+                BuildSuffixArray_V2,
                 //BuildSuffixArray_V3,
                 BuildSuffixArray_V4,
                     //BuildSuffixArray_V5
@@ -199,7 +199,7 @@ namespace ConsoleApp
                 */
                 var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
-                string p1 = "there";
+                string p1 = "a";
                 Random random = new Random();
                 int x = 1;
                 string p2 = "a";

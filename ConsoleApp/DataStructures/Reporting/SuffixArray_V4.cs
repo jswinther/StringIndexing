@@ -165,7 +165,7 @@ namespace ConsoleApp.DataStructures.Reporting
             {
                 IntervalNode node = intervalNodes.Dequeue();
                 if (node.DistanceToRoot == 1 && node.IsLeaf) nodes.Add(node);
-                if (node.DistanceToRoot >= 0.25 * node.DeepestLeaf) nodes.Add(node);
+                if (node.DistanceToRoot > 0.25 * node.DeepestLeaf) nodes.Add(node);
                 else {
                     foreach (var child in node.Children)
                     {
@@ -176,6 +176,7 @@ namespace ConsoleApp.DataStructures.Reporting
 
             var non = nodes.OrderBy(s => s.Interval.start).Select(s => s.Interval);
             TopNodes = nodes.Select(s => s.Interval).ToList();
+            var sum = nodes.Sum(s => s.Size);
         }
 
 
