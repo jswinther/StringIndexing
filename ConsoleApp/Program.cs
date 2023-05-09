@@ -169,10 +169,10 @@ namespace ConsoleApp
                 //DummyData.DNA("DNA_1048576"),
                 //DummyData.DNA("DNA_2097152"),
                 //DummyData.DNA("DNA_4194304"),
-                DummyData.DNA("DNA_1048576"),
-                DummyData.PCC("realDNA_1048576"),
-                DummyData.PCC("proteins_1048576"),
-                DummyData.PCC("english_1048576"),
+                //DummyData.DNA("DNA_1048576"),
+                //DummyData.PCC("realDNA_1048576"),
+                //DummyData.PCC("proteins_1048576"),
+                DummyData.ENG("english_1048576"),
                 //DummyData.PCC("english_8388608"),
                 //DummyData.DNA("DNA_16777216"),
                 //DummyData.DNA("DNA_33554432")
@@ -199,7 +199,7 @@ namespace ConsoleApp
                 */
                 var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
-                string p1 = "a";
+                string p1 = "there";
                 Random random = new Random();
                 int x = 1;
                 string p2 = "a";

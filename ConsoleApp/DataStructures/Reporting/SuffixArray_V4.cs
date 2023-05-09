@@ -54,6 +54,7 @@ namespace ConsoleApp.DataStructures.Reporting
                 Array.Sort(occs);
                 SortedTree.Add(intervalToBeSorted.Interval, occs);
             }
+            var TopNodeSubstrings = TopNodes.Select(tn => (SA.S.Substring(tn.Item1, tn.Item2 - tn.Item1 + 1), tn.Item1, tn.Item2)).Distinct().ToList();
             HashSet<IntervalNode> parents = new();
             for (int i = 0; i < TopNodes.Count; i++)
             {
