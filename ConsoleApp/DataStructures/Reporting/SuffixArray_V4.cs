@@ -47,16 +47,13 @@ namespace ConsoleApp.DataStructures.Reporting
            
 
             
-            TopNodes = new();
-            foreach (var intervalToBeSorted in Nodes.Where(n => n.DistanceToRoot >= (int)Math.Ceiling(0.75 * n.DeepestLeaf) || (n.DeepestLeaf == int.MinValue && n.DistanceToRoot == 1)))
+           
+            foreach (var intervalToBeSorted in Nodes.Where(n => n.DistanceToRoot >= 0.25 * n.DeepestLeaf || n.DistanceToRoot == 1 && n.IsLeaf))
             {
                 var occs = SA.GetOccurrencesForInterval(intervalToBeSorted.Interval);
-                if (intervalToBeSorted.DistanceToRoot == intervalToBeSorted.DeepestLeaf || intervalToBeSorted.DistanceToRoot == (int)Math.Ceiling(0.75 * intervalToBeSorted.DeepestLeaf)) TopNodes.Add(intervalToBeSorted.Interval);
                 Array.Sort(occs);
                 SortedTree.Add(intervalToBeSorted.Interval, occs);
             }
-            var TopNodeSubstrings = TopNodes.Select(tn => (SA.S.Substring(tn.Item1, tn.Item2 - tn.Item1 + 1), tn.Item1, tn.Item2)).Distinct().ToList();
-            var non = TopNodes.OrderBy(s => s.Item1);
             HashSet<IntervalNode> parents = new();
             for (int i = 0; i < TopNodes.Count; i++)
             {
@@ -178,6 +175,7 @@ namespace ConsoleApp.DataStructures.Reporting
             }
 
             var non = nodes.OrderBy(s => s.Interval.start).Select(s => s.Interval);
+            TopNodes = nodes.Select(s => s.Interval).ToList();
         }
 
 
