@@ -181,9 +181,9 @@ namespace ConsoleApp
                 BuildDataStructure[] dataStructures = new BuildDataStructure[]
                 {
                 //BuildSuffixArray_V1,
-                BuildSuffixArray_V2,
-                BuildSuffixArray_V3,
-                //BuildSuffixArray_V4,
+                //BuildSuffixArray_V2,
+                //BuildSuffixArray_V3,
+                BuildSuffixArray_V4,
                     //BuildSuffixArray_V5
                 };
                 /*

@@ -27,7 +27,7 @@ namespace ConsoleApp.DataStructures.Reporting
             // Populates _nodes and _leaves
             int minIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n));
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(1, out Tree, out Leaves1);
+            SA.GetAllLcpIntervals(minIntervalSize, out Tree, out Leaves1);
             Leaves = Leaves1.Keys.ToArray();
 
          
@@ -82,7 +82,7 @@ namespace ConsoleApp.DataStructures.Reporting
         {
             var interval = SA.ExactStringMatchingWithESA(pattern);
             if (SortedTree.ContainsKey(interval)) return SortedTree[interval];
-            if (Tree.ContainsKey(interval) && Tree[interval].DistanceToRoot <= Height - Height / 2)
+            if (Tree[interval].LeftMostLeaf < int.MaxValue)
             {
                 var intervalNode = Tree[interval];
                 int start = intervalNode.LeftMostLeaf;
