@@ -27,7 +27,7 @@ namespace ConsoleApp.DataStructures.Reporting
             // Populates _nodes and _leaves
             int minIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n));
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(minIntervalSize, out Tree, out Leaves1);
+            SA.GetAllLcpIntervals(1, out Tree, out Leaves1);
             Leaves = Leaves1.Keys.ToArray();
             UpdateDeepestLeaf();
 
@@ -48,7 +48,7 @@ namespace ConsoleApp.DataStructures.Reporting
 
             
             TopNodes = new();
-            foreach (var intervalToBeSorted in Nodes.Where(n => n.DistanceToRoot >= (int)Math.Ceiling(0.75 * n.DeepestLeaf)))
+            foreach (var intervalToBeSorted in Nodes.Where(n => n.DistanceToRoot >= (int)Math.Ceiling(0.75 * n.DeepestLeaf) || (n.DeepestLeaf == int.MinValue && n.DistanceToRoot == 1)))
             {
                 var occs = SA.GetOccurrencesForInterval(intervalToBeSorted.Interval);
                 if (intervalToBeSorted.DistanceToRoot == intervalToBeSorted.DeepestLeaf || intervalToBeSorted.DistanceToRoot == (int)Math.Ceiling(0.75 * intervalToBeSorted.DeepestLeaf)) TopNodes.Add(intervalToBeSorted.Interval);
@@ -56,6 +56,7 @@ namespace ConsoleApp.DataStructures.Reporting
                 SortedTree.Add(intervalToBeSorted.Interval, occs);
             }
             var TopNodeSubstrings = TopNodes.Select(tn => (SA.S.Substring(tn.Item1, tn.Item2 - tn.Item1 + 1), tn.Item1, tn.Item2)).Distinct().ToList();
+            var non = TopNodes.OrderBy(s => s.Item1);
             HashSet<IntervalNode> parents = new();
             for (int i = 0; i < TopNodes.Count; i++)
             {
@@ -149,6 +150,7 @@ namespace ConsoleApp.DataStructures.Reporting
                 (int, int) leafInterval = Leaves[i];
                 var leaf = Tree[leafInterval];
                 var parentInterval = leaf.Parent;
+                leaf.DeepestLeaf = leaf.DistanceToRoot;
                 while (Tree.ContainsKey(parentInterval.Interval))
                 {
                     var parent = Tree[parentInterval.Interval];
