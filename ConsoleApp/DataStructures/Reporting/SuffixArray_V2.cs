@@ -19,7 +19,7 @@ namespace ConsoleApp.DataStructures.Reporting
         public override IEnumerable<int> Matches(string pattern)
         {
             var occs = SA.GetOccurrencesForPattern(pattern);
-            Array.Sort(occs);
+            occs.Sort();
             return occs;
         }
 
@@ -42,8 +42,7 @@ namespace ConsoleApp.DataStructures.Reporting
             List<(int, int)> occs = new List<(int, int)>();
             var occs1 = SA.GetOccurrencesForPattern(pattern1);
             var occs2 = SA.GetOccurrencesForPattern(pattern2);
-            Array.Sort(occs2);
-
+            occs2.Sort();
             foreach (var occ1 in occs1)
             {
                 int min = occ1 + y_min + pattern1.Length;
@@ -55,5 +54,7 @@ namespace ConsoleApp.DataStructures.Reporting
             }
             return occs;
         }
+
+        
     }
 }

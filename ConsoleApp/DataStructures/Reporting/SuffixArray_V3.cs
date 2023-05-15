@@ -29,7 +29,7 @@ namespace ConsoleApp.DataStructures.Reporting
             {
                 var interval = keys[i];
                 var originalPlacesOfSuffixes = SA.GetOccurrencesForInterval(interval);
-                Array.Sort(originalPlacesOfSuffixes);
+                originalPlacesOfSuffixes.Sort();
                 sorted.Add(interval, originalPlacesOfSuffixes);
             }
            

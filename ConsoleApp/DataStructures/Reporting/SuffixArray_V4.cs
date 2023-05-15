@@ -51,7 +51,7 @@ namespace ConsoleApp.DataStructures.Reporting
             foreach (var intervalToBeSorted in Nodes.Where(n => n.DistanceToRoot >= 0.25 * n.DeepestLeaf || n.DistanceToRoot == 1 && n.IsLeaf))
             {
                 var occs = SA.GetOccurrencesForInterval(intervalToBeSorted.Interval);
-                Array.Sort(occs);
+                occs.Sort();
                 SortedTree.Add(intervalToBeSorted.Interval, occs);
             }
             HashSet<IntervalNode> parents = new();
@@ -97,7 +97,7 @@ namespace ConsoleApp.DataStructures.Reporting
             else
             {
                 var occs = SA.GetOccurrencesForInterval(interval);
-                Array.Sort(occs);
+                occs.Sort();
                 return occs;
             }
         }
@@ -197,7 +197,7 @@ namespace ConsoleApp.DataStructures.Reporting
             if (!SortedTree.ContainsKey(interval))
             {
                 var occs = SA.GetOccurrencesForInterval(interval);
-                Array.Sort(occs);
+                occs.Sort();
                 return occs;
             }
             var node = Tree[interval];
@@ -210,7 +210,7 @@ namespace ConsoleApp.DataStructures.Reporting
                 .SelectMany(SA.GetOccurrencesForInterval)
                 .ToArray();
 
-            Array.Sort(occurrencesOfNonSortedIntervalsSorted);
+            occurrencesOfNonSortedIntervalsSorted.Sort();
 
             IEnumerable<int> sortedOccurrences = SortTwoSortedArrays(sortedLeaves, occurrencesOfNonSortedIntervalsSorted);
             return sortedOccurrences.ToArray();
