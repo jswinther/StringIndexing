@@ -420,6 +420,7 @@ namespace ConsoleApp.DataStructures
     
         public void GetAllLcpIntervals(int minSize, out Dictionary<(int, int), IntervalNode> _nodes, out Dictionary<(int, int), IntervalNode> _leaves, out IntervalNode root)
         {
+            
             _nodes = new();
             _leaves = new();
             System.Collections.Generic.HashSet<(int, int)> hashSet = new();
@@ -478,6 +479,7 @@ namespace ConsoleApp.DataStructures
                 }
                 
             }
+            root.SubtreeSize = Update(root);
         }
 
         
@@ -559,8 +561,9 @@ namespace ConsoleApp.DataStructures
         {
             var sufi = S.Substring(Sa[i]);
             var sufj = S.Substring(Sa[j]);
+            int minLength = Math.Min(sufi.Length, sufj.Length);
             int k = 0;
-            while (sufi[k] == sufj[k])
+            while (k < minLength && sufi[k] == sufj[k])
             {
                 ++k;
             }
@@ -661,6 +664,18 @@ namespace ConsoleApp.DataStructures
             {
                 RankSuffix(notedSuffixes[i].head);
             }
+        }
+
+        public int Update(IntervalNode node)
+        {
+            if (node.Children.Count == 0) return 1;
+            int sum = 0;
+            foreach (var child in node.Children)
+            {
+                child.SubtreeSize = Update(child);
+                sum += child.SubtreeSize;
+            }
+            return sum + 1;
         }
     }
 }
