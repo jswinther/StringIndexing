@@ -20,6 +20,8 @@ namespace ConsoleApp.DataStructures
         public int m_nextRank = 1;
         public string m_str;
         public int n;
+        public static int k; // number of digits
+
         protected BaseSuffixArray(string str) : base(str)
         {
             m_str = str;
@@ -27,7 +29,11 @@ namespace ConsoleApp.DataStructures
             n = m_str.Length;
             m_sa = new int[n];
             m_isa = new int[n];
-
+            do
+            {
+                n /= 10;
+                ++k;
+            } while (n != 0);
 
             FormInitialChains();
             BuildSuffixArray();
