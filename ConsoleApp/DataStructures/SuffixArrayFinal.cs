@@ -463,6 +463,9 @@ namespace ConsoleApp.DataStructures
                             intervals.Enqueue(item);
                             var child = new IntervalNode(item, currNode, currNode.DistanceToRoot + 1);
                             currNode.Children.Add(child);
+                            var occs = GetOccurrencesForInterval(item);
+                            currNode.Min = occs.Min();
+                            currNode.Max = occs.Max();
                             _nodes.Add(item, child);
                         }
                     }
