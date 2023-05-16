@@ -102,9 +102,6 @@ namespace ConsoleApp.DataStructures.Reporting
                 var intervalNode = Tree[interval];
                 int start = intervalNode.LeftMostLeaf;
                 int end = intervalNode.RightMostLeaf;
-                var oh = Math.Log2(end + 1 - start);
-                if (oh >= SuffixArrayFinal.k) 
-                    return SA.GetOccurrencesForInterval(interval).Sort();
                 int[][] arr = new int[end - start + 1][];
                 for (int i = start; i < end + 1; i++)
                 {
