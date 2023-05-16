@@ -76,7 +76,7 @@
 
         public static void Sort(this int[] a)
         {
-            if (BaseSuffixArray.k >= Math.Log2(a.Length))
+            if (SuffixArrayFinal.k >= Math.Log2(a.Length))
             {
                 Array.Sort(a);
                 return;
