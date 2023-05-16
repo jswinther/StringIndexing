@@ -74,12 +74,12 @@
             return array.Take(new Range(s, e + 1));
         }
 
-        public static void Sort(this int[] a)
+        public static int[] Sort(this int[] a)
         {
             if (SuffixArrayFinal.k >= Math.Log2(a.Length))
             {
                 Array.Sort(a);
-                return;
+                return a;
             }
 
             // our helper array 
@@ -126,6 +126,7 @@
                 t.CopyTo(a, 0);
             }
             // a is sorted 
+            return a;
         }
 
         public static bool ContainsElementInRange(this int[] array, int x, int y)
