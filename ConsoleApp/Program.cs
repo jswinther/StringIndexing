@@ -37,6 +37,16 @@ namespace ConsoleApp
             return new SuffixArray_V5(str);
         }
 
+        public static PatternMatcher BuildSuffixArray_V6(string str)
+        {
+            return new SuffixArray_V6(str);
+        }
+
+        public static PatternMatcher BuildSuffixArray_V7(string str)
+        {
+            return new SuffixArray_V7(str);
+        }
+
         public static PatternMatcher BuildSuffixTree(string str)
         {
             return SuffixTree.Create(str);
@@ -145,7 +155,17 @@ namespace ConsoleApp
 
         static void Main(string[] args)
         {
-            if (args.Length > 0)
+            if(true)
+            {
+                var SA = new SuffixArray_Scanner(DummyData.DNA("DNA_512").Item2);
+                Console.WriteLine("Top pattern: " + SA.topPattern);
+                Console.WriteLine("Bot pattern: " + SA.botPattern);
+                foreach (var item in SA.midPatterns)
+                {
+                    Console.WriteLine("Mid pattern: " + item);
+                }
+            }
+            else if (args.Length > 0)
             {
                 var path = args[0];
                 var p1 = args[1];
@@ -164,18 +184,18 @@ namespace ConsoleApp
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
                 //DummyData.DNA("DNA_512"),
-                DummyData.DNA("DNA_262144"),
+                //DummyData.DNA("DNA_262144"),
                 DummyData.DNA("DNA_524288"),
-                DummyData.DNA("DNA_1048576"),
+                //DummyData.DNA("DNA_1048576"),
                 DummyData.DNA("DNA_2097152"),
                 DummyData.DNA("DNA_4194304"),
                 //DummyData.DNA("DNA_1048576"),
-                //DummyData.PCC("realDNA_1048576"),
-                //DummyData.PCC("proteins_1048576"),
+                //DummyData.PCC("realDNA_16777216"),
+                //DummyData.PCC("proteins_16777216"),
                 //DummyData.ENG("english_1048576"),
                 //DummyData.PCC("english_8388608"),
-                DummyData.DNA("DNA_16777216"),
-                DummyData.DNA("DNA_33554432")
+                //DummyData.DNA("DNA_16777216"),
+                //DummyData.DNA("DNA_33554432")
             };
 
                 BuildDataStructure[] dataStructures = new BuildDataStructure[]
@@ -184,6 +204,8 @@ namespace ConsoleApp
                 BuildSuffixArray_V2,
                 BuildSuffixArray_V3,
                 //BuildSuffixArray_V4,
+                BuildSuffixArray_V6,
+                BuildSuffixArray_V7,
                     //BuildSuffixArray_V5
                 };
                 /*
@@ -199,10 +221,10 @@ namespace ConsoleApp
                 */
                 var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
-                string p1 = "a";
+                string p1 = "actaa";
                 Random random = new Random();
                 int x = 1;
-                string p2 = "a";
+                string p2 = "atac";
                 Query query = new Query(p1, x, p2);
                 query.Y = (1, 45);
 
