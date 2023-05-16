@@ -36,6 +36,7 @@ namespace ConsoleApp.DataStructures
                 n /= 10;
                 ++k;
             } while (n != 0);
+            n = m_str.Length;
             FormInitialChains();
             BuildSuffixArray();
             BuildLcpArray();
