@@ -20,13 +20,13 @@ namespace ConsoleApp.DataStructures.Reporting
         public IntervalNode[] Nodes { get; private set; }
         public List<(int, int)> TopNodes { get; private set; }
         public int Height { get; set; }
-
+        private IntervalNode Root;
         public SuffixArray_V7(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
             int minIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n));
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(2, out Tree, out Leaves1);
+            SA.GetAllLcpIntervals(2, out Tree, out Leaves1, out Root);
             Leaves = Leaves1.Keys.ToArray();
             UpdateDeepestLeaf();
             var root = Tree.Values.First();
@@ -39,7 +39,7 @@ namespace ConsoleApp.DataStructures.Reporting
             SortedTree = new();
             Height = Tree.Last().Value.DistanceToRoot/2;
             Nodes = Tree.Values.Skip(1).ToArray();
-            foreach (var intervalToBeSorted in Nodes.Where(n => n.SubtreeSize >= (int)Math.Floor(Math.Log2(SA.n)) && n.SubtreeSize <= (int)Math.Floor(Math.Sqrt(SA.n))))
+            foreach (var intervalToBeSorted in Nodes.Where(n => n.SubtreeSize >= (int)Math.Floor(Math.Sqrt(SA.n))))
             {
                 var occs = SA.GetOccurrencesForInterval(intervalToBeSorted.Interval);
                 intervalToBeSorted.SortedOccurrences = occs;

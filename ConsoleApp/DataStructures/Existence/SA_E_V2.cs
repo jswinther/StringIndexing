@@ -13,6 +13,7 @@ namespace ConsoleApp.DataStructures.Existence
         private SuffixArrayFinal SA;
         private Dictionary<(int, int), IntervalNode> Tree;
         private Dictionary<(int, int), IntervalNode> Leaves;
+        private IntervalNode Root;
         //private Dictionary<(int, int), IntervalNode> TreeSqrt;
         //private HashSet<(int, int)> LeavesSqrt;
         private List<IntervalNode> BotLevel;
@@ -35,7 +36,7 @@ namespace ConsoleApp.DataStructures.Existence
             SA.BuildChildTable();
             int minSizeForLcpIntervals = 0;
             int minSizeSaved = (int)Math.Sqrt(SA.n);
-            SA.GetAllLcpIntervals(minSizeForLcpIntervals, out Tree, out Leaves);
+            SA.GetAllLcpIntervals(minSizeForLcpIntervals, out Tree, out Leaves, out Root);
             //SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n), out TreeSqrt, out LeavesSqrt);
             ComputeSubSuffixArrays(minSize: minSizeSaved);
 

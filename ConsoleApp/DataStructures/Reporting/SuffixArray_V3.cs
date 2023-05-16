@@ -17,12 +17,13 @@ namespace ConsoleApp.DataStructures.Reporting
         private Dictionary<(int, int), int[]> sorted = new();
         Dictionary<(int, int), IntervalNode> Tree;
         Dictionary<(int, int), IntervalNode> Leaves;
+        private IntervalNode Root;
         SuffixArrayFinal SA;
         public SuffixArray_V3(string S) : base(S)
         {
             SA = new SuffixArrayFinal(S);
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(2, out Tree, out Leaves);
+            SA.GetAllLcpIntervals(2, out Tree, out Leaves, out Root);
             var keys = Tree.Keys.ToList();
 
             for (int i = 1; i < keys.Count; i++)

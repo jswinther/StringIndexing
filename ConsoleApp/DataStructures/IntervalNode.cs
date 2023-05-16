@@ -15,6 +15,8 @@ namespace ConsoleApp.DataStructures
         public int DeepestLeaf { get; set; } = int.MinValue;
         public HashSet<(int, int)> MatchingIntervals { get; set; } = new();
         public int SubtreeSize { get; set; } = 0;
+        public int Min { get; set; }
+        public int Max { get; set; }
 
         public bool Merged { get; set; }
 

@@ -12,11 +12,12 @@ namespace ConsoleApp.DataStructures.Reporting
         SuffixArrayFinal SA;
         Dictionary<(int, int), IntervalNode> Tree;
         Dictionary<(int, int), IntervalNode> Leaves;
+        private IntervalNode Root;
         public SuffixArray_V5(string str) : base(str)
         {
             SA = new(str);
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(0, out Tree, out Leaves);
+            SA.GetAllLcpIntervals(0, out Tree, out Leaves, out Root);
             int x = 5;
             foreach (((int start, int end), IntervalNode leafNode) in Leaves)
             {

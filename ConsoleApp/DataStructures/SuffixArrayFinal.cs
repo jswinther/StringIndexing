@@ -21,6 +21,7 @@ namespace ConsoleApp.DataStructures
         public string m_str;
         public int n;
         public (int Up, int Down, int Next)[] Children;
+        public static int k; // number of digits
 
         public SuffixArrayFinal(string str) 
         {
@@ -30,7 +31,11 @@ namespace ConsoleApp.DataStructures
             m_sa = new int[n];
             m_isa = new int[n];
 
-
+            do
+            {
+                n /= 10;
+                ++k;
+            } while (n != 0);
             FormInitialChains();
             BuildSuffixArray();
             BuildLcpArray();
@@ -412,7 +417,7 @@ namespace ConsoleApp.DataStructures
         
 
     
-        public void GetAllLcpIntervals(int minSize, out Dictionary<(int, int), IntervalNode> _nodes, out Dictionary<(int, int), IntervalNode> _leaves)
+        public void GetAllLcpIntervals(int minSize, out Dictionary<(int, int), IntervalNode> _nodes, out Dictionary<(int, int), IntervalNode> _leaves, out IntervalNode root)
         {
             _nodes = new();
             _leaves = new();
@@ -422,7 +427,8 @@ namespace ConsoleApp.DataStructures
             // First add child intervals for the interval [0..n]
             var Initinterval = intervals.Dequeue();
             hashSet.Add((Initinterval.Item1, Initinterval.Item2));
-            _nodes.Add(Initinterval, new IntervalNode(Initinterval, null, 0));
+            root = new IntervalNode(Initinterval, null, 0);
+            _nodes.Add(Initinterval, root);
             var currNode = _nodes[Initinterval];
             foreach (var item in GetChildIntervalsInit(Initinterval.Item1, Initinterval.Item2))
             {
@@ -432,6 +438,9 @@ namespace ConsoleApp.DataStructures
                     hashSet.Add(item);
                     var child = new IntervalNode(item, currNode, currNode.DistanceToRoot + 1);
                     currNode.Children.Add(child);
+                    var occs = GetOccurrencesForInterval(item);
+                    currNode.Min = occs.Min();
+                    currNode.Max = occs.Max();
                     _nodes.Add(item, child);
                 }
             }

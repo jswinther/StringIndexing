@@ -12,7 +12,8 @@ namespace ConsoleApp.DataStructures.Existence
         SuffixArrayFinal SA;
         Dictionary<(int, int), IntervalNode> Tree;
         Dictionary<(int, int), IntervalNode> Leaves;
-        
+        private IntervalNode Root;
+
         Dictionary<(int, int), List<HashSet<(int, int)>>> Nodes = new Dictionary<(int, int), List<HashSet<(int, int)>>>();
 
         public SA_E_V5(string str, int x)
@@ -20,7 +21,7 @@ namespace ConsoleApp.DataStructures.Existence
             this.x = x;
             SA = new SuffixArrayFinal(str);
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n), out Tree, out Leaves);
+            SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n), out Tree, out Leaves, out Root);
             var hashed = Leaves.Values.Select(s => new { interval = s.Interval, occs = new HashSet<int>(SA.GetOccurrencesForInterval(s.Interval)) }).ToArray();
 
             foreach (var item in hashed)

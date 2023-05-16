@@ -12,6 +12,7 @@ namespace ConsoleApp.DataStructures.Existence
         private SuffixArrayFinal SA;
         private Dictionary<(int, int), IntervalNode> Tree;
         private Dictionary<(int, int), IntervalNode> Leaves;
+        private IntervalNode Root;
         private int FixedGap { get; set; }
         private int MinGap { get; set; }
         private int MaxGap { get; set; }
@@ -27,7 +28,7 @@ namespace ConsoleApp.DataStructures.Existence
             MaxGap = maxGap;
             SA.BuildChildTable();
             int minSizeForLcpIntervals = (int)Math.Sqrt(SA.n);
-            SA.GetAllLcpIntervals(1, out Tree, out Leaves);
+            SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
 
             var tree = Tree.Skip(1);
             foreach (var node in tree)

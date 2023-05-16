@@ -14,6 +14,7 @@ namespace ConsoleApp.DataStructures.Reporting
     {
         SuffixArrayFinal SA;
         public Dictionary<(int, int), IntervalNode> Tree;
+        private IntervalNode Root;
         public Dictionary<(int, int), int[]> SortedTree;
         Dictionary<(int, int), IntervalNode> Leaves1;
         public (int, int)[] Leaves { get; private set; }
@@ -27,7 +28,7 @@ namespace ConsoleApp.DataStructures.Reporting
             // Populates _nodes and _leaves
             int minIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n));
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(1, out Tree, out Leaves1);
+            SA.GetAllLcpIntervals(1, out Tree, out Leaves1, out Root);
             Leaves = Leaves1.Keys.ToArray();
             UpdateDeepestLeaf();
 
