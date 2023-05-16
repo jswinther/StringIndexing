@@ -2,7 +2,7 @@
 
 namespace ConsoleApp.DataStructures
 {
-    [DebuggerDisplay("Interval = {Interval}, Depth = {DistanceToRoot}, DeepestLeaf = {DeepestLeaf}, Children = {Children.Count}")]
+    [DebuggerDisplay("Interval = {Interval}, Depth = {DistanceToRoot}, DeepestLeaf = {DeepestLeaf}, Children = {Children.Count}, SubtreeSize = {SubtreeSize}")]
     public class IntervalNode
     {
         public (int start, int end) Interval { get; set; }
@@ -13,7 +13,8 @@ namespace ConsoleApp.DataStructures
         public List<IntervalNode> Children { get; set; } = new();
         public int DistanceToRoot { get; set; }
         public int DeepestLeaf { get; set; } = int.MinValue;
-        public System.Collections.Generic.HashSet<(int, int)> MatchingIntervals { get; set; } = new();
+        public HashSet<(int, int)> MatchingIntervals { get; set; } = new();
+        public int SubtreeSize { get; set; } = 0;
 
         public bool Merged { get; set; }
 
