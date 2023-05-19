@@ -8,11 +8,11 @@ namespace ConsoleApp.DataStructures.Count
 {
     public abstract class CountDataStructure
     {
-        protected CountDataStructure(string str)
+        protected CountDataStructure(string str, int x, int ymin, int ymax)
         {
         }
         public abstract int Matches(string pattern);
-        public abstract int Matches(string pattern1, int x, string pattern2);
-        public abstract int Matches(string pattern1, int y_min, int y_max, string pattern2);
+        public abstract int MatchesFixed(string pattern1, string pattern2);
+        public abstract int MatchesVariable(string pattern1, string pattern2);
     }
 }

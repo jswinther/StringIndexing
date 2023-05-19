@@ -15,7 +15,7 @@ namespace ConsoleApp
     {
         public delegate ReportDataStructure BuildReportDataStructure(string str);
         public delegate ExistDataStructure BuildExistDataStructure(string str, int x, int ymin, int ymax);
-        public delegate CountDataStructure BuildCountDataStructure(string str);
+        public delegate CountDataStructure BuildCountDataStructure(string str, int x, int ymin, int ymax);
 
         public static ReportDataStructure BuildSuffixArray_V1(string str)
         {
@@ -52,9 +52,9 @@ namespace ConsoleApp
             return new SA_R_V4_3(str);
         }
 
-        public static CountDataStructure BuildSuffixArray_V8(string str)
+        public static CountDataStructure BuildSuffixArray_V8(string str, int x, int ymin, int ymax)
         {
-            return new SA_C_V1(str);
+            return new SA_C_V1(str, x, ymin, ymax);
         }
 
         public static ReportDataStructure BuildSuffixTree(string str)
@@ -175,8 +175,9 @@ namespace ConsoleApp
         {
             Benchmark benchmark = new Benchmark();
             Stopwatch stopwatch = Stopwatch.StartNew();
+            var q = queries[0];
             // Construction
-            var patternMatcher = matcher.Invoke(str);
+            var patternMatcher = matcher.Invoke(str, q.X, q.Y.Min, q.Y.Max);
             stopwatch.Stop();
             benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
             // Query Time
@@ -203,7 +204,7 @@ namespace ConsoleApp
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(query.P1, query.X, query.P2);
+                    var occs = patternMatcher.MatchesFixed(query.P1, query.P2);
                     stopwatch.Stop();
                     benchmark.DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
                     benchmark.DoublePatternFixedMatchesQueryOccs = occs;
@@ -218,7 +219,7 @@ namespace ConsoleApp
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(query.P1, query.Y.Min, query.Y.Max, query.P2);
+                    var occs = patternMatcher.MatchesVariable(query.P1, query.P2);
                     stopwatch.Stop();
                     benchmark.DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
                     benchmark.DoublePatternVariableMatchesQueryOccs = occs;

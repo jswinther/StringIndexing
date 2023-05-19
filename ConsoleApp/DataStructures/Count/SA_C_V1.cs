@@ -19,9 +19,15 @@ namespace ConsoleApp.DataStructures.Count
 
         public double MinSize { get; set; }
         public double MaxSize { get; set; }
-        public SA_C_V1(string str) : base(str)
+        int x;
+        int ymin;
+        int ymax;
+        public SA_C_V1(string str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
         {
             SA = new SuffixArrayFinal(str);
+            this.x = x;
+            this.ymin = ymin;
+            this.ymax = ymax;
             MinSize = Math.Pow(SA.n, 0.50);
             //MaxSize = Math.Pow(SA.n, 0.66);
             SA.BuildChildTable();
@@ -59,17 +65,16 @@ namespace ConsoleApp.DataStructures.Count
             return a.j + 1 - a.i;
         }
 
-        public override int Matches(string pattern1, int x, string pattern2)
+        public override int MatchesFixed(string pattern1, string pattern2)
         {
             var occs = HashedTree[SA.ExactStringMatchingWithESA(pattern1)][SA.ExactStringMatchingWithESA(pattern2)][x];
             return occs;
         }
 
-        public override int Matches(string pattern1, int y_min, int y_max, string pattern2)
+        public override int MatchesVariable(string pattern1, string pattern2)
         {
             var occs = HashedTree[SA.ExactStringMatchingWithESA(pattern1)][SA.ExactStringMatchingWithESA(pattern2)];
-            return occs.Where(key => y_min <= key.Key && key.Key <= y_max).Select(key => key.Value).Sum();
+            return occs.Where(key => ymin <= key.Key && key.Key <= ymax).Select(key => key.Value).Sum();
         }
-
     }
 }
