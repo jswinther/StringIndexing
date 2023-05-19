@@ -123,7 +123,7 @@ namespace ConsoleApp
                     benchmark.SinglePatternMatchesQueryOccs = occs.Count();
 
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmark.SinglePatternMatchesQuery = -1;
                 }
@@ -189,7 +189,7 @@ namespace ConsoleApp
                     benchmark.SinglePatternMatchesQueryOccs = occs;
 
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmark.SinglePatternMatchesQuery = -1;
                 }
@@ -219,7 +219,7 @@ namespace ConsoleApp
                     benchmark.DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
                     benchmark.DoublePatternVariableMatchesQueryOccs = occs;
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmark.DoublePatternVariableMatchesQuery = -1;
                 }
@@ -337,31 +337,31 @@ namespace ConsoleApp
 
             BuildReportDataStructure[] reportingDataStructures = new BuildReportDataStructure[]
             {
-                BuildSuffixArray_V1,
-                BuildSuffixArray_V2,
+                //BuildSuffixArray_V1,
+                //BuildSuffixArray_V2,
                 BuildSuffixArray_V3,
-                BuildSuffixArray_V4,
-                BuildSuffixArray_V5,
-                BuildSuffixArray_V6,
-                BuildSuffixArray_V7,
+                //BuildSuffixArray_V4,
+                //BuildSuffixArray_V5,
+                //BuildSuffixArray_V6,
+                //BuildSuffixArray_V7,
                 
             };
 
             BuildCountDataStructure[] countingDataStructures = new BuildCountDataStructure[]
             {
-                BuildSuffixArray_V8
+                //BuildSuffixArray_V8
             };
 
             BuildExistDataStructure[] existenceDataStructures = new BuildExistDataStructure[]
             {
-                BuildSA_E_V1,
+                //BuildSA_E_V1,
                 BuildSA_E_V2,
-                BuildSA_E_V3,
-                BuildSA_E_V4
+                //BuildSA_E_V3,
+                //BuildSA_E_V4
             };
 
 
-            var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
+            var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Pattern Type", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
 
             string p1 = "a";
             Random random = new Random();
@@ -375,24 +375,41 @@ namespace ConsoleApp
             foreach (var sequence in testData)
             {
                 SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner(sequence);
+                Query query1 = new Query(suffixArray_Scanner.topPattern, x, p2);
+                Random random1 = new Random();
+                int randInd = random1.Next(0, 5);
+                Query query2 = new Query(suffixArray_Scanner.midPatterns[randInd], x, p2);
+                Query query3 = new Query(suffixArray_Scanner.botPattern, x, p2);
 
 
                 foreach (var dataStructure in reportingDataStructures)
                 {
-                    var b = BenchReportDataStructure(dataStructure, sequence.Item1, sequence.Item2, query);
-                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    var b = BenchReportDataStructure(dataStructure, sequence.Item1, sequence.Item2, query1);
+                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Top", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    b = BenchReportDataStructure(dataStructure, sequence.Item1, sequence.Item2, query2);
+                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Middle", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    b = BenchReportDataStructure(dataStructure, sequence.Item1, sequence.Item2, query3);
+                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Bot", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
                 }
 
                 foreach (var dataStructure in countingDataStructures)
                 {
-                    var b = BenchCountDataStructure(dataStructure, sequence.Item1, sequence.Item2, query);
-                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    var b = BenchCountDataStructure(dataStructure, sequence.Item1, sequence.Item2, query1);
+                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Top", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    b = BenchCountDataStructure(dataStructure, sequence.Item1, sequence.Item2, query2);
+                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Middle", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    b = BenchCountDataStructure(dataStructure, sequence.Item1, sequence.Item2, query3);
+                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Bot", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
                 }
 
                 foreach (var dataStructure in existenceDataStructures)
                 {
-                    var b = BenchExistDataStructure(dataStructure, sequence.Item1, sequence.Item2, x, query.Y.Min, query.Y.Max, (p1, p2));
-                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    var b = BenchExistDataStructure(dataStructure, sequence.Item1, sequence.Item2, x, query.Y.Min, query.Y.Max, (suffixArray_Scanner.topPattern, p2));
+                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Top", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    b = BenchExistDataStructure(dataStructure, sequence.Item1, sequence.Item2, x, query.Y.Min, query.Y.Max, (suffixArray_Scanner.midPatterns[randInd], p2));
+                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Middle", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    b = BenchExistDataStructure(dataStructure, sequence.Item1, sequence.Item2, x, query.Y.Min, query.Y.Max, (suffixArray_Scanner.botPattern, p2));
+                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Bot", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
                 }
             }
             table.Options.NumberAlignment = Alignment.Right;
