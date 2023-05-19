@@ -1,4 +1,5 @@
-﻿using Gma.DataStructures.StringSearch;
+﻿using ConsoleApp.DataStructures.Reporting;
+using Gma.DataStructures.StringSearch;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures
 {
-    internal class UkkonenWrapper : PatternMatcher
+    internal class UkkonenWrapper : ReportDataStructure
     {
         CharUkkonenTrie<int> suffixTree;
         public UkkonenWrapper(string str) : base(str)

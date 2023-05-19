@@ -4,10 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
+using ConsoleApp.DataStructures.Reporting;
 
 namespace ConsoleApp.DataStructures
 {
-    public class BaratgaborSuffixTree : PatternMatcher
+    public class BaratgaborSuffixTree : ReportDataStructure
     {
         private const int BOUNDLESS = -1;
 

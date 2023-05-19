@@ -4,11 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.DataStructures.Reporting
 {
-    public abstract class PatternMatcher
+    public abstract class ReportDataStructure
     {
-        protected PatternMatcher(string str)
+        protected ReportDataStructure(string str)
         {
         }
         public abstract IEnumerable<int> Matches(string pattern);

@@ -1,4 +1,5 @@
 ﻿using C5;
+using ConsoleApp.DataStructures.Reporting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures
 {
-    internal abstract class BaseSuffixArray : PatternMatcher
+    internal abstract class BaseSuffixArray : ReportDataStructure
     {
 
         public const int EOC = int.MaxValue;
@@ -20,8 +21,6 @@ namespace ConsoleApp.DataStructures
         public int m_nextRank = 1;
         public string m_str;
         public int n;
-        
-
         protected BaseSuffixArray(string str) : base(str)
         {
             m_str = str;
@@ -29,7 +28,7 @@ namespace ConsoleApp.DataStructures
             n = m_str.Length;
             m_sa = new int[n];
             m_isa = new int[n];
-            
+
 
             FormInitialChains();
             BuildSuffixArray();

@@ -8,7 +8,7 @@ using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
 namespace ConsoleApp.DataStructures.Existence
 {
-    public class SA_E_V2
+    public class SA_E_V2 : ExistDataStructure
     {
         private SuffixArrayFinal SA;
         private Dictionary<(int, int), IntervalNode> Tree;
@@ -27,7 +27,7 @@ namespace ConsoleApp.DataStructures.Existence
         //private Dictionary<((int, int), (int, int)), bool> Exists = new Dictionary<((int, int), (int, int)), bool>();
 
 
-        public SA_E_V2(string str, int fixedGap, int minGap, int maxGap)
+        public SA_E_V2(string str, int fixedGap, int minGap, int maxGap) : base(str, fixedGap, minGap, maxGap)
         {
             SA = new SuffixArrayFinal(str);
             FixedGap = fixedGap;
@@ -38,7 +38,7 @@ namespace ConsoleApp.DataStructures.Existence
             int minSizeSaved = (int)Math.Sqrt(SA.n);
             SA.GetAllLcpIntervals(minSizeForLcpIntervals, out Tree, out Leaves, out Root);
             //SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n), out TreeSqrt, out LeavesSqrt);
-            ComputeSubSuffixArrays(minSize: minSizeSaved);
+           
 
 
             /*Precomputation 1
@@ -160,27 +160,33 @@ namespace ConsoleApp.DataStructures.Existence
             }
         }
 
-        private void ComputeSubSuffixArrays(int minSize)
-        {
-            foreach (var interval in Tree.Values)
-            {
+        
 
-            }
+        public bool VariableExists(string pattern1, string pattern2)
+        {
+            return true;
         }
 
-        public bool FixedExists(string pattern1, string pattern2)
+        public override bool Matches(string pattern)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool MatchesFixedGap(string pattern1, string pattern2)
         {
             var int1 = SA.ExactStringMatchingWithESA(pattern1);
             var int2 = SA.ExactStringMatchingWithESA(pattern2);
             if (ExistsForward[int1].Contains(int2) || ExistsBackward[int2].Contains(int1))
             {
                 return true;
-            } else if (int1.j - int1.i > int2.j - int2.i)
+            }
+            else if (int1.j - int1.i > int2.j - int2.i)
             {
                 var occs1 = new HashSet<int>(SA.GetOccurrencesForInterval(int1));
                 var occs2 = SA.GetOccurrencesForInterval(int2);
                 return occs2.Any(occ2 => occs1.Contains(occ2 - Tree[int1].DistanceToRoot - FixedGap));
-            } else
+            }
+            else
             {
                 var occs1 = SA.GetOccurrencesForInterval(int1);
                 var occs2 = new HashSet<int>(SA.GetOccurrencesForInterval(int2));
@@ -188,9 +194,9 @@ namespace ConsoleApp.DataStructures.Existence
             }
         }
 
-        public bool VariableExists(string pattern1, string pattern2)
+        public override bool MatchesVariableGap(string pattern1, string pattern2)
         {
-            return true;
+            throw new NotImplementedException();
         }
     }
 }

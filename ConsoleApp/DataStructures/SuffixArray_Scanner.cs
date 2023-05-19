@@ -30,8 +30,9 @@ namespace ConsoleApp.DataStructures.Reporting
         public string topPattern = null;
         public string botPattern = null;
         public string[] midPatterns = new string[5];
-        public SuffixArray_Scanner(string str)
+        public SuffixArray_Scanner((string, string) args)
         {
+            (string name, string str) = args;
             SA = new SuffixArrayFinal(str);
             SA.BuildChildTable();
             SA.GetAllLcpIntervals((int)1, out Tree, out Leaves1, out Root);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleApp.DataStructures.Count;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
-    internal class SuffixArray_V8
+    internal class SuffixArray_V8 : CountDataStructure
     {
         private SuffixArrayFinal SA;
 
@@ -19,7 +20,7 @@ namespace ConsoleApp.DataStructures.Reporting
         
         public double MinSize { get; set; }
         public double MaxSize { get; set; }
-        public SuffixArray_V8(string str)
+        public SuffixArray_V8(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
             MinSize = Math.Pow(SA.n, 0.50);
@@ -53,22 +54,23 @@ namespace ConsoleApp.DataStructures.Reporting
             }
         }
 
-        public int Matches(string pattern)
+        public override int Matches(string pattern)
         {
             var a = SA.ExactStringMatchingWithESA(pattern);
             return a.j + 1 - a.i;
         }
 
-        public int Matches(string pattern1, int x, string pattern2)
+        public override int Matches(string pattern1, int x, string pattern2)
         {
             var occs = HashedTree[SA.ExactStringMatchingWithESA(pattern1)][SA.ExactStringMatchingWithESA(pattern2)][x];
             return occs;
         }
 
-        public int Matches(string pattern1, int y_min, int y_max, string pattern2)
+        public override int Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
             var occs = HashedTree[SA.ExactStringMatchingWithESA(pattern1)][SA.ExactStringMatchingWithESA(pattern2)];
             return occs.Where(key => y_min <= key.Key && key.Key <= y_max).Select(key => key.Value).Sum();
         }
+
     }
 }

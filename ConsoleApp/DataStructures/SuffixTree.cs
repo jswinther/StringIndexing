@@ -1,4 +1,5 @@
 ﻿using C5;
+using ConsoleApp.DataStructures.Reporting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +8,7 @@ using System.Text;
 
 namespace ConsoleApp.DataStructures
 {
-    public class SuffixTree : PatternMatcher
+    public class SuffixTree : ReportDataStructure
     {
         public char? CanonizationChar { get; set; }
         public string S { get; private set; }

@@ -7,7 +7,7 @@ using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
 namespace ConsoleApp.DataStructures.Existence
 {
-    public class SA_E_V1
+    public class SA_E_V1 : ExistDataStructure
     {
         private SuffixArrayFinal SA;
         private Dictionary<(int, int), IntervalNode> Tree;
@@ -20,7 +20,7 @@ namespace ConsoleApp.DataStructures.Existence
         private Dictionary<((int, int), (int, int)), bool> Exists = new Dictionary<((int, int), (int, int)), bool>();
 
 
-        public SA_E_V1(string str, int fixedGap, int minGap, int maxGap)
+        public SA_E_V1(string str, int fixedGap, int minGap, int maxGap) : base(str, fixedGap, minGap, maxGap)
         {
             SA = new SuffixArrayFinal(str);
             FixedGap = fixedGap;
@@ -52,24 +52,27 @@ namespace ConsoleApp.DataStructures.Existence
             }
         }
 
-        private void ComputeSubSuffixArrays(int minSize)
+
+
+
+
+ 
+
+        public override bool Matches(string pattern)
         {
-            foreach (var interval in Tree.Values)
-            {
-                
-            }
+            throw new NotImplementedException();
         }
 
-        public bool FixedExists(string pattern1, string pattern2)
+        public override bool MatchesFixedGap(string pattern1, string pattern2)
         {
             var int1 = SA.ExactStringMatchingWithESA(pattern1);
             var int2 = SA.ExactStringMatchingWithESA(pattern2);
             return Exists[(int1, int2)];
         }
 
-        public bool VariableExists(string pattern1, string pattern2) 
+        public override bool MatchesVariableGap(string pattern1, string pattern2)
         {
-            return true;
+            throw new NotImplementedException();
         }
     }
 }

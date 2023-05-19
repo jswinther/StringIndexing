@@ -6,90 +6,99 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures.Existence
 {
-    // Bruteforce
-    internal class SA_E_V4
+    public class SA_E_V4 : ExistDataStructure
     {
         int x;
         SuffixArrayFinal SA;
         Dictionary<(int, int), IntervalNode> Tree;
         Dictionary<(int, int), IntervalNode> Leaves;
         private IntervalNode Root;
-        Dictionary<(int, int), HashSet<(int, int)>> Exists = new Dictionary<(int, int), HashSet<(int, int)>>();
-        Dictionary<(int, int), HashSet<int>> HashedNodes = new Dictionary<(int, int), HashSet<int>>(); 
-        public SA_E_V4(string str, int x) 
+
+        Dictionary<(int, int), List<HashSet<(int, int)>>> Nodes = new Dictionary<(int, int), List<HashSet<(int, int)>>>();
+
+        public SA_E_V4(string str, int fixedGap, int minGap, int maxGap) : base(str, fixedGap, minGap, maxGap)
         {
             this.x = x;
             SA = new SuffixArrayFinal(str);
-
             SA.BuildChildTable();
             SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n), out Tree, out Leaves, out Root);
-            
-            foreach (var item in Tree.OrderBy(s => s.Value.Size).Take((int)Math.Sqrt(SA.n)))
-            {
-                HashedNodes.Add(item.Key, new HashSet<int>(SA.GetOccurrencesForInterval(item.Key)));
-            }
+            var hashed = Leaves.Values.Select(s => new { interval = s.Interval, occs = new HashSet<int>(SA.GetOccurrencesForInterval(s.Interval)) }).ToArray();
 
-            
-            foreach ((var key1, var occs1) in HashedNodes)
+            foreach (var item in hashed)
             {
-                var int1 = Tree[key1];
-                Exists.Add(int1.Interval, new HashSet<(int, int)>());
-                foreach ((var int2, var occs2) in HashedNodes)
+                var hs1 = item.occs;
+                Nodes.Add(item.interval, new List<HashSet<(int, int)>>());
+                var no = Nodes[item.interval];
+                for (int i = 0; i < Tree[item.interval].DistanceToRoot + 1; i++)
                 {
-                    if (occs1.Any(occ1 => occs2.Contains(occ1 + int1.DistanceToRoot + x)))
+                    no.Add(new HashSet<(int, int)>());
+                    foreach (var item1 in hashed)
                     {
-                        Exists[key1].Add(int2);
-                    }
+                        var hs2 = item1.occs;
+                        if (hs1.Any(o1 => hs2.Contains(o1 + x + i)))
+                        {
+                            no[i].Add(item1.interval);
+                            var parent = Tree[item1.interval].Parent;
+                            while (no[i].Add(parent.Interval))
+                            {
+                                parent = parent.Parent;
+                                if (parent == null) break;
+                            }
+                        }
+                    }                    
+                }
+            }
+            ComputeLeafIntervals();
+
+        }
+
+
+        public void ComputeLeafIntervals()
+        {
+            var Leaves = this.Leaves.Keys.ToArray();
+            for (int i = 0; i < Leaves.Length; i++)
+            {
+                (int, int) leafInterval = Leaves[i];
+                var leaf = Tree[leafInterval];
+                var parentInterval = leaf.Parent;
+                while (Tree.ContainsKey(parentInterval.Interval))
+                {
+                    var parent = Tree[parentInterval.Interval];
+                    if (parent.LeftMostLeaf > i) Tree[parentInterval.Interval].LeftMostLeaf = i;
+                    if (parent.RightMostLeaf < i) Tree[parentInterval.Interval].RightMostLeaf = i;
+                    if (parent.Parent == null) break;
+                    parentInterval = parent.Parent;
                 }
             }
         }
 
-        public bool IsIntervalSizeLessThan((int, int) interval, out HashSet<int> occs)
+        public override bool Matches(string pattern)
         {
-            var b = interval.Item2 - interval.Item1 < (int)Math.Sqrt(SA.n);
-            if (b)
-            {
-                occs = new HashSet<int>(SA.GetOccurrencesForInterval(interval));
-            }
-            else
-            {
-                occs = new HashSet<int>();
-            }
-            return b;
+            throw new NotImplementedException();
         }
 
-        public bool PatternExists(string p1, string p2)
+        public override bool MatchesFixedGap(string p1, string p2)
         {
             var pattern1Interval = SA.ExactStringMatchingWithESA(p1);
             var pattern2Interval = SA.ExactStringMatchingWithESA(p2);
-            HashSet<int> n2hash = new();
-            HashSet<int> n1hash = new();
-            if (IsIntervalSizeLessThan(pattern1Interval, out n1hash))
+            var val = Tree[pattern1Interval];
+            foreach (var leaf in Leaves.Keys.Take(new Range(val.LeftMostLeaf, val.RightMostLeaf + 1)))
             {
-                IsIntervalSizeLessThan(pattern2Interval, out n2hash);
-                if (HashedNodes.TryGetValue(pattern1Interval, out var n1))
-                {
-                    n2hash.Any(s2 => n1.Contains(s2 - x - p1.Length));
-                } 
-                else if (HashedNodes.TryGetValue(pattern2Interval, out var n2))
-                {
-                    n1hash.Any(s1 => n2.Contains(s1 + x + p1.Length));
-                } 
-                else 
-                { 
-                    n1hash.Any(s1 => n2hash.Contains(s1 + x + p1.Length));
-                }
+                var n = Nodes[leaf];
+                var hs = n[val.DistanceToRoot];
+                if (hs.Contains(pattern2Interval))
+                { return true; }
             }
-            if (Exists.TryGetValue(pattern1Interval, out var result))
-            {
-                return result.Contains(pattern2Interval);
-            }
-            else
-            {
-                var occs2 = new HashSet<int>(SA.GetOccurrencesForInterval(pattern2Interval));
-                return SA.GetOccurrencesForInterval(pattern1Interval).Any(occ1 => occs2.Contains(occ1 + x + p1.Length));
-            }
+            return false;
         }
-    }
 
+        public override bool MatchesVariableGap(string pattern1, string pattern2)
+        {
+            throw new NotImplementedException();
+        }
+
+    
+
+
+    }
 }

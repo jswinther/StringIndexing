@@ -2,11 +2,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using ConsoleApp.DataStructures.Reporting;
 
-namespace ConsoleApp.DataStructures{
+namespace ConsoleApp.DataStructures
+{
 
 
-class SuffixTreeOther : PatternMatcher{
+    class SuffixTreeOther : ReportDataStructure{
     private class Node {
         public int start, end;
         public Dictionary<char, Node> children = new Dictionary<char, Node>();

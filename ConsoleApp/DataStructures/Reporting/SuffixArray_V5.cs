@@ -7,12 +7,12 @@ using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
-    internal class SuffixArray_V5 : PatternMatcher
+    internal class SuffixArray_V5 : ReportDataStructure
     {
         SuffixArrayFinal SA;
         Dictionary<(int, int), IntervalNode> Tree;
         Dictionary<(int, int), IntervalNode> Leaves;
-        private IntervalNode Root;
+        IntervalNode Root;
         public SuffixArray_V5(string str) : base(str)
         {
             SA = new(str);

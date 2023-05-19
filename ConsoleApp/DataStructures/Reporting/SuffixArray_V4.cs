@@ -10,17 +10,17 @@ using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
-    internal class SuffixArray_V4 : PatternMatcher
+    internal class SuffixArray_V4 : ReportDataStructure
     {
         SuffixArrayFinal SA;
         public Dictionary<(int, int), IntervalNode> Tree;
-        private IntervalNode Root;
         public Dictionary<(int, int), int[]> SortedTree;
         Dictionary<(int, int), IntervalNode> Leaves1;
         public (int, int)[] Leaves { get; private set; }
         public IntervalNode[] Nodes { get; private set; }
         public List<(int, int)> TopNodes { get; private set; }
         public int Height { get; set; }
+        IntervalNode Root;
 
         public SuffixArray_V4(string str) : base(str)
         {

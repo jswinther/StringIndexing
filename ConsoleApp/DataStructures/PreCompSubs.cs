@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ConsoleApp.DataStructures.Reporting;
 
 namespace ConsoleApp.DataStructures
 {
-    internal class PreCompSubs : PatternMatcher
+    internal class PreCompSubs : ReportDataStructure
     {
         Dictionary<string, HashSet<int>> Substrings = new();
 

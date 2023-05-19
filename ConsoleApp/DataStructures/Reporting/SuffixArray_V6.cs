@@ -10,7 +10,7 @@ using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
-    internal class SuffixArray_V6 : PatternMatcher
+    internal class SuffixArray_V6 : ReportDataStructure
     {
         SuffixArrayFinal SA;
         public Dictionary<(int, int), IntervalNode> Tree;

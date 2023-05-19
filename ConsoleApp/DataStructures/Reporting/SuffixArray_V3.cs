@@ -11,7 +11,7 @@ using static ConsoleApp.DataStructures.SuffixArrayFinal;
 namespace ConsoleApp.DataStructures.Reporting
 {
     // Inspired by this paper https://www.uni-ulm.de/fileadmin/website_uni_ulm/iui.inst.190/Mitarbeiter/ohlebusch/PAPERS/HCMB8.pdf
-    internal class SuffixArray_V3 : PatternMatcher
+    internal class SuffixArray_V3 : ReportDataStructure
     {
 
         private Dictionary<(int, int), int[]> sorted = new();

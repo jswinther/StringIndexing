@@ -7,7 +7,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
-    internal class SuffixArray_V2 : PatternMatcher
+    internal class SuffixArray_V2 : ReportDataStructure
     {
         SuffixArrayFinal SA;
         public SuffixArray_V2(string str) : base(str)
