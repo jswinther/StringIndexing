@@ -379,10 +379,15 @@ namespace ConsoleApp
             foreach (var sequence in testData)
             {
                 SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner(sequence);
+                if (suffixArray_Scanner.botPattern.EndsWith('|'))
+                {
+                    //suffixArray_Scanner.botPattern = suffixArray_Scanner.botPattern.Remove(suffixArray_Scanner.botPattern.Length -1);
+                }
                 Query query1 = new Query(suffixArray_Scanner.topPattern, x, p2);
                 Random random1 = new Random();
                 Query query2 = new Query(suffixArray_Scanner.midPatterns.GetRandom(), x, p2);
                 Query query3 = new Query(suffixArray_Scanner.botPattern, x, p2);
+                Console.WriteLine(query3.P1);
 
 
                 foreach (var dataStructure in reportingDataStructures)
