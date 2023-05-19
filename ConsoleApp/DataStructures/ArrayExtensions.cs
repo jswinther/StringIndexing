@@ -20,6 +20,36 @@
             return (minIndex, maxIndex);
         }
 
+        private static Random Random = new Random();
+
+        public static T GetRandom<T>(this IEnumerable<T> values)
+        {
+            return values.ElementAt(Random.Next(values.Count()));
+        }
+
+        public static IEnumerable<T> GetRandom<T>(this IEnumerable<T> values, int amount)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                yield return GetRandom(values);
+            }
+        }
+
+        public static string GetSubstringOfPercentageOfString(this string s, double percent)
+        {
+            double maxStart = s.Length * (1 - percent);
+            double maxLength = s.Length * percent;
+            return s.Substring(Random.Next((int)maxStart), (int)maxLength);
+        }
+
+        public static IEnumerable<string> GetSubstringOfPercentageOfString(this string s, double percent, int amount)
+        {
+            for (int i = 0; i < amount; i++)
+            {
+                yield return GetSubstringOfPercentageOfString(s, percent);
+            }
+        }
+
         public static int IndexOfSucessor(this int[] array, int v)
         {
             int left = 0;

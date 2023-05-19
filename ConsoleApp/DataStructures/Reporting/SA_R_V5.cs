@@ -3,71 +3,56 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
     internal class SA_R_V5 : ReportDataStructure
     {
         SuffixArrayFinal SA;
-        Dictionary<(int, int), IntervalNode> Tree;
-        Dictionary<(int, int), IntervalNode> Leaves;
-        IntervalNode Root;
         public SA_R_V5(string str) : base(str)
         {
-            SA = new(str);
+            SA = new SuffixArrayFinal(str);
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(0, out Tree, out Leaves, out Root);
-            int x = 5;
-            foreach (((int start, int end), IntervalNode leafNode) in Leaves)
-            {
-                int depth = leafNode.DistanceToRoot;
-                int left = start - depth - x;
-                int right = start + depth + x;
-                if (left >= 0)
-                {
-                    leafNode.MatchingIntervals.Add((left, left));
-                }
-                if (right < Leaves.Count)
-                {
-                    leafNode.MatchingIntervals.Add((right, right));
-                }
-            }
-
-            var a = ComputeMatchingIntervals(Tree.Values.First());
-        }
-
-        private HashSet<(int, int)> ComputeMatchingIntervals(IntervalNode node)
-        {
-            if (node.MatchingIntervals.Count > 0)
-            {
-                return node.MatchingIntervals;
-            }
-            else
-            {
-                HashSet<(int, int)> values = new HashSet<(int, int)>();
-                foreach (var child in node.Children)
-                {
-                    values.UnionWith(ComputeMatchingIntervals(child));
-                }
-                node.MatchingIntervals = values;
-                return values;
-            }
         }
 
         public override IEnumerable<int> Matches(string pattern)
         {
-            throw new NotImplementedException();
+            var occs = SA.GetOccurrencesForPattern(pattern);
+            occs.Sort();
+            return occs;
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
         {
-            throw new NotImplementedException();
+            List<(int, int)> occs = new List<(int, int)>();
+            var occs1 = SA.GetOccurrencesForPattern(pattern1);
+            var occs2 = new HashSet<int>(SA.GetOccurrencesForPattern(pattern2));
+
+            foreach (var occ1 in occs1)
+            {
+                if (occs2.Contains(occ1 + pattern1.Length + x))
+                    occs.Add((occ1, occ1 + pattern2.Length + pattern2.Length + x));
+            }
+            return occs;
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            throw new NotImplementedException();
+            List<(int, int)> occs = new List<(int, int)>();
+            var occs1 = SA.GetOccurrencesForPattern(pattern1);
+            var occs2 = new HashSet<int>(SA.GetOccurrencesForPattern(pattern2));
+            
+            foreach (var occ1 in occs1)
+            {
+                int min = occ1 + y_min + pattern1.Length;
+                int max = occ1 + y_max + pattern1.Length;
+                for (int i = min; i < max; i++)
+                {
+                    if (occs2.Contains(i))
+                        occs.Add((occ1, i));
+                }
+            }
+            return occs;
         }
     }
 }

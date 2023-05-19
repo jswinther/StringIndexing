@@ -364,3 +364,4 @@ FodyWeavers.xsd
 ConsoleApp/.vscode/launch.json
 .gitignore
 ConsoleApp/.vscode/tasks.json
+ConsoleApp/consoleoutput.txt

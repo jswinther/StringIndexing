@@ -32,7 +32,7 @@ namespace ConsoleApp
             return new SA_R_V3(str);
         }
 
-        public static ReportDataStructure BuildSuffixArray_V4(string str)
+        public static ReportDataStructure BuildSuffixArray_V4_1(string str)
         {
             return new SA_R_V4_1(str);
         }
@@ -42,12 +42,12 @@ namespace ConsoleApp
             return new SA_R_V5(str);
         }
 
-        public static ReportDataStructure BuildSuffixArray_V6(string str)
+        public static ReportDataStructure BuildSuffixArray_V4_2(string str)
         {
             return new SA_R_V4_2(str);
         }
 
-        public static ReportDataStructure BuildSuffixArray_V7(string str)
+        public static ReportDataStructure BuildSuffixArray_V4_3(string str)
         {
             return new SA_R_V4_3(str);
         }
@@ -109,6 +109,7 @@ namespace ConsoleApp
             var patternMatcher = matcher.Invoke(str);
             stopwatch.Stop();
             benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            int repetitions = 5;
             // Query Time
             foreach (var query in queries)
             {
@@ -116,19 +117,22 @@ namespace ConsoleApp
                 
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(query.P1);
-                    stopwatch.Stop();
-                    benchmark.SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmark.SinglePatternMatchesQueryOccs = occs.Count();
-
+                    for (int i = 0; i < repetitions; i++)
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.Matches(query.P1);
+                        stopwatch.Stop();
+                        benchmark.SinglePatternMatchesQueryOccs = occs.Count();
+                        benchmark.SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
+                    }
+                    benchmark.SinglePatternMatchesQuery /= repetitions;
                 }
                 catch (Exception)
                 {
                     benchmark.SinglePatternMatchesQuery = -1;
                 }
                 
-                /*
+                
                 // Double Pattern + Fixed Gap
                 try
                 {
@@ -142,7 +146,7 @@ namespace ConsoleApp
                 {
                     benchmark.DoublePatternFixedMatchesQuery = -1;
                 }
-                */
+                
                 // Double Pattern + Variable Gap
                 
                 try
@@ -320,16 +324,16 @@ namespace ConsoleApp
             {
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
-                //DummyData.DNA("DNA_512"),
+                DummyData.DNA("DNA_512"),
                 //DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
                 //DummyData.DNA("DNA_1048576"),
                 //DummyData.DNA("DNA_2097152"),
                 //DummyData.DNA("DNA_4194304"),
-                DummyData.DNA("DNA_1048576"),
-                DummyData.PCC("realDNA_1048576"),
-                DummyData.PCC("proteins_1048576"),
-                DummyData.ENG("english_1048576"),
+                //DummyData.DNA("DNA_1048576"),
+                //DummyData.PCC("realDNA_1048576"),
+                //DummyData.PCC("proteins_1048576"),
+                //DummyData.ENG("english_1048576"),
                 //DummyData.PCC("english_8388608"),
                 //DummyData.DNA("DNA_16777216"),
                 //DummyData.DNA("DNA_33554432")
@@ -338,12 +342,12 @@ namespace ConsoleApp
             BuildReportDataStructure[] reportingDataStructures = new BuildReportDataStructure[]
             {
                 //BuildSuffixArray_V1,
-                //BuildSuffixArray_V2,
-                BuildSuffixArray_V3,
-                //BuildSuffixArray_V4,
+                BuildSuffixArray_V2,
+                //BuildSuffixArray_V3,
+                //BuildSuffixArray_V4_1,
                 //BuildSuffixArray_V5,
-                //BuildSuffixArray_V6,
-                //BuildSuffixArray_V7,
+                //BuildSuffixArray_V4_2,
+                //BuildSuffixArray_V4_3,
                 
             };
 
@@ -355,7 +359,7 @@ namespace ConsoleApp
             BuildExistDataStructure[] existenceDataStructures = new BuildExistDataStructure[]
             {
                 //BuildSA_E_V1,
-                BuildSA_E_V2,
+                //BuildSA_E_V2,
                 //BuildSA_E_V3,
                 //BuildSA_E_V4
             };
