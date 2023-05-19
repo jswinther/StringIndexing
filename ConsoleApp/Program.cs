@@ -381,8 +381,7 @@ namespace ConsoleApp
                 SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner(sequence);
                 Query query1 = new Query(suffixArray_Scanner.topPattern, x, p2);
                 Random random1 = new Random();
-                int randInd = random1.Next(0, 5);
-                Query query2 = new Query(suffixArray_Scanner.midPatterns[randInd], x, p2);
+                Query query2 = new Query(suffixArray_Scanner.midPatterns.GetRandom(), x, p2);
                 Query query3 = new Query(suffixArray_Scanner.botPattern, x, p2);
 
 
