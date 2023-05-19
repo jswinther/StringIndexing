@@ -369,6 +369,7 @@ namespace ConsoleApp.DataStructures
                 else
                 {
                     queryFound = ComparePrefix(pattern, S.Substring(idx)) == 0;
+                    if (queryFound) break;
                 }
             }
             if (queryFound)

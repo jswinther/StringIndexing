@@ -23,7 +23,7 @@ namespace ConsoleApp.DataStructures.Reporting
         {
             SA = new SuffixArrayFinal(S);
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(2, out Tree, out Leaves, out Root);
+            SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
             var keys = Tree.Keys.ToList();
 
             for (int i = 1; i < keys.Count; i++)
