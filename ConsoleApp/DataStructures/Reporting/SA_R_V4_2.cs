@@ -5,12 +5,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static ConsoleApp.DataStructures.Reporting.SuffixArray_V2;
+using static ConsoleApp.DataStructures.Reporting.SA_R_V2;
 using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
-    internal class SuffixArray_V4 : ReportDataStructure
+    internal class SA_R_V4_2 : ReportDataStructure
     {
         SuffixArrayFinal SA;
         public Dictionary<(int, int), IntervalNode> Tree;
@@ -20,18 +20,22 @@ namespace ConsoleApp.DataStructures.Reporting
         public IntervalNode[] Nodes { get; private set; }
         public List<(int, int)> TopNodes { get; private set; }
         public int Height { get; set; }
-        IntervalNode Root;
 
-        public SuffixArray_V4(string str) : base(str)
+        public int MinIntervalSize { get; set; }
+        public int MaxIntervalSize { get; set; }
+
+        private IntervalNode Root;
+
+        public SA_R_V4_2(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
             // Populates _nodes and _leaves
-            int minIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n));
+            MinIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n));
+            MaxIntervalSize = (int)Math.Floor(Math.Pow(SA.n,(0.667)));
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(1, out Tree, out Leaves1, out Root);
+            SA.GetAllLcpIntervals(MinIntervalSize, out Tree, out Leaves1, out Root);
             Leaves = Leaves1.Keys.ToArray();
-            UpdateDeepestLeaf();
-
+            //UpdateDeepestLeaf();
 
             BuildDataStructure();
     
@@ -43,19 +47,19 @@ namespace ConsoleApp.DataStructures.Reporting
         private void BuildDataStructure()
         {
             SortedTree = new();
-            Height = Tree.Last().Value.DistanceToRoot/2;
+            //Height = Tree.Last().Value.DistanceToRoot/2;
             Nodes = Tree.Values.ToArray();
            
 
             
            
-            foreach (var intervalToBeSorted in Nodes.Where(n => n.DistanceToRoot >= 0.25 * n.DeepestLeaf || n.DistanceToRoot == 1 && n.IsLeaf))
+            foreach (var intervalToBeSorted in Nodes.Where(n => n.Size <= MaxIntervalSize))
             {
                 var occs = SA.GetOccurrencesForInterval(intervalToBeSorted.Interval);
                 occs.Sort();
                 SortedTree.Add(intervalToBeSorted.Interval, occs);
             }
-            HashSet<IntervalNode> parents = new();
+            /*HashSet<IntervalNode> parents = new();
             for (int i = 0; i < TopNodes.Count; i++)
             {
                 (int, int) leafInterval = TopNodes[i];
@@ -70,7 +74,7 @@ namespace ConsoleApp.DataStructures.Reporting
                     if (parent.Parent == null) break;
                     parentInterval = parent.Parent.Interval;
                 }
-            }
+            }*/
             
         }
 
@@ -82,18 +86,13 @@ namespace ConsoleApp.DataStructures.Reporting
         private int[] SortedOccurrencesForPattern(string pattern)
         {
             var interval = SA.ExactStringMatchingWithESA(pattern);
+            var intervalSize = (interval.j + 1 - interval.i);
             if (SortedTree.ContainsKey(interval)) return SortedTree[interval];
-            if (Tree.ContainsKey(interval) && Tree[interval].LeftMostLeaf < int.MaxValue)
+            else if (intervalSize < MinIntervalSize)
             {
-                var intervalNode = Tree[interval];
-                int start = intervalNode.LeftMostLeaf;
-                int end = intervalNode.RightMostLeaf;
-                int[][] arr = new int[end - start + 1][];
-                for (int i = start; i < end + 1; i++)
-                {
-                    arr[i - start] = SortedTree[TopNodes[i]];
-                }
-                return MergeKSortedArrays(arr);
+                var occs = SA.GetOccurrencesForInterval(interval);
+                Array.Sort(occs);
+                return occs;
             }
             else
             {

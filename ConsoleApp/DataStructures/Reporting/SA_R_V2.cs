@@ -7,10 +7,10 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
-    internal class SuffixArray_V2 : ReportDataStructure
+    internal class SA_R_V2 : ReportDataStructure
     {
         SuffixArrayFinal SA;
-        public SuffixArray_V2(string str) : base(str)
+        public SA_R_V2(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
             SA.BuildChildTable();

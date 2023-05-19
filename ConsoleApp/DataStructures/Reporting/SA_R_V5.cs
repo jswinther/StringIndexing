@@ -7,13 +7,13 @@ using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
-    internal class SuffixArray_V5 : ReportDataStructure
+    internal class SA_R_V5 : ReportDataStructure
     {
         SuffixArrayFinal SA;
         Dictionary<(int, int), IntervalNode> Tree;
         Dictionary<(int, int), IntervalNode> Leaves;
         IntervalNode Root;
-        public SuffixArray_V5(string str) : base(str)
+        public SA_R_V5(string str) : base(str)
         {
             SA = new(str);
             SA.BuildChildTable();

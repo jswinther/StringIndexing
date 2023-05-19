@@ -1,14 +1,13 @@
-﻿using ConsoleApp.DataStructures.Count;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures.Reporting
+namespace ConsoleApp.DataStructures.Count
 {
-    internal class SuffixArray_V8 : CountDataStructure
+    internal class SA_C_V1 : CountDataStructure
     {
         private SuffixArrayFinal SA;
 
@@ -17,20 +16,20 @@ namespace ConsoleApp.DataStructures.Reporting
         private IntervalNode Root;
 
         private Dictionary<(int, int), Dictionary<(int, int), Dictionary<int, int>>> HashedTree = new();
-        
+
         public double MinSize { get; set; }
         public double MaxSize { get; set; }
-        public SuffixArray_V8(string str) : base(str)
+        public SA_C_V1(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
             MinSize = Math.Pow(SA.n, 0.50);
             //MaxSize = Math.Pow(SA.n, 0.66);
             SA.BuildChildTable();
             SA.GetAllLcpIntervals((int)MinSize, out Tree, out Leaves, out Root);
-            List<(IntervalNode, System.Collections.Generic.HashSet<int>)> intermediate = new();
+            List<(IntervalNode, HashSet<int>)> intermediate = new();
             foreach (var intervalNode in Tree.Values.Skip(1))
             {
-                var h = new System.Collections.Generic.HashSet<int>(SA.GetOccurrencesForInterval(intervalNode.Interval));
+                var h = new HashSet<int>(SA.GetOccurrencesForInterval(intervalNode.Interval));
                 intermediate.Add((intervalNode, h));
             }
 

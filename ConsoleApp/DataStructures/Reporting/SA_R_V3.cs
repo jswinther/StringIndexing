@@ -11,7 +11,7 @@ using static ConsoleApp.DataStructures.SuffixArrayFinal;
 namespace ConsoleApp.DataStructures.Reporting
 {
     // Inspired by this paper https://www.uni-ulm.de/fileadmin/website_uni_ulm/iui.inst.190/Mitarbeiter/ohlebusch/PAPERS/HCMB8.pdf
-    internal class SuffixArray_V3 : ReportDataStructure
+    internal class SA_R_V3 : ReportDataStructure
     {
 
         private Dictionary<(int, int), int[]> sorted = new();
@@ -19,7 +19,7 @@ namespace ConsoleApp.DataStructures.Reporting
         Dictionary<(int, int), IntervalNode> Leaves;
         private IntervalNode Root;
         SuffixArrayFinal SA;
-        public SuffixArray_V3(string S) : base(S)
+        public SA_R_V3(string S) : base(S)
         {
             SA = new SuffixArrayFinal(S);
             SA.BuildChildTable();

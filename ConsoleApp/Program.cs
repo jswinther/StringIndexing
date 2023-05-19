@@ -19,42 +19,42 @@ namespace ConsoleApp
 
         public static ReportDataStructure BuildSuffixArray_V1(string str)
         {
-            return new SuffixArray_V1(str);
+            return new SA_R_V1(str);
         }
 
         public static ReportDataStructure BuildSuffixArray_V2(string str)
         {
-            return new SuffixArray_V2(str);
+            return new SA_R_V2(str);
         }
 
         public static ReportDataStructure BuildSuffixArray_V3(string str)
         {
-            return new SuffixArray_V3(str);
+            return new SA_R_V3(str);
         }
 
         public static ReportDataStructure BuildSuffixArray_V4(string str)
         {
-            return new SuffixArray_V4(str);
+            return new SA_R_V4_1(str);
         }
 
         public static ReportDataStructure BuildSuffixArray_V5(string str)
         {
-            return new SuffixArray_V5(str);
+            return new SA_R_V5(str);
         }
 
         public static ReportDataStructure BuildSuffixArray_V6(string str)
         {
-            return new SuffixArray_V6(str);
+            return new SA_R_V4_2(str);
         }
 
         public static ReportDataStructure BuildSuffixArray_V7(string str)
         {
-            return new SuffixArray_V7(str);
+            return new SA_R_V4_3(str);
         }
 
         public static CountDataStructure BuildSuffixArray_V8(string str)
         {
-            return new SuffixArray_V8(str);
+            return new SA_C_V1(str);
         }
 
         public static ReportDataStructure BuildSuffixTree(string str)
@@ -255,7 +255,7 @@ namespace ConsoleApp
                     benchmark.SinglePatternMatchesQueryOccs = occs;
 
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmark.SinglePatternMatchesQuery = -1;
                 }
@@ -270,7 +270,7 @@ namespace ConsoleApp
                     benchmark.DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
                     benchmark.DoublePatternFixedMatchesQueryOccs = occs;
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmark.DoublePatternFixedMatchesQuery = -1;
                 }
@@ -285,7 +285,7 @@ namespace ConsoleApp
                     benchmark.DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
                     benchmark.DoublePatternVariableMatchesQueryOccs = occs;
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmark.DoublePatternVariableMatchesQuery = -1;
                 }
@@ -320,16 +320,16 @@ namespace ConsoleApp
             {
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
-                DummyData.DNA("DNA_512"),
+                //DummyData.DNA("DNA_512"),
                 //DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
                 //DummyData.DNA("DNA_1048576"),
                 //DummyData.DNA("DNA_2097152"),
                 //DummyData.DNA("DNA_4194304"),
-                //DummyData.DNA("DNA_1048576"),
-                //DummyData.PCC("realDNA_1048576"),
-                //DummyData.PCC("proteins_1048576"),
-                //DummyData.ENG("english_1048576"),
+                DummyData.DNA("DNA_1048576"),
+                DummyData.PCC("realDNA_1048576"),
+                DummyData.PCC("proteins_1048576"),
+                DummyData.ENG("english_1048576"),
                 //DummyData.PCC("english_8388608"),
                 //DummyData.DNA("DNA_16777216"),
                 //DummyData.DNA("DNA_33554432")

@@ -12,10 +12,10 @@ namespace ConsoleApp.DataStructures.Reporting
 {
 
     [Serializable]
-    internal class SuffixArray_V1 : ReportDataStructure
+    internal class SA_R_V1 : ReportDataStructure
     {
         SuffixArrayFinal SA;
-        public SuffixArray_V1(string str) : base(str)
+        public SA_R_V1(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);   
         }
