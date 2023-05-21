@@ -19,8 +19,7 @@ namespace ConsoleApp.DataStructures.Count
             throw new NotImplementedException();
         }
 
-        public override int Matches(string pattern1, int x, string pattern2)
-public override int MatchesFixed(string pattern1, string pattern2)
+        public override int MatchesFixed(string pattern1, string pattern2)
         {
             throw new NotImplementedException();
         }

@@ -1,0 +1,11 @@
+{
+    "configurations": [
+        {
+            "type": "dotnet",
+            "name": "Dotnet configuration",
+            "projectPath": "C:/Users/Jonathan/Desktop/StringIndexing/ConsoleApp/ConsoleApp.csproj",
+            "args": [],
+        },
+        
+    ]
+}
