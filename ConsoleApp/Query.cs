@@ -13,11 +13,22 @@ namespace ConsoleApp
         public string P2 { get; set; }
         public (int Min, int Max) Y { get; set; }
 
+        public string QueryName { get; set; }
+
         public Query(string p1, int x, string p2)
         {
             P1 = p1;
             X = x;
             P2 = p2;
+        }
+
+        public Query(string p1, int x, string p2, string queryName)
+        {
+            P1 = p1;
+            X = x;
+            P2 = p2;
+            QueryName = queryName;
+
         }
     }
 }

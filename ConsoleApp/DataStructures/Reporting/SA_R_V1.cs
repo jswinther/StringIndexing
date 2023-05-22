@@ -17,7 +17,7 @@ namespace ConsoleApp.DataStructures.Reporting
         SuffixArrayFinal SA;
         public SA_R_V1(string str) : base(str)
         {
-            SA = new SuffixArrayFinal(str);   
+            SA = new SuffixArrayFinal(str); 
         }
 
         public override IEnumerable<int> Matches(string pattern)
