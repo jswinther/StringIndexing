@@ -55,7 +55,7 @@ namespace ConsoleApp
 
         public static CountDataStructure BuildSuffixArray_V8(string str, int x, int ymin, int ymax)
         {
-            return new SA_C_V1(str, x, ymin, ymax);
+            return new SA_C_V2(str, x, ymin, ymax);
         }
 
         public static ReportDataStructure BuildSuffixTree(string str)
@@ -342,9 +342,9 @@ namespace ConsoleApp
                 //DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
                 //DummyData.DNA("DNA_1048576"),
-                //DummyData.DNA("DNA_2097152"),
+                DummyData.DNA("DNA_2097152"),
                 //DummyData.DNA("DNA_4194304"),
-                DummyData.DNA("DNA_1048576"),
+                //DummyData.DNA("DNA_1048576"),
                 //DummyData.PCC("realDNA_1048576"),
                 //DummyData.PCC("proteins_1048576"),
                 //DummyData.ENG("english_1048576"),
@@ -355,19 +355,20 @@ namespace ConsoleApp
 
             BuildReportDataStructure[] reportingDataStructures = new BuildReportDataStructure[]
             {
-                BuildSuffixArray_V1,
+                //BuildSuffixArray_V1,
                 BuildSuffixArray_V2,
-                BuildSuffixArray_V3,
-                BuildSuffixArray_V4_1,
-                BuildSuffixArray_V5,
-                BuildSuffixArray_V4_2,
-                BuildSuffixArray_V4_3,
+                //BuildSuffixArray_V3,
+                //BuildSuffixArray_V4_1,
+                //BuildSuffixArray_V5,
+                //BuildSuffixArray_V4_2,
+                //BuildSuffixArray_V4_3,
                 
             };
 
             BuildCountDataStructure[] countingDataStructures = new BuildCountDataStructure[]
             {
-                //BuildSuffixArray_V8  // ALTID BAD, IKKE KØR PÅ ANDET END 512
+                BuildSuffixArray_V8  // ALTID BAD, IKKE KØR PÅ ANDET END 512
+
             };
 
             BuildExistDataStructure[] existenceDataStructures = new BuildExistDataStructure[]
@@ -402,6 +403,7 @@ namespace ConsoleApp
                 Query query2 = new Query(suffixArray_Scanner.midPatterns.GetRandom(), x, p2, "Mid");
                 Query query3 = new Query(suffixArray_Scanner.botPattern, x, p2, "Bot");
                 Query[] queries = new Query[3];
+                query1.Y = query.Y; query2.Y = query.Y; query3.Y = query.Y;
                 queries[0] = query1;
                 queries[1] = query2;
                 queries[2] = query3;
