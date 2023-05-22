@@ -146,11 +146,16 @@ namespace ConsoleApp
                 // Double Pattern + Fixed Gap
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(queries[i].P1, queries[i].X, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs.Count();
+                    for (int j = 0; j < repetitions; j++) // for each repetition
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.Matches(queries[i].P1, queries[i].X, queries[i].P2);
+                        stopwatch.Stop();
+                        benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs.Count();
+                        benchmarks[i].DoublePatternFixedMatchesQuery += stopwatch.ElapsedMilliseconds;
+                    }
+                    benchmarks[i].DoublePatternFixedMatchesQuery /= repetitions;
+
                 }
                 catch (NotImplementedException)
                 {
@@ -161,11 +166,16 @@ namespace ConsoleApp
                 
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(queries[i].P1, queries[i].Y.Min, queries[i].Y.Max, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs.Count();
+                    for (int j = 0; j < repetitions; j++) // for each repetition
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.Matches(queries[i].P1, queries[i].Y.Min, queries[i].Y.Max, queries[i].P2);
+                        stopwatch.Stop();
+                        benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs.Count();
+                        benchmarks[i].DoublePatternVariableMatchesQuery += stopwatch.ElapsedMilliseconds;
+                    }
+                    benchmarks[i].DoublePatternVariableMatchesQuery /= repetitions;
+
                 }
                 catch (NotImplementedException)
                 {
@@ -180,32 +190,44 @@ namespace ConsoleApp
             return benchmarks;
         }
 
-        public static Benchmark BenchCountDataStructure(BuildCountDataStructure matcher, string name, string str, params Query[] queries)
+        public static Benchmark[] BenchCountDataStructure(BuildCountDataStructure matcher, string name, string str, params Query[] queries)
         {
-            Benchmark benchmark = new Benchmark();
+            Benchmark[] benchmarks = new Benchmark[queries.Length];
             Stopwatch stopwatch = Stopwatch.StartNew();
             var q = queries[0];
             // Construction
             var patternMatcher = matcher.Invoke(str, q.X, q.Y.Min, q.Y.Max);
             stopwatch.Stop();
-            benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+            for (int i = 0; i < benchmarks.Length; i++)
+            {
+                benchmarks[i] = new Benchmark();
+                benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+                benchmarks[i].DataStructureName = patternMatcher.GetType().Name;
+                benchmarks[i].DataName = name;
+                benchmarks[i].QueryName = queries[i].QueryName;
+            }
+            int repetitions = 5;
             // Query Time
-            foreach (var query in queries)
+            for (int i = 0; i < queries.Length; i++) // For each query
             {
                 // Single Pattern
 
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(query.P1);
-                    stopwatch.Stop();
-                    benchmark.SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmark.SinglePatternMatchesQueryOccs = occs;
+                    for (int j = 0; j < repetitions; j++) // for each repetition
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.Matches(queries[i].P1);
+                        stopwatch.Stop();
+                        benchmarks[i].SinglePatternMatchesQueryOccs = occs;
+                        benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
+                    }
+                    benchmarks[i].SinglePatternMatchesQuery /= repetitions;
 
                 }
                 catch (Exception)
                 {
-                    benchmark.SinglePatternMatchesQuery = -1;
+                    benchmarks[i].SinglePatternMatchesQuery = -1;
                 }
 
                 /*
@@ -227,90 +249,113 @@ namespace ConsoleApp
 
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.MatchesVariable(query.P1, query.P2);
-                    stopwatch.Stop();
-                    benchmark.DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmark.DoublePatternVariableMatchesQueryOccs = occs;
+                    for (int j = 0; j < repetitions; j++) // for each repetition
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.MatchesVariable(queries[i].P1, queries[i].P2);
+                        stopwatch.Stop();
+                        benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs;
+                        benchmarks[i].DoublePatternVariableMatchesQuery += stopwatch.ElapsedMilliseconds;
+                    }
+                    benchmarks[i].DoublePatternVariableMatchesQuery /= repetitions;
+
                 }
                 catch (Exception)
                 {
-                    benchmark.DoublePatternVariableMatchesQuery = -1;
+                    benchmarks[i].DoublePatternVariableMatchesQuery = -1;
                 }
 
             }
             stopwatch.Stop();
-            benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-            benchmark.DataStructureName = patternMatcher.GetType().Name;
-            benchmark.DataName = name;
 
-            return benchmark;
+            return benchmarks;
         }
 
-        public static Benchmark BenchExistDataStructure(BuildExistDataStructure matcher, string name, string str, int x, int ymin, int ymax, params (string p1, string p2)[] queries)
+        public static Benchmark[] BenchExistDataStructure(BuildExistDataStructure matcher, string name, string str, int x, int ymin, int ymax, params (string p1, string p2, string queryName)[] queries)
         {
-            Benchmark benchmark = new Benchmark();
+            Benchmark[] benchmarks = new Benchmark[queries.Length];
             Stopwatch stopwatch = Stopwatch.StartNew();
             // Construction
             var patternMatcher = matcher.Invoke(str, x, ymin, ymax);
             stopwatch.Stop();
-            benchmark.ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-            // Query Time
-            foreach (var query in queries)
+            for (int i = 0; i < benchmarks.Length; i++)
+            {
+                benchmarks[i] = new Benchmark();
+                benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+                benchmarks[i].DataStructureName = patternMatcher.GetType().Name;
+                benchmarks[i].DataName = name;
+                benchmarks[i].QueryName = queries[i].queryName;
+            }
+            int repetitions = 5;
+
+
+            for (int i = 0; i < queries.Length; i++) // For each query
             {
                 // Single Pattern
 
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(query.p1);
-                    stopwatch.Stop();
-                    benchmark.SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmark.SinglePatternMatchesQueryOccs = occs;
+
+                    for (int j = 0; j < repetitions; j++) // for each repetition
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.Matches(queries[i].p1);
+                        stopwatch.Stop();
+                        benchmarks[i].SinglePatternMatchesQueryOccs = occs;
+                        benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
+                    }
+                    benchmarks[i].SinglePatternMatchesQuery /= repetitions;
 
                 }
                 catch (Exception)
                 {
-                    benchmark.SinglePatternMatchesQuery = -1;
+                    benchmarks[i].SinglePatternMatchesQuery = -1;
                 }
 
                 
                 // Double Pattern + Fixed Gap
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.MatchesFixedGap(query.p1, query.p2);
-                    stopwatch.Stop();
-                    benchmark.DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmark.DoublePatternFixedMatchesQueryOccs = occs;
+                    for (int j = 0; j < repetitions; j++) // for each repetition
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.MatchesFixedGap(queries[i].p1, queries[i].p2);
+                        stopwatch.Stop();
+                        benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs;
+                        benchmarks[i].DoublePatternFixedMatchesQuery += stopwatch.ElapsedMilliseconds;
+                    }
+                    benchmarks[i].DoublePatternFixedMatchesQuery /= repetitions;
+
                 }
                 catch (Exception)
                 {
-                    benchmark.DoublePatternFixedMatchesQuery = -1;
+                    benchmarks[i].DoublePatternFixedMatchesQuery = -1;
                 }
                 
                 // Double Pattern + Variable Gap
 
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.MatchesVariableGap(query.p1, query.p2);
-                    stopwatch.Stop();
-                    benchmark.DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmark.DoublePatternVariableMatchesQueryOccs = occs;
+                    for (int j = 0; j < repetitions; j++) // for each repetition
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.MatchesVariableGap(queries[i].p1, queries[i].p2);
+                        stopwatch.Stop();
+                        benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs;
+                        benchmarks[i].DoublePatternVariableMatchesQuery += stopwatch.ElapsedMilliseconds;
+                    }
+                    benchmarks[i].DoublePatternVariableMatchesQuery /= repetitions;
+
                 }
                 catch (Exception)
                 {
-                    benchmark.DoublePatternVariableMatchesQuery = -1;
+                    benchmarks[i].DoublePatternVariableMatchesQuery = -1;
                 }
 
             }
             stopwatch.Stop();
-            benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-            benchmark.DataStructureName = patternMatcher.GetType().Name;
-            benchmark.DataName = name;
 
-            return benchmark;
+            return benchmarks;
         }
 
         internal class Benchmark
@@ -336,7 +381,7 @@ namespace ConsoleApp
             {
                 //DummyData.Dummy,
                 //DummyData.DNA("TEST"),
-                //DummyData.DNA("DNA_512"),
+                DummyData.DNA("DNA_512"),
                 //DummyData.DNA("DNA_8192"),
                 //DummyData.DNA("DNA_16384"),
                 //DummyData.DNA("DNA_262144"),
@@ -344,7 +389,7 @@ namespace ConsoleApp
                 //DummyData.DNA("DNA_1048576"),
                 //DummyData.DNA("DNA_2097152"),
                 //DummyData.DNA("DNA_4194304"),
-                DummyData.DNA("DNA_1048576"),
+                //DummyData.DNA("DNA_1048576"),
                 //DummyData.PCC("realDNA_1048576"),
                 //DummyData.PCC("proteins_1048576"),
                 //DummyData.ENG("english_1048576"),
@@ -356,24 +401,24 @@ namespace ConsoleApp
             BuildReportDataStructure[] reportingDataStructures = new BuildReportDataStructure[]
             {
                 BuildSuffixArray_V1,
-                BuildSuffixArray_V2,
-                BuildSuffixArray_V3,
-                BuildSuffixArray_V4_1,
-                BuildSuffixArray_V5,
-                BuildSuffixArray_V4_2,
-                BuildSuffixArray_V4_3,
+                //BuildSuffixArray_V2,
+                //BuildSuffixArray_V3,
+                //BuildSuffixArray_V4_1,
+                //BuildSuffixArray_V5,
+                //BuildSuffixArray_V4_2,
+                //BuildSuffixArray_V4_3,
                 
             };
 
             BuildCountDataStructure[] countingDataStructures = new BuildCountDataStructure[]
             {
-                //BuildSuffixArray_V8  // ALTID BAD, IKKE KØR PÅ ANDET END 512
+                BuildSuffixArray_V8  // ALTID BAD, IKKE KØR PÅ ANDET END 512
             };
 
             BuildExistDataStructure[] existenceDataStructures = new BuildExistDataStructure[]
             {
                 //BuildSA_E_V1,   // ALTID BAD, IKKE KØR PÅ ANDET END 512
-                //BuildSA_E_V2,
+                BuildSA_E_V2,
                 //BuildSA_E_V3,
                 //BuildSA_E_V4
             };
@@ -424,22 +469,32 @@ namespace ConsoleApp
 
                 foreach (var dataStructure in countingDataStructures)
                 {
-                    var b = BenchCountDataStructure(dataStructure, sequence.Item1, sequence.Item2, query1);
-                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Top", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
-                    b = BenchCountDataStructure(dataStructure, sequence.Item1, sequence.Item2, query2);
-                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Middle", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
-                    b = BenchCountDataStructure(dataStructure, sequence.Item1, sequence.Item2, query3);
-                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Bot", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    var b = BenchCountDataStructure(dataStructure, sequence.Item1, sequence.Item2, queries);
+                    foreach (var bench in b)
+                    {
+                        table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
+                    }
+
+                    //table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Top", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    //b = BenchCountDataStructure(dataStructure, sequence.Item1, sequence.Item2, query2);
+                    //table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Middle", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    //b = BenchCountDataStructure(dataStructure, sequence.Item1, sequence.Item2, query3);
+                    //table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Bot", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
                 }
 
                 foreach (var dataStructure in existenceDataStructures)
                 {
-                    var b = BenchExistDataStructure(dataStructure, sequence.Item1, sequence.Item2, x, query.Y.Min, query.Y.Max, (suffixArray_Scanner.topPattern, p2));
-                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Top", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
-                    b = BenchExistDataStructure(dataStructure, sequence.Item1, sequence.Item2, x, query.Y.Min, query.Y.Max, (suffixArray_Scanner.midPatterns.GetRandom(), p2));
-                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Middle", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
-                    b = BenchExistDataStructure(dataStructure, sequence.Item1, sequence.Item2, x, query.Y.Min, query.Y.Max, (suffixArray_Scanner.botPattern, p2));
-                    table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Bot", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    var b = BenchExistDataStructure(dataStructure, sequence.Item1, sequence.Item2, x, query.Y.Min, query.Y.Max, (suffixArray_Scanner.topPattern, p2, "Top"), (suffixArray_Scanner.midPatterns.GetRandom(), p2, "Mid"), (suffixArray_Scanner.botPattern, p2, "Bot"));
+                    foreach (var bench in b)
+                    {
+                        table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
+                    }
+
+                    //table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Top", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    //b = BenchExistDataStructure(dataStructure, sequence.Item1, sequence.Item2, x, query.Y.Min, query.Y.Max, (suffixArray_Scanner.midPatterns.GetRandom(), p2));
+                    //table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Middle", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
+                    //b = BenchExistDataStructure(dataStructure, sequence.Item1, sequence.Item2, x, query.Y.Min, query.Y.Max, (suffixArray_Scanner.botPattern, p2));
+                    //table.AddRow($"{b.DataStructureName} {b.DataName}", $"{b.ConstructionTimeMilliseconds}", $"Bot", $"{b.SinglePatternMatchesQuery}ms, Occs: {b.SinglePatternMatchesQueryOccs}", $"{b.DoublePatternFixedMatchesQuery}ms, Occs: {b.DoublePatternFixedMatchesQueryOccs}", $"{b.DoublePatternVariableMatchesQuery}ms, Occs: {b.DoublePatternVariableMatchesQueryOccs}");
                 }
             }
             table.Options.NumberAlignment = Alignment.Right;
