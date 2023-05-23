@@ -15,25 +15,30 @@ namespace ConsoleApp.DataStructures.Count
 
         // key = start of LCP interval
         private int[][] variableLeafPairs;
+        private int[] fixedLeafPairs;
 
         public SA_C_V2(string str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
         {
             SA = new SuffixArrayFinal(str);
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
-            variableLeafPairs = new int[Leaves.Count][];
-            for (int lcpPos = 0; lcpPos < Leaves.Count; lcpPos++)
+            //SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
+            int n = SA.n;
+            variableLeafPairs = new int[n][];
+            fixedLeafPairs = new int[n];
+            for (int lcpPos = 0; lcpPos < n; lcpPos++)
             {
-                List<int> ints = new List<int>();
+                List<int> variable = new List<int>();
                 var suffPos = SA[lcpPos];
 
                 for (int realOffset = ymin; realOffset <= ymax; realOffset++)
                 {
                     if (realOffset + suffPos >= SA.m_isa.Length) break;
-                    ints.Add(Math.Abs(SA.m_isa[suffPos + realOffset]));
+                    variable.Add(Math.Abs(SA.m_isa[suffPos + realOffset]));
                     
                 }
-                variableLeafPairs[lcpPos] = ints.ToArray().Sort();
+                variableLeafPairs[lcpPos] = variable.ToArray().Sort();
+                if (suffPos + x < SA.m_isa.Length)
+                    fixedLeafPairs[lcpPos] = Math.Abs(SA.m_isa[suffPos + x]);
             }
         }
 
@@ -46,15 +51,11 @@ namespace ConsoleApp.DataStructures.Count
         public override int MatchesFixed(string pattern1, string pattern2)
         {
             int count = 0;
-            var occs1 = SA.GetOccurrencesForPattern(pattern1);
-            var occs2 = new HashSet<int>(SA.GetOccurrencesForPattern(pattern2));
+            var int1 = SA.ExactStringMatchingWithESA(pattern1);
+            var int2 = SA.ExactStringMatchingWithESA(pattern2);
+            var occs = fixedLeafPairs[int1.i..(int1.j + 1)];
+            return SizeOfInterval(occs.BinarySearchOnRange(int2.i, int2.j));
 
-            foreach (var occ1 in occs1)
-            {
-                if (occs2.Contains(occ1 + pattern1.Length + x))
-                    count++;
-            }
-            return count;
         }
 
         public override int MatchesVariable(string pattern1, string pattern2)

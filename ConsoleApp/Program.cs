@@ -365,10 +365,10 @@ namespace ConsoleApp
                 //DummyData.DNA("DNA_512"),
                 //DummyData.DNA("DNA_8192"),
                 //DummyData.DNA("DNA_16384"),
-                //DummyData.DNA("DNA_262144"),
+                DummyData.DNA("DNA_262144"),
                 //DummyData.DNA("DNA_524288"),
                 //DummyData.DNA("DNA_1048576"),
-                DummyData.DNA("DNA_2097152"),
+                //DummyData.DNA("DNA_2097152"),
                 //DummyData.DNA("DNA_4194304"),
                 //DummyData.DNA("DNA_1048576"),
                 //DummyData.PCC("realDNA_1048576"),
@@ -433,6 +433,7 @@ namespace ConsoleApp
                 queries[0] = query1;
                 queries[1] = query2;
                 queries[2] = query3;
+                query.Y =  (1, (int)Math.Sqrt(sequence.Item2.Length));
                 //Console.WriteLine(query3.P1);
 
 

@@ -20,6 +20,17 @@
             return (minIndex, maxIndex);
         }
 
+        public static (int, int) BinarySearchOnRange(this Span<int> array, int min, int max)
+        {
+            int minIndex = array.IndexOfSucessor(min);
+            int maxIndex = array.IndexOfPredecessor(max);
+            if (minIndex == -1 || array[minIndex] > max)
+            {
+                return (-1, -1);
+            }
+            return (minIndex, maxIndex);
+        }
+
         private static Random Random = new Random();
 
         public static T GetRandom<T>(this IEnumerable<T> values)
@@ -73,7 +84,54 @@
             return result;
         }
 
+        public static int IndexOfSucessor(this Span<int> array, int v)
+        {
+            int left = 0;
+            int right = array.Length - 1;
+            int result = -1;
+
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+
+                if (array[mid] <= v)
+                {
+                    left = mid + 1;
+                }
+                else
+                {
+                    result = mid;
+                    right = mid - 1;
+                }
+            }
+            return result;
+        }
+
         public static int IndexOfPredecessor(this int[] array, int v)
+        {
+            int left = 0;
+            int right = array.Length - 1;
+            int result = -1;
+
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+
+                if (array[mid] >= v)
+                {
+                    right = mid - 1;
+                }
+                else
+                {
+                    result = mid;
+                    left = mid + 1;
+                }
+            }
+
+            return result;
+        }
+
+        public static int IndexOfPredecessor(this Span<int> array, int v)
         {
             int left = 0;
             int right = array.Length - 1;

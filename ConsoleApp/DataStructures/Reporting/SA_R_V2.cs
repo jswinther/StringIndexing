@@ -25,8 +25,25 @@ namespace ConsoleApp.DataStructures.Reporting
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
         {
+            /*
+            var int1 = SA.ExactStringMatchingWithESA(pattern1);
+            var int2 = SA.ExactStringMatchingWithESA(pattern2);
+            List<int> ints = new(int2.j - int2.i + 1);
+            for (int i = int1.i; i <= int1.j; i++)
+            {
+                if (i + pattern1.Length + x < SA.n)
+                {
+                    ints.Add(SA[i + pattern1.Length + x]);
+                }
+            }
+
+
+            return ints.ToArray().Sort().GetViewBetween(int2.i, int2.j).Select(s => (s, s));
+            */
             List<(int, int)> occs = new List<(int, int)>();
             var occs1 = SA.GetOccurrencesForPattern(pattern1);
+
+            
             var occs2 = new HashSet<int>(SA.GetOccurrencesForPattern(pattern2));
 
             foreach (var occ1 in occs1)
@@ -35,6 +52,7 @@ namespace ConsoleApp.DataStructures.Reporting
                     occs.Add((occ1, occ1 + pattern2.Length + pattern2.Length + x));
             }
             return occs;
+
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
