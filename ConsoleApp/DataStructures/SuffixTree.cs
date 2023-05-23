@@ -344,15 +344,7 @@ namespace ConsoleApp.DataStructures
 
         
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public class Edge
         {
@@ -713,6 +705,16 @@ namespace ConsoleApp.DataStructures
                 }
                 if (h > 0) h--;
             }
+        }
+
+        public override IEnumerable<int> Matches(string pattern1, int x, string pattern2)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IEnumerable<int> Matches(string pattern1, int y_min, int y_max, string pattern2)
+        {
+            throw new NotImplementedException();
         }
     }
 }

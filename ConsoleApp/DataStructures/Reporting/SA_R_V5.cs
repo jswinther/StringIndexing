@@ -22,23 +22,23 @@ namespace ConsoleApp.DataStructures.Reporting
             return occs;
         }
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
+        public override IEnumerable<int> Matches(string pattern1, int x, string pattern2)
         {
-            List<(int, int)> occs = new List<(int, int)>();
+            List<int> occs = new List<int>();
             var occs1 = SA.GetOccurrencesForPattern(pattern1);
             var occs2 = new HashSet<int>(SA.GetOccurrencesForPattern(pattern2));
 
             foreach (var occ1 in occs1)
             {
                 if (occs2.Contains(occ1 + pattern1.Length + x))
-                    occs.Add((occ1, occ1 + pattern2.Length + pattern2.Length + x));
+                    occs.Add(occ1);
             }
             return occs;
         }
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
+        public override IEnumerable<int> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            List<(int, int)> occs = new List<(int, int)>();
+            List<int> occs = new List<int>();
             var occs1 = SA.GetOccurrencesForPattern(pattern1);
             var occs2 = new HashSet<int>(SA.GetOccurrencesForPattern(pattern2));
             
@@ -49,7 +49,7 @@ namespace ConsoleApp.DataStructures.Reporting
                 for (int i = min; i < max; i++)
                 {
                     if (occs2.Contains(i))
-                        occs.Add((occ1, i));
+                        occs.Add(occ1);
                 }
             }
             return occs;

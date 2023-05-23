@@ -51,24 +51,24 @@ namespace ConsoleApp.DataStructures.Reporting
             return sorted[interval];
         }
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
+        public override IEnumerable<int> Matches(string pattern1, int x, string pattern2)
         {
-            List<(int, int)> occs = new List<(int, int)>();
+            List<int> occs = new List<int>();
             var pattern1Occurrences = Matches(pattern1);
             var pattern2Occurrences = new System.Collections.Generic.HashSet<int>(Matches(pattern2));
             foreach (var occ1 in pattern1Occurrences)
             {
                 if (pattern2Occurrences.Contains(occ1 + pattern1.Length + x))
                 {
-                    occs.Add((occ1, occ1 + pattern1.Length + x));
+                    occs.Add(occ1);
                 }
             }
             return occs;
         }
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
+        public override IEnumerable<int> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            List<(int, int)> occs = new List<(int, int)>();
+            List<int> occs = new List<int>();
             var pattern1Occurrences = ArrayOfPattern(pattern1);
             var pattern2Occurrences = ArrayOfPattern(pattern2);
            
@@ -76,10 +76,7 @@ namespace ConsoleApp.DataStructures.Reporting
             {
                 int min = occ1 + y_min + pattern1.Length;
                 int max = occ1 + y_max + pattern1.Length;
-                foreach (var occ2 in pattern2Occurrences.GetViewBetween(min, max))
-                {
-                    occs.Add((occ1, occ2 - occ1 + pattern2.Length));
-                }
+                occs.AddRange(pattern2Occurrences.GetViewBetween(min, max));
             }
             return occs;
         }

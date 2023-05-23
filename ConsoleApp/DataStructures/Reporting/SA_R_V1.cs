@@ -97,9 +97,9 @@ namespace ConsoleApp.DataStructures.Reporting
             return 0;
         }
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
+        public override IEnumerable<int> Matches(string pattern1, int x, string pattern2)
         {
-            List<(int, int)> occs = new();
+            List<int> occs = new();
             var occurrencesP1 = Matches(pattern1);
 
             System.Collections.Generic.HashSet<int> occurencesP2 = new();
@@ -136,16 +136,16 @@ namespace ConsoleApp.DataStructures.Reporting
             {
                 if (occurencesP2.Contains(occ1 + pattern1.Length + x))
                 {
-                    occs.Add((occ1, occ1 + pattern1.Length + x));
+                    occs.Add(occ1);
                 }
             }
 
             return occs;
         }
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
+        public override IEnumerable<int> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            List<(int, int)> occs = new();
+            List<int> occs = new();
             var occurrencesP1 = Matches(pattern1);
 
             SortedSet<int> occurencesP2 = new();
@@ -185,7 +185,7 @@ namespace ConsoleApp.DataStructures.Reporting
                 var getkekd = occurencesP2.GetViewBetween(min, max);
                 foreach (var occ2 in occurencesP2.GetViewBetween(min, max))
                 {
-                    occs.Add((occ1, occ2 - occ1 + pattern2.Length));
+                    occs.Add(occ1);
                 }
             }
 

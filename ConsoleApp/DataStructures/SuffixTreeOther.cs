@@ -179,16 +179,16 @@ namespace ConsoleApp.DataStructures
             throw new NotImplementedException();
         }
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
+        public override IEnumerable<int> Matches(string pattern1, int x, string pattern2)
         {
             var p1occs = reportAllOccurrences(pattern1);
             var p2occs = reportAllOccurrences(pattern2);
-            var occs = new HashSet<(int, int)>();
+            var occs = new HashSet<int>();
             foreach (var item in p1occs)
             {
                 if (p2occs.Contains(item + pattern1.Length + x))
                 {
-                    occs.Add((item, item + pattern1.Length + x));
+                    occs.Add(item);
                     //global::System.Console.WriteLine((item, item + query.P1.Length + query.X + query.P2.Length));
                 }
 
@@ -196,7 +196,7 @@ namespace ConsoleApp.DataStructures
             return occs;
         }
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
+        public override IEnumerable<int> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
             throw new NotImplementedException();
         }

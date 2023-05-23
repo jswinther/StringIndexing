@@ -60,12 +60,12 @@ namespace ConsoleApp.DataStructures.Reporting
             throw new NotImplementedException();
         }
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int x, string pattern2)
+        public override IEnumerable<int> Matches(string pattern1, int x, string pattern2)
         {
             throw new NotImplementedException();
         }
 
-        public override IEnumerable<(int, int)> Matches(string pattern1, int y_min, int y_max, string pattern2)
+        public override IEnumerable<int> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
             throw new NotImplementedException();
         }
