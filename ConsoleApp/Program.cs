@@ -6,6 +6,7 @@ using Gma.DataStructures.StringSearch;
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading.Tasks;
 using static ConsoleApp.DataStructures.AlgoSuffixTreeProblem;
 using static ConsoleApp.Program;
 using static System.Net.Mime.MediaTypeNames;
@@ -17,6 +18,7 @@ namespace ConsoleApp
         public delegate ReportDataStructure BuildReportDataStructure(string str);
         public delegate ExistDataStructure BuildExistDataStructure(string str, int x, int ymin, int ymax);
         public delegate CountDataStructure BuildCountDataStructure(string str, int x, int ymin, int ymax);
+        public static readonly int TIMEOUT = 1;
 
         public static ReportDataStructure BuildSuffixArray_V1(string str)
         {
@@ -102,19 +104,39 @@ namespace ConsoleApp
             return new SA_E_V4(str, x, ymin, ymax);
         }
 
-        public static Benchmark[] BenchReportDataStructure(BuildReportDataStructure matcher, string name, string str, params Query[] queries)
+        public static Benchmark[] BenchReportDataStructure(string dsname, BuildReportDataStructure matcher, string name, string str, params Query[] queries)       
         {
             Benchmark[] benchmarks = new Benchmark[queries.Length];
             
             Stopwatch stopwatch = Stopwatch.StartNew();
             // Construction
-            var patternMatcher = matcher.Invoke(str);
+            ReportDataStructure patternMatcher = null;
+            var t = Task.Run(() =>
+            {
+                patternMatcher = matcher.Invoke(str);
+            });
+            if (!t.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+            {
+                stopwatch.Stop();
+                for (int i = 0; i < benchmarks.Length; i++)
+                {
+                    benchmarks[i] = new Benchmark();
+                    benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+                    benchmarks[i].DataStructureName = dsname;
+                    benchmarks[i].DataName = name;
+                    benchmarks[i].QueryName = queries[i].QueryName;
+                    benchmarks[i].SinglePatternMatchesQuery = -1;
+                    benchmarks[i].DoublePatternFixedMatchesQuery = -1;
+                    benchmarks[i].DoublePatternVariableMatchesQuery = -1;
+                }
+                return benchmarks;
+            };
             stopwatch.Stop();
             for (int i = 0; i < benchmarks.Length; i++)
             {
                 benchmarks[i] = new Benchmark();
                 benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-                benchmarks[i].DataStructureName = patternMatcher.GetType().Name;
+                benchmarks[i].DataStructureName = dsname;
                 benchmarks[i].DataName = name;
                 benchmarks[i].QueryName = queries[i].QueryName;
             }
@@ -127,15 +149,21 @@ namespace ConsoleApp
                 
                 try
                 {
-                    for (int j = 0; j < repetitions; j++) // for each repetition
+                    var task = Task.Run(() =>
                     {
-                        stopwatch = Stopwatch.StartNew();
-                        var occs = patternMatcher.Matches(queries[i].P1);
-                        stopwatch.Stop();
-                        benchmarks[i].SinglePatternMatchesQueryOccs = occs.Count();
-                        benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
-                    }
-                    benchmarks[i].SinglePatternMatchesQuery /= repetitions;
+                        for (int j = 0; j < repetitions; j++) // for each repetition
+                        {
+                            stopwatch = Stopwatch.StartNew();
+                            var occs = patternMatcher.Matches(queries[i].P1);
+                            stopwatch.Stop();
+                            benchmarks[i].SinglePatternMatchesQueryOccs = occs.Count();
+                            benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
+                        }
+                        benchmarks[i].SinglePatternMatchesQuery /= repetitions;
+                    });
+                    
+                    if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+                        throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
                 catch (Exception)
                 {
@@ -146,13 +174,19 @@ namespace ConsoleApp
                 // Double Pattern + Fixed Gap
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(queries[i].P1, queries[i].X, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs.Count();
+                    var task = Task.Run(() =>
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.Matches(queries[i].P1, queries[i].X, queries[i].P2);
+                        stopwatch.Stop();
+                        benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
+                        benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs.Count();
+                    });
+                    
+                    if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+                        throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmarks[i].DoublePatternFixedMatchesQuery = -1;
                 }
@@ -161,13 +195,19 @@ namespace ConsoleApp
                 
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(queries[i].P1, queries[i].Y.Min, queries[i].Y.Max, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs.Count();
+                    var task = Task.Run(() =>
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.Matches(queries[i].P1, queries[i].Y.Min, queries[i].Y.Max, queries[i].P2);
+                        stopwatch.Stop();
+                        benchmarks[i].DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
+                        benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs.Count();
+                    });
+
+                    if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+                        throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmarks[i].DoublePatternVariableMatchesQuery = -1;
                 }
@@ -180,19 +220,39 @@ namespace ConsoleApp
             return benchmarks;
         }
 
-        public static Benchmark[] BenchCountDataStructure(BuildCountDataStructure matcher, string name, string str, int x, int ymin, int ymax, params Query[] queries)
+        public static Benchmark[] BenchCountDataStructure(string dsname, BuildCountDataStructure matcher, string name, string str, int x, int ymin, int ymax, params Query[] queries)
         {
             Benchmark[] benchmarks = new Benchmark[queries.Length];
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             // Construction
-            var patternMatcher = matcher.Invoke(str, x, ymin, ymax);
+            CountDataStructure patternMatcher = null;
+            var t = Task.Run(() =>
+            {
+                patternMatcher = matcher.Invoke(str, x, ymin, ymax);
+            });
+            if (!t.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+            {
+                stopwatch.Stop();
+                for (int i = 0; i < benchmarks.Length; i++)
+                {
+                    benchmarks[i] = new Benchmark();
+                    benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+                    benchmarks[i].DataStructureName = dsname;
+                    benchmarks[i].DataName = name;
+                    benchmarks[i].QueryName = queries[i].QueryName;
+                    benchmarks[i].SinglePatternMatchesQuery = -1;
+                    benchmarks[i].DoublePatternFixedMatchesQuery = -1;
+                    benchmarks[i].DoublePatternVariableMatchesQuery = -1;
+                }
+                return benchmarks;
+            };
             stopwatch.Stop();
             for (int i = 0; i < benchmarks.Length; i++)
             {
                 benchmarks[i] = new Benchmark();
                 benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-                benchmarks[i].DataStructureName = patternMatcher.GetType().Name;
+                benchmarks[i].DataStructureName = dsname;
                 benchmarks[i].DataName = name;
                 benchmarks[i].QueryName = queries[i].QueryName;
             }
@@ -205,15 +265,22 @@ namespace ConsoleApp
 
                 try
                 {
-                    for (int j = 0; j < repetitions; j++) // for each repetition
+                    var task = Task.Run(() =>
                     {
-                        stopwatch = Stopwatch.StartNew();
-                        var occs = patternMatcher.Matches(queries[i].P1);
-                        stopwatch.Stop();
-                        benchmarks[i].SinglePatternMatchesQueryOccs = occs;
-                        benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
-                    }
-                    benchmarks[i].SinglePatternMatchesQuery /= repetitions;
+                        for (int j = 0; j < repetitions; j++) // for each repetition
+                        {
+                            stopwatch = Stopwatch.StartNew();
+                            var occs = patternMatcher.Matches(queries[i].P1);
+                            stopwatch.Stop();
+                            benchmarks[i].SinglePatternMatchesQueryOccs = occs;
+                            benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
+                        }
+                        benchmarks[i].SinglePatternMatchesQuery /= repetitions;
+                    });
+                    
+
+                    if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+                        throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
                 catch (Exception)
                 {
@@ -224,13 +291,18 @@ namespace ConsoleApp
                 // Double Pattern + Fixed Gap
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.MatchesFixed(queries[i].P1, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs;
+                    var task = Task.Run(() =>
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.MatchesFixed(queries[i].P1, queries[i].P2);
+                        stopwatch.Stop();
+                        benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
+                        benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs;
+                    });
+                    if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+                        throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmarks[i].DoublePatternFixedMatchesQuery = -1;
                 }
@@ -239,13 +311,19 @@ namespace ConsoleApp
 
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.MatchesVariable(queries[i].P1, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs;
+                    var task = Task.Run(() =>
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.MatchesVariable(queries[i].P1, queries[i].P2);
+                        stopwatch.Stop();
+                        benchmarks[i].DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
+                        benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs;
+                    });
+                    
+                    if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+                        throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmarks[i].DoublePatternVariableMatchesQuery = -1;
                 }
@@ -258,19 +336,39 @@ namespace ConsoleApp
             return benchmarks;
         }
 
-        public static Benchmark[] BenchExistDataStructure(BuildExistDataStructure matcher, string name, string str, int x, int ymin, int ymax, params Query[] queries)
+        public static Benchmark[] BenchExistDataStructure(string dsname, BuildExistDataStructure matcher, string name, string str, int x, int ymin, int ymax, params Query[] queries)
         {
             Benchmark[] benchmarks = new Benchmark[queries.Length];
 
             Stopwatch stopwatch = Stopwatch.StartNew();
             // Construction
-            var patternMatcher = matcher.Invoke(str, x, ymin, ymax);
+            ExistDataStructure patternMatcher = null;
+            var t = Task.Run(() =>
+            {
+                patternMatcher = matcher.Invoke(str, x, ymin, ymax);
+            });
+            if (!t.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+            {
+                stopwatch.Stop();
+                for (int i = 0; i < benchmarks.Length; i++)
+                {
+                    benchmarks[i] = new Benchmark();
+                    benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+                    benchmarks[i].DataStructureName = dsname;
+                    benchmarks[i].DataName = name;
+                    benchmarks[i].QueryName = queries[i].QueryName;
+                    benchmarks[i].SinglePatternMatchesQuery = -1;
+                    benchmarks[i].DoublePatternFixedMatchesQuery = -1;
+                    benchmarks[i].DoublePatternVariableMatchesQuery = -1;
+                }
+                return benchmarks;
+            };
             stopwatch.Stop();
             for (int i = 0; i < benchmarks.Length; i++)
             {
                 benchmarks[i] = new Benchmark();
                 benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-                benchmarks[i].DataStructureName = patternMatcher.GetType().Name;
+                benchmarks[i].DataStructureName = dsname;
                 benchmarks[i].DataName = name;
                 benchmarks[i].QueryName = queries[i].QueryName;
             }
@@ -283,15 +381,20 @@ namespace ConsoleApp
 
                 try
                 {
-                    for (int j = 0; j < repetitions; j++) // for each repetition
+                    var task = Task.Run(() =>
                     {
-                        stopwatch = Stopwatch.StartNew();
-                        var occs = patternMatcher.Matches(queries[i].P1);
-                        stopwatch.Stop();
-                        benchmarks[i].SinglePatternMatchesQueryOccs = occs;
-                        benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
-                    }
-                    benchmarks[i].SinglePatternMatchesQuery /= repetitions;
+                        for (int j = 0; j < repetitions; j++) // for each repetition
+                        {
+                            stopwatch = Stopwatch.StartNew();
+                            var occs = patternMatcher.Matches(queries[i].P1);
+                            stopwatch.Stop();
+                            benchmarks[i].SinglePatternMatchesQueryOccs = occs;
+                            benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
+                        }
+                        benchmarks[i].SinglePatternMatchesQuery /= repetitions;
+                    });
+                    if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+                        throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
                 catch (Exception)
                 {
@@ -302,13 +405,19 @@ namespace ConsoleApp
                 // Double Pattern + Fixed Gap
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.MatchesFixedGap(queries[i].P1, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs;
+                    var task = Task.Run(() =>
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.MatchesFixedGap(queries[i].P1, queries[i].P2);
+                        stopwatch.Stop();
+                        benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
+                        benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs;
+                    });
+                    if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+                        throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
+
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmarks[i].DoublePatternFixedMatchesQuery = -1;
                 }
@@ -317,13 +426,18 @@ namespace ConsoleApp
 
                 try
                 {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.MatchesVariableGap(queries[i].P1, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs;
+                    var task = Task.Run(() =>
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        var occs = patternMatcher.MatchesVariableGap(queries[i].P1, queries[i].P2);
+                        stopwatch.Stop();
+                        benchmarks[i].DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
+                        benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs;
+                    });
+                    if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
+                        throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (NotImplementedException)
+                catch (Exception)
                 {
                     benchmarks[i].DoublePatternVariableMatchesQuery = -1;
                 }
@@ -380,10 +494,10 @@ namespace ConsoleApp
                
           
 
-            BuildReportDataStructure[] reportingDataStructures = new BuildReportDataStructure[]
+            var reportingDataStructures = new(string, BuildReportDataStructure)[]
             {
                 //BuildSuffixArray_V1,
-                BuildSuffixArray_V2,
+                ("SA_R_V2", BuildSuffixArray_V2),
                 //BuildSuffixArray_V3,
                 //BuildSuffixArray_V4_1,
                 //BuildSuffixArray_V5,
@@ -392,13 +506,13 @@ namespace ConsoleApp
                 
             };
 
-            BuildCountDataStructure[] countingDataStructures = new BuildCountDataStructure[]
+            var countingDataStructures = new(string, BuildCountDataStructure)[]
             {
-                BuildSuffixArray_V8  // ALTID BAD, IKKE KØR PÅ ANDET END 512
+                //BuildSuffixArray_V8  // ALTID BAD, IKKE KØR PÅ ANDET END 512
 
             };
 
-            BuildExistDataStructure[] existenceDataStructures = new BuildExistDataStructure[]
+            var existenceDataStructures = new(string, BuildExistDataStructure)[]
             {
                 //BuildSA_E_V1,   // ALTID BAD, IKKE KØR PÅ ANDET END 512
                 //BuildSA_E_V2,
@@ -438,27 +552,27 @@ namespace ConsoleApp
                 //Console.WriteLine(query3.P1);
 
 
-                foreach (var dataStructure in reportingDataStructures)
+                foreach ((var name, var dataStructure) in reportingDataStructures)
                 {
-                    var b = BenchReportDataStructure(dataStructure, sequence.Item1, sequence.Item2, queries);
+                    var b = BenchReportDataStructure(name, dataStructure, sequence.Item1, sequence.Item2, queries);
                     foreach (var bench in b)
                     {
                         table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
                     }
                 }
 
-                foreach (var dataStructure in countingDataStructures)
+                foreach ((var name, var dataStructure) in countingDataStructures)
                 {
-                    var b = BenchCountDataStructure(dataStructure, sequence.Item1, sequence.Item2, query.X, query.Y.Min, query.Y.Max, queries);
+                    var b = BenchCountDataStructure(name, dataStructure, sequence.Item1, sequence.Item2, query.X, query.Y.Min, query.Y.Max, queries);
                     foreach (var bench in b)
                     {
                         table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
                     }
                 }
 
-                foreach (var dataStructure in existenceDataStructures)
+                foreach ((var name, var dataStructure) in existenceDataStructures)
                 {
-                    var b = BenchExistDataStructure(dataStructure, sequence.Item1, sequence.Item2, query.X, query.Y.Min, query.Y.Max, queries);
+                    var b = BenchExistDataStructure(name, dataStructure, sequence.Item1, sequence.Item2, query.X, query.Y.Min, query.Y.Max, queries);
                     foreach (var bench in b)
                     {
                         table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
