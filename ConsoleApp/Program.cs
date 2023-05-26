@@ -18,7 +18,7 @@ namespace ConsoleApp
         public delegate ReportDataStructure BuildReportDataStructure(string str);
         public delegate ExistDataStructure BuildExistDataStructure(string str, int x, int ymin, int ymax);
         public delegate CountDataStructure BuildCountDataStructure(string str, int x, int ymin, int ymax);
-        public static readonly int TIMEOUT = 1;
+        public static readonly int TIMEOUT = 300;
 
         public static ReportDataStructure BuildSuffixArray_V1(string str)
         {
@@ -54,8 +54,11 @@ namespace ConsoleApp
         {
             return new SA_R_V4_3(str);
         }
-
-        public static CountDataStructure BuildSuffixArray_V8(string str, int x, int ymin, int ymax)
+        public static CountDataStructure BuildSA_C_V1(string str, int x, int ymin, int ymax)
+        {
+            return new SA_C_V1(str, x, ymin, ymax);
+        }
+        public static CountDataStructure BuildSA_C_V2(string str, int x, int ymin, int ymax)
         {
             return new SA_C_V2(str, x, ymin, ymax);
         }
@@ -165,8 +168,9 @@ namespace ConsoleApp
                     if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
                         throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].SinglePatternMatchesQuery = -1;
                 }
                 
@@ -186,8 +190,9 @@ namespace ConsoleApp
                     if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
                         throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].DoublePatternFixedMatchesQuery = -1;
                 }
                 
@@ -207,8 +212,9 @@ namespace ConsoleApp
                     if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
                         throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].DoublePatternVariableMatchesQuery = -1;
                 }
                 
@@ -282,8 +288,9 @@ namespace ConsoleApp
                     if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
                         throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].SinglePatternMatchesQuery = -1;
                 }
 
@@ -302,8 +309,9 @@ namespace ConsoleApp
                     if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
                         throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].DoublePatternFixedMatchesQuery = -1;
                 }
 
@@ -323,8 +331,9 @@ namespace ConsoleApp
                     if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
                         throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].DoublePatternVariableMatchesQuery = -1;
                 }
 
@@ -396,8 +405,9 @@ namespace ConsoleApp
                     if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
                         throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].SinglePatternMatchesQuery = -1;
                 }
 
@@ -417,8 +427,9 @@ namespace ConsoleApp
                         throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
 
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].DoublePatternFixedMatchesQuery = -1;
                 }
 
@@ -437,8 +448,9 @@ namespace ConsoleApp
                     if (!task.Wait(TimeSpan.FromSeconds(TIMEOUT)))
                         throw new TimeoutException(benchmarks[i].DataStructureName + " " + benchmarks[i].DataName + " timed out");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].DoublePatternVariableMatchesQuery = -1;
                 }
 
@@ -478,16 +490,16 @@ namespace ConsoleApp
             var testData = DummyData.GetData(new DS[]
             {
                 DS._512,
-                //DS._8192,
-                //DS._16384,
-                //DS._262144,
-                //DS._524288,
+                DS._8192,
+                DS._16384,
+                DS._262144,
+                DS._524288,
                 DS._1048576,
-                //DS._2097152,
-                //DS._4194304,
-                //DS._8388608,
-                //DS._16777216,
-                //DS._33554432,
+                DS._2097152,
+                DS._4194304,
+                DS._8388608,
+                DS._16777216,
+                DS._33554432,
             });
                 
                 
@@ -496,28 +508,27 @@ namespace ConsoleApp
 
             var reportingDataStructures = new(string, BuildReportDataStructure)[]
             {
-                //BuildSuffixArray_V1,
+                ("SA_R_V1", BuildSuffixArray_V1),
                 ("SA_R_V2", BuildSuffixArray_V2),
-                //BuildSuffixArray_V3,
-                //BuildSuffixArray_V4_1,
-                //BuildSuffixArray_V5,
-                //BuildSuffixArray_V4_2,
-                //BuildSuffixArray_V4_3,
-                
+                ("SA_R_V3", BuildSuffixArray_V3),
+                ("SA_R_V4_1", BuildSuffixArray_V4_1),
+                ("SA_R_V4_2", BuildSuffixArray_V4_2),
+                ("SA_R_V4_3", BuildSuffixArray_V4_3),
             };
 
             var countingDataStructures = new(string, BuildCountDataStructure)[]
             {
-                //BuildSuffixArray_V8  // ALTID BAD, IKKE KØR PÅ ANDET END 512
-
+                //  // ALTID BAD, IKKE KØR PÅ ANDET END 512
+                ("SA_C_V1", BuildSA_C_V1),
+                ("SA_C_V2", BuildSA_C_V2)
             };
 
             var existenceDataStructures = new(string, BuildExistDataStructure)[]
             {
-                //BuildSA_E_V1,   // ALTID BAD, IKKE KØR PÅ ANDET END 512
-                //BuildSA_E_V2,
-                //BuildSA_E_V3,
-                //BuildSA_E_V4
+                ("SA_E_V1", BuildSA_E_V1),
+                ("SA_E_V2", BuildSA_E_V2),
+                ("SA_E_V3", BuildSA_E_V3),
+                ("SA_E_V4", BuildSA_E_V4)
             };
 
 
@@ -584,7 +595,7 @@ namespace ConsoleApp
             var workdir = Assembly.GetAssembly(typeof(Program)).Location; ;
             var dir = Directory.GetParent(workdir).Parent.Parent.Parent.FullName;
             var date = DateTime.Now.ToString("yyyyMMddTHHmmss");
-            File.WriteAllText($"{dir}\\consoleoutput{date}.txt", table.ToString());
+            File.WriteAllText($"{dir}\\TablePrints\\consoleoutput{date}.txt", table.ToString());
         }
 
 
