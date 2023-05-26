@@ -358,26 +358,27 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
 
-            (string, string)[] testData = new (string, string)[]
+
+
+
+            var testData = DummyData.GetData(new DS[]
             {
-                //DummyData.Dummy,
-                //DummyData.DNA("TEST"),
-                //DummyData.DNA("DNA_512"),
-                //DummyData.DNA("DNA_8192"),
-                //DummyData.DNA("DNA_16384"),
-                DummyData.DNA("DNA_262144"),
-                //DummyData.DNA("DNA_524288"),
-                //DummyData.DNA("DNA_1048576"),
-                //DummyData.DNA("DNA_2097152"),
-                //DummyData.DNA("DNA_4194304"),
-                //DummyData.DNA("DNA_1048576"),
-                //DummyData.PCC("realDNA_1048576"),
-                //DummyData.PCC("proteins_1048576"),
-                //DummyData.ENG("english_1048576"),
-                //DummyData.PCC("english_8388608"),
-                //DummyData.DNA("DNA_16777216"),
-                //DummyData.DNA("DNA_33554432")
-            };
+                DS._512,
+                //DS._8192,
+                //DS._16384,
+                //DS._262144,
+                //DS._524288,
+                DS._1048576,
+                //DS._2097152,
+                //DS._4194304,
+                //DS._8388608,
+                //DS._16777216,
+                //DS._33554432,
+            });
+                
+                
+               
+          
 
             BuildReportDataStructure[] reportingDataStructures = new BuildReportDataStructure[]
             {
