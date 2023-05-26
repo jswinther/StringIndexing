@@ -1,4 +1,4 @@
-﻿namespace ConsoleApp.DataStructures
+﻿namespace ConsoleApp.Data.Obsolete
 {
     internal abstract class RangeMinimumQuery
     {
@@ -8,7 +8,7 @@
         protected RangeMinimumQuery(int[] arr)
         {
             this.arr = arr;
-            this.N = arr.Length;
+            N = arr.Length;
         }
 
         public abstract int RMQ(int startIndex, int endIndex);

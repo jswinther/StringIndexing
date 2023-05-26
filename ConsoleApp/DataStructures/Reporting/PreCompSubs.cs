@@ -3,16 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ConsoleApp.DataStructures.Reporting;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.DataStructures.Reporting
 {
     internal class PreCompSubs : ReportDataStructure
     {
         Dictionary<string, HashSet<int>> Substrings = new();
 
 
-        public PreCompSubs(string text): base(text)
+        public PreCompSubs(string text) : base(text)
         {
             for (int i = 1; i <= text.Length; i++)
             {

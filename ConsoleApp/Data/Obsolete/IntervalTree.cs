@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.Data.Obsolete
 {
     internal class IntervalTree
     {
@@ -22,9 +22,9 @@ namespace ConsoleApp.DataStructures
             {
                 this.start = start;
                 this.end = end;
-                this.maxEnd = end;
-                this.left = null;
-                this.right = null;
+                maxEnd = end;
+                left = null;
+                right = null;
                 this.v = v;
                 this.ints = ints;
             }
@@ -39,11 +39,11 @@ namespace ConsoleApp.DataStructures
 
         }
 
-    
+
 
         public void Insert(int start, int end, int v, SortedSet<int> ints)
         {
-            this.root = InsertHelper(this.root, start, end, v, ints);
+            root = InsertHelper(root, start, end, v, ints);
         }
 
         private Node InsertHelper(Node node, int start, int end, int v, SortedSet<int> ints)
@@ -51,10 +51,10 @@ namespace ConsoleApp.DataStructures
             if (node == null)
             {
                 var node1 = new Node(start, end, v, ints);
-                
+
                 return node1;
             }
-                
+
 
             if (start < node.start)
                 node.left = InsertHelper(node.left, start, end, v, ints);
@@ -68,7 +68,7 @@ namespace ConsoleApp.DataStructures
         public List<Node> Query(int k, int i)
         {
             List<Node> result = new List<Node>();
-            QueryHelper(this.root, k, i, result);
+            QueryHelper(root, k, i, result);
             return result;
         }
 
@@ -79,7 +79,7 @@ namespace ConsoleApp.DataStructures
 
             if (node.start <= i && i <= node.end && node.v >= k)
                 result.Add(node);
-            
+
             if (node.left != null && node.left.maxEnd >= i)
                 QueryHelper(node.left, k, i, result);
 

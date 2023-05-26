@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.Data.Obsolete
 {
     internal class Trie
     {

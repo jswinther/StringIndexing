@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.Data.Obsolete
 {
     internal abstract class BaseSuffixArray : ReportDataStructure
     {
@@ -15,7 +15,7 @@ namespace ConsoleApp.DataStructures
         public int[] m_sa;
         public int[] m_isa;
         public int[] m_lcp;
-        public C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
+        public HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
         public List<Chain> m_chainStack = new List<Chain>();
         public ArrayList<Chain> m_subChains = new ArrayList<Chain>();
         public int m_nextRank = 1;
@@ -40,15 +40,15 @@ namespace ConsoleApp.DataStructures
             get { return Sa[index]; }
         }
 
-        
-       
 
 
-       
 
-   
 
-        
+
+
+
+
+
 
         public int Length
         {
@@ -111,7 +111,7 @@ namespace ConsoleApp.DataStructures
             return n;
         }
 
-       
+
 
         private void BuildLcpArray()
         {
@@ -149,7 +149,7 @@ namespace ConsoleApp.DataStructures
         {
             int lcp;
             int maxIndex = m_str.Length - Math.Max(i, j);       // Out of bounds prevention
-            for (lcp = 0; (lcp < maxIndex) && (m_str[i + lcp] == m_str[j + lcp]); lcp++) ;
+            for (lcp = 0; lcp < maxIndex && m_str[i + lcp] == m_str[j + lcp]; lcp++) ;
             return lcp;
         }
 
@@ -208,7 +208,7 @@ namespace ConsoleApp.DataStructures
 
 
 
-  
+
 
         private void FormInitialChains()
         {

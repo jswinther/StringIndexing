@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Gma.DataStructures.StringSearch
+namespace ConsoleApp.Data.Obsolete.TrieNet.Ukkonen
 {
     internal class EdgeDictionary<K, T> : Dictionary<K, Edge<K, T>> where K : IComparable<K>
     {

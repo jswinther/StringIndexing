@@ -7,7 +7,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.Data.Obsolete
 {
     internal class SuffixArrayKarkkainan
     {
@@ -15,11 +15,11 @@ namespace ConsoleApp.DataStructures
         private readonly int n; // The length of the original input text
         private readonly int[] suftab; //The suffix array
         private readonly int[] lcptab; //The longest common prefix array
-        private readonly int[] childtab; 
+        private readonly int[] childtab;
         private readonly int[] suflink;
 
-      
-        
+
+
         RangeMinimumQuery RangeMinimumQuery;
 
         public SuffixArrayKarkkainan(string text)
@@ -29,10 +29,10 @@ namespace ConsoleApp.DataStructures
             suftab = new int[n + 3];
             ConstructESA();
 
-            
-           
 
-            
+
+
+
         }
 
         public void ConstructESA()
@@ -59,7 +59,7 @@ namespace ConsoleApp.DataStructures
         {
             int lcp;
             int maxIndex = S.Length - Math.Max(i, j);       // Out of bounds prevention
-            for (lcp = 0; (lcp < maxIndex) && (S[i + lcp] == S[j + lcp]); lcp++) ;
+            for (lcp = 0; lcp < maxIndex && S[i + lcp] == S[j + lcp]; lcp++) ;
             return lcp;
         }
 
@@ -81,7 +81,7 @@ namespace ConsoleApp.DataStructures
             int r = suftab.Length;
             int m = -1;
 
-            if ((substr == null) || (substr.Length == 0))
+            if (substr == null || substr.Length == 0)
             {
                 return -1;
             }
@@ -109,7 +109,7 @@ namespace ConsoleApp.DataStructures
             }
         }
 
-   
+
 
         public IEnumerable<(int, int)> GetOccurrencesWithSortedSet(Query query)
         {
@@ -133,13 +133,13 @@ namespace ConsoleApp.DataStructures
 
         public static Span<int> GetIntsInRange(int min, int max, int[] arr)
         {
-            var start = Array.BinarySearch<int>(arr, min);
-            var end = Array.BinarySearch<int>(arr, max);
+            var start = Array.BinarySearch(arr, min);
+            var end = Array.BinarySearch(arr, max);
             if (start < 0 || end < 0) return new();
             return arr.AsSpan(start, end - start);
         }
 
-       
+
 
         public IEnumerable<(int, int)> GetOccurrencesWithList(Query query)
         {
@@ -195,7 +195,7 @@ namespace ConsoleApp.DataStructures
         }
 
 
-        
+
 
 
 
@@ -229,24 +229,24 @@ namespace ConsoleApp.DataStructures
             s12[n02] = s12[n02 + 1] = s12[n02 + 2] = 0;
 
             //finding positions i != 0 (mod 3)
-            if ((n0 - n1) == 0)
+            if (n0 - n1 == 0)
             {
                 int position = 0;
                 for (int i = 0; i < n; i++)
                 {
-                    if ((i % 3) != 0)
+                    if (i % 3 != 0)
                     {
                         s12[position] = i;
                         position++;
                     }
                 }
             }
-            else if ((n0 - n1) == 1)            //if (n0-n1) == 1 -> add triplet $$$ on the end of t1
+            else if (n0 - n1 == 1)            //if (n0-n1) == 1 -> add triplet $$$ on the end of t1
             {
                 int position = 0;
                 for (int i = 0; i < n + 1; i++)
                 {
-                    if ((i % 3) != 0)
+                    if (i % 3 != 0)
                     {
                         s12[position] = i;
                         position++;
@@ -270,7 +270,7 @@ namespace ConsoleApp.DataStructures
             int c2 = -1;
             for (int i = 0; i < n02; i++)
             {
-                if ((s[start + sorted[i]] != c0) || (s[start + sorted[i] + 1] != c1) || (s[start + sorted[i] + 2] != c2))
+                if (s[start + sorted[i]] != c0 || s[start + sorted[i] + 1] != c1 || s[start + sorted[i] + 2] != c2)
                 {
                     name++;
                     c0 = s[start + sorted[i]];
@@ -330,7 +330,7 @@ namespace ConsoleApp.DataStructures
             //make SA from SA0 and SA12
             for (int p = 0, t = n0 - n1, k = 0; k < n; k++)
             {
-                int i = (SA12[t] < n0 ? SA12[t] * 3 + 1 : (SA12[t] - n0) * 3 + 2);
+                int i = SA12[t] < n0 ? SA12[t] * 3 + 1 : (SA12[t] - n0) * 3 + 2;
                 int j = SA0[p];
 
                 // comparing suffixes
@@ -358,7 +358,7 @@ namespace ConsoleApp.DataStructures
                     {
                         for (k++; t < n02; t++, k++)
                         {
-                            SA[k] = (SA12[t] < n0 ? SA12[t] * 3 + 1 : (SA12[t] - n0) * 3 + 2);
+                            SA[k] = SA12[t] < n0 ? SA12[t] * 3 + 1 : (SA12[t] - n0) * 3 + 2;
                         }
                     }
                 }
@@ -382,7 +382,7 @@ namespace ConsoleApp.DataStructures
 
             //exclusive prefix sums
             int sum = 0;
-            for (int i = 0; i < (K + 1); i++)
+            for (int i = 0; i < K + 1; i++)
             {
                 int temp = count[i];
                 count[i] = sum;
@@ -401,12 +401,12 @@ namespace ConsoleApp.DataStructures
         //lexic order for pairs
         static public bool leq(int a1, int a2, int b1, int b2)
         {
-            return (a1 < b1 || (a1 == b1 && a2 <= b2));
+            return a1 < b1 || a1 == b1 && a2 <= b2;
         }
         //lexic order for triples
         static public bool leq(int a1, int a2, int a3, int b1, int b2, int b3)
         {
-            return (a1 < b1 || (a1 == b1 && leq(a2, a3, b2, b3)));
+            return a1 < b1 || a1 == b1 && leq(a2, a3, b2, b3);
         }
         //find max value in slice of an array
         static public int max(int[] input, int start, int length)
@@ -441,7 +441,7 @@ namespace ConsoleApp.DataStructures
                 for (int i = 0; i < length; i++)
                 {
                     //in FASTA only can be letters from A to Z, char '-' and '*'
-                    if (!((s[i] >= 'A' && s[i] <= 'Z') || s[i] == '-' || s[i] == '*'))
+                    if (!(s[i] >= 'A' && s[i] <= 'Z' || s[i] == '-' || s[i] == '*'))
                     {
                         throw new Exception("Wrong format!");
                     }
@@ -464,7 +464,7 @@ namespace ConsoleApp.DataStructures
             }
             return returnArray;
         }
-        
-        
+
+
     }
 }

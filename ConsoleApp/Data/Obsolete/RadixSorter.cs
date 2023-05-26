@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.Data.Obsolete
 {
     internal class RadixSorter
     {
@@ -30,13 +30,13 @@ namespace ConsoleApp.DataStructures
             for (int i = 0; i < 10; i++)
                 occurences[i] = 0;
             for (int i = 0; i < size; i++)
-                occurences[(array[i] / exponent) % 10]++;
+                occurences[array[i] / exponent % 10]++;
             for (int i = 1; i < 10; i++)
                 occurences[i] += occurences[i - 1];
             for (int i = size - 1; i >= 0; i--)
             {
-                outputArr[occurences[(array[i] / exponent) % 10] - 1] = array[i];
-                occurences[(array[i] / exponent) % 10]--;
+                outputArr[occurences[array[i] / exponent % 10] - 1] = array[i];
+                occurences[array[i] / exponent % 10]--;
             }
             for (int i = 0; i < size; i++)
                 array[i] = outputArr[i];

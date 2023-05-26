@@ -3,16 +3,16 @@
 using System;
 using System.Collections.Generic;
 
-namespace Gma.DataStructures.StringSearch
+namespace ConsoleApp.Data.Obsolete.TrieNet
 {
     /// <summary>
     /// Interface to be implemented by a data structure 
-    /// which allows adding values <see cref="TValue"/> associated with <b>string</b> keys.
+    /// which allows adding values <see cref="TValue"/> associated with generic keys.
     /// The interface allows retrieval of multiple values along with their positions.
     /// </summary>
     /// <typeparam name="TValue"></typeparam>
-    public interface ISuffixTrie<TValue> : ITrie<TValue>
+    public interface IGenericSuffixTrie<K, TValue> : IGenericTrie<K, TValue> where K : IEquatable<K>
     {
-        IEnumerable<WordPosition<TValue>> RetrieveSubstrings(string query);
+        IEnumerable<WordPosition<TValue>> RetrieveSubstrings(ReadOnlySpan<K> query);
     }
 }

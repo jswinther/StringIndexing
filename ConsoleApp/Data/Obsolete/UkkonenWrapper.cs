@@ -1,5 +1,5 @@
-﻿using ConsoleApp.DataStructures.Reporting;
-using Gma.DataStructures.StringSearch;
+﻿using ConsoleApp.Data.Obsolete.TrieNet.Ukkonen;
+using ConsoleApp.DataStructures.Reporting;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.Data.Obsolete
 {
     internal class UkkonenWrapper : ReportDataStructure
     {
@@ -49,10 +49,10 @@ namespace ConsoleApp.DataStructures
                 foreach (var item2 in occs2.GetViewBetween(item1 + pattern1.Length + y_min, item1 + pattern1.Length + y_max))
                 {
                     occs.Add(item1);
-                }                  
+                }
             }
             return occs;
         }
-        
+
     }
 }

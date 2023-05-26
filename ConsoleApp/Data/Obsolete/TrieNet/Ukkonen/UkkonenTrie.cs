@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ConsoleApp.Data.Obsolete.TrieNet;
 
-namespace Gma.DataStructures.StringSearch
+namespace ConsoleApp.Data.Obsolete.TrieNet.Ukkonen
 {
     public class UkkonenTrie<K, T> : IGenericSuffixTrie<K, T> where K : IEquatable<K>, IComparable<K>
     {
@@ -18,15 +19,17 @@ namespace Gma.DataStructures.StringSearch
         {
         }
 
-        public UkkonenTrie(int minSuffixLength) 
+        public UkkonenTrie(int minSuffixLength)
         {
             _minSuffixLength = minSuffixLength;
             _root = new Node<K, WordPosition<T>>();
             _activeLeaf = _root;
         }
 
-        public long Size {
-            get {
+        public long Size
+        {
+            get
+            {
                 return _root.Size();
             }
         }
@@ -40,12 +43,13 @@ namespace Gma.DataStructures.StringSearch
         {
             if (word.Length < _minSuffixLength) return Enumerable.Empty<WordPosition<T>>();
             var tmpNode = SearchNode(word);
-            return tmpNode == null 
-                ? Enumerable.Empty<WordPosition<T>>() 
+            return tmpNode == null
+                ? Enumerable.Empty<WordPosition<T>>()
                 : tmpNode.GetData();
         }
 
-        public IEnumerable<WordPosition<T>> RetrieveSubstringsRange(ReadOnlyMemory<K> min, ReadOnlyMemory<K> max) {
+        public IEnumerable<WordPosition<T>> RetrieveSubstringsRange(ReadOnlyMemory<K> min, ReadOnlyMemory<K> max)
+        {
             if (min.Length != max.Length) throw new ArgumentException("Lengths of min and max must be the same.");
             if (min.Length < _minSuffixLength) return Enumerable.Empty<WordPosition<T>>();
             var nodes = SearchNodeRange(_root, 0, min, max);
@@ -91,7 +95,8 @@ namespace Gma.DataStructures.StringSearch
             var chMin = min.Span[i];
             var chMax = max.Span[i];
             // follow all the EdgeA<T> which are between min and max
-            foreach (var currentEdge in currentNode.GetEdgesBetween(chMin, chMax)) {
+            foreach (var currentEdge in currentNode.GetEdgesBetween(chMin, chMax))
+            {
                 if (null == currentEdge)
                 {
                     // there is no EdgeA<T> starting with this char
@@ -109,9 +114,12 @@ namespace Gma.DataStructures.StringSearch
                 if (label.Length >= min.Length - i)
                 {
                     yield return currentEdge.Target;
-                } else {
+                }
+                else
+                {
                     // advance to next NodeA<T>
-                    foreach (var result in SearchNodeRange(currentEdge.Target, i + lenToMatch, min, max)) {
+                    foreach (var result in SearchNodeRange(currentEdge.Target, i + lenToMatch, min, max))
+                    {
                         yield return result;
                     }
                 }

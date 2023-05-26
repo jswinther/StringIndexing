@@ -1,13 +1,13 @@
-﻿using ConsoleApp.DataStructures;
+﻿using ConsoleApp.Data.Obsolete;
+using ConsoleApp.DataStructures;
 using ConsoleApp.DataStructures.Count;
 using ConsoleApp.DataStructures.Existence;
 using ConsoleApp.DataStructures.Reporting;
-using Gma.DataStructures.StringSearch;
 using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
-using static ConsoleApp.DataStructures.AlgoSuffixTreeProblem;
+using static ConsoleApp.Data.Obsolete.AlgoSuffixTreeProblem;
 using static ConsoleApp.Program;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -595,7 +595,7 @@ namespace ConsoleApp
             var workdir = Assembly.GetAssembly(typeof(Program)).Location; ;
             var dir = Directory.GetParent(workdir).Parent.Parent.Parent.FullName;
             var date = DateTime.Now.ToString("yyyyMMddTHHmmss");
-            File.WriteAllText($"{dir}\\TablePrints\\consoleoutput{date}.txt", table.ToString());
+            File.WriteAllText($"{dir}\\Data\\TablePrints\\consoleoutput{date}.txt", table.ToString());
         }
 
 

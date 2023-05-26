@@ -1,4 +1,5 @@
 ﻿using C5;
+using ConsoleApp.Data.Obsolete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace ConsoleApp.DataStructures
         public int[] m_sa;
         public int[] m_isa;
         public int[] m_lcp;
-        public C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
+        public HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
         public List<Chain> m_chainStack = new List<Chain>();
         public ArrayList<Chain> m_subChains = new ArrayList<Chain>();
         public int m_nextRank = 1;
@@ -23,7 +24,7 @@ namespace ConsoleApp.DataStructures
         public (int Up, int Down, int Next)[] Children;
         public static int k; // number of digits
 
-        public SuffixArrayFinal(string str) 
+        public SuffixArrayFinal(string str)
         {
             m_str = str;
             m_str += "|";
@@ -41,7 +42,7 @@ namespace ConsoleApp.DataStructures
             BuildSuffixArray();
             BuildLcpArray();
             Children = new (int Up, int Down, int Next)[n];
-            
+
         }
 
         public int this[int index]
@@ -148,7 +149,7 @@ namespace ConsoleApp.DataStructures
         {
             int lcp;
             int maxIndex = m_str.Length - Math.Max(i, j);       // Out of bounds prevention
-            for (lcp = 0; (lcp < maxIndex) && (m_str[i + lcp] == m_str[j + lcp]); lcp++) ;
+            for (lcp = 0; lcp < maxIndex && m_str[i + lcp] == m_str[j + lcp]; lcp++) ;
             return lcp;
         }
 
@@ -416,12 +417,12 @@ namespace ConsoleApp.DataStructures
             return occs;
         }
 
-        
 
-    
+
+
         public void GetAllLcpIntervals(int minSize, out Dictionary<(int, int), IntervalNode> _nodes, out Dictionary<(int, int), IntervalNode> _leaves, out IntervalNode root)
         {
-            
+
             _nodes = new();
             _leaves = new();
             System.Collections.Generic.HashSet<(int, int)> hashSet = new();
@@ -478,12 +479,12 @@ namespace ConsoleApp.DataStructures
                         _leaves.Add(currNode.Interval, currNode);
                     }
                 }
-                
+
             }
             root.SubtreeSize = Update(root);
         }
 
-        
+
 
 
 

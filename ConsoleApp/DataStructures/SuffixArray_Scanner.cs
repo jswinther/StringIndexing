@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace ConsoleApp.DataStructures.Reporting
+namespace ConsoleApp.DataStructures
 {
     internal class SuffixArray_Scanner
     {
@@ -35,11 +35,11 @@ namespace ConsoleApp.DataStructures.Reporting
             (string name, string str) = args;
             SA = new SuffixArrayFinal(str);
             SA.BuildChildTable();
-            SA.GetAllLcpIntervals((int)1, out Tree, out Leaves1, out Root);
+            SA.GetAllLcpIntervals(1, out Tree, out Leaves1, out Root);
 
             Queue<IntervalNode> findTestNodes = new Queue<IntervalNode>();
             findTestNodes.Enqueue(Tree.Values.First());
-            
+
             //HashSet<(int, int)> top = new HashSet<(int, int)>();
             Random r = new Random();
             double probRoll = 0.0;
@@ -49,14 +49,15 @@ namespace ConsoleApp.DataStructures.Reporting
                 var n = findTestNodes.Dequeue();
                 if (n.DistanceToRoot < 5 && n.DistanceToRoot > 0)
                 {
-                    probRoll = ((double) n.SubtreeSize / (double) Tree.Count) * 0.2;
+                    probRoll = n.SubtreeSize / (double)Tree.Count * 0.2;
                     if (r.NextDouble() <= probRoll || topPattern == null)
                     {
                         var patLength = SA.GetLcp(n.Interval.start, n.Interval.end);
                         topPattern = string.Concat(SA.S.Take(new Range(SA.Sa[n.Interval.start], SA.Sa[n.Interval.start] + patLength)));
                     }
 
-                } else if (n.SubtreeSize <= minSize)
+                }
+                else if (n.SubtreeSize <= minSize)
                 {
                     probRoll = n.SubtreeSize / (0.5 * Tree.Count);
                     if (r.NextDouble() <= probRoll || botPattern == null)

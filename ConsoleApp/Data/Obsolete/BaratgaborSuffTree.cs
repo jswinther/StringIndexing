@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using ConsoleApp.DataStructures.Reporting;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.Data.Obsolete
 {
     public class BaratgaborSuffixTree : ReportDataStructure
     {
@@ -88,17 +88,17 @@ namespace ConsoleApp.DataStructures
             }
         }
 
-        public BaratgaborSuffixTree(string str): base(str)
+        public BaratgaborSuffixTree(string str) : base(str)
         {
             _root = new Node() { Start = 0, End = 0 };
-            _structure.Add((null, default(char)), _root);
+            _structure.Add((null, default), _root);
             _AP = new ActivePoint(this) { ActiveParent = _root };
             AddString(str);
         }
 
-  
 
-    
+
+
 
         /// <summary>
         /// Extends the suffix tree with the specified value.

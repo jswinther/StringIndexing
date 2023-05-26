@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace ConsoleApp.DataStructures
+namespace ConsoleApp.Data.Obsolete
 {
     public class SuffixTree : ReportDataStructure
     {
@@ -304,7 +304,7 @@ namespace ConsoleApp.DataStructures
             }
         }
 
-        
+
 
         public override IEnumerable<int> Matches(string pattern)
         {
@@ -342,9 +342,9 @@ namespace ConsoleApp.DataStructures
             return indexes;
         }
 
-        
 
-       
+
+
 
         public class Edge
         {
@@ -533,7 +533,7 @@ namespace ConsoleApp.DataStructures
         }
 
         private const int EOC = int.MaxValue;
-        private C5.HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
+        private HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
         private List<Chain> m_chainStack = new List<Chain>();
         private ArrayList<Chain> m_subChains = new ArrayList<Chain>();
         private int m_nextRank = 1;

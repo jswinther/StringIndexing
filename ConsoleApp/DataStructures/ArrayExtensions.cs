@@ -42,7 +42,7 @@
         {
             for (int i = 0; i < amount; i++)
             {
-                yield return GetRandom(values);
+                yield return values.GetRandom();
             }
         }
 
@@ -57,7 +57,7 @@
         {
             for (int i = 0; i < amount; i++)
             {
-                yield return GetSubstringOfPercentageOfString(s, percent);
+                yield return s.GetSubstringOfPercentageOfString(percent);
             }
         }
 
@@ -199,7 +199,7 @@
 
                 // counting elements of the c-th group 
                 for (int i = 0; i < a.Length; i++)
-                    count[(a[i] >> shift) & mask]++;
+                    count[a[i] >> shift & mask]++;
 
                 // calculating prefixes 
                 pref[0] = 0;
@@ -208,7 +208,7 @@
 
                 // from a[] to t[] elements ordered by c-th group 
                 for (int i = 0; i < a.Length; i++)
-                    t[pref[(a[i] >> shift) & mask]++] = a[i];
+                    t[pref[a[i] >> shift & mask]++] = a[i];
 
                 // a[]=t[] and start again until the last group 
                 t.CopyTo(a, 0);
@@ -219,7 +219,7 @@
 
         public static bool ContainsElementInRange(this int[] array, int x, int y)
         {
-            return (array.BinarySearchOnRange(x, y) != (-1, -1));
+            return array.BinarySearchOnRange(x, y) != (-1, -1);
         }
 
         public static int MinUnsorted(this int[] array)
