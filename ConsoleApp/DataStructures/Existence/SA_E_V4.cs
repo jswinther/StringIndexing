@@ -74,7 +74,8 @@ namespace ConsoleApp.DataStructures.Existence
 
         public override bool Matches(string pattern)
         {
-            throw new NotImplementedException();
+            (var a, var b) = SA.ExactStringMatchingWithESA(pattern);
+            return ((a, b) != (-1, -1));
         }
 
         public override bool MatchesFixedGap(string p1, string p2)

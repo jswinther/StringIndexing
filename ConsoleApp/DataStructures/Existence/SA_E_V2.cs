@@ -160,16 +160,12 @@ namespace ConsoleApp.DataStructures.Existence
             }
         }
 
-        
-
-        public bool VariableExists(string pattern1, string pattern2)
-        {
-            return true;
-        }
+       
 
         public override bool Matches(string pattern)
         {
-            throw new NotImplementedException();
+            (var a, var b) = SA.ExactStringMatchingWithESA(pattern);
+            return ((a, b) != (-1, -1));
         }
 
         public override bool MatchesFixedGap(string pattern1, string pattern2)

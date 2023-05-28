@@ -28,23 +28,15 @@ namespace ConsoleApp.DataStructures.Existence
             MaxGap = maxGap;
             SA.BuildChildTable();
             int minSizeForLcpIntervals = (int)Math.Sqrt(SA.n);
-            SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
+            SA.GetAllLcpIntervals(minSizeForLcpIntervals, out Tree, out Leaves, out Root);
 
-            var tree = Tree.Skip(1);
-            foreach (var node in tree)
-            {
-                var n = node.Value;
-                foreach (var node2 in tree)
-                {
-                    
-                }
-            }
+            var tree = Tree.Keys.Skip(1);
 
-            foreach (var int2 in Tree.Keys.Take(512))
+            foreach (var int2 in tree)
             {
                 var occs2 = new HashSet<int>(SA.GetOccurrencesForInterval(int2));
                 
-                foreach (var int1 in Tree.Keys.Take(512))
+                foreach (var int1 in tree)
                 {
                     var occs1 = SA.GetOccurrencesForInterval(int1);
                     Exists.Add((int1, int2), occs1.Any(occ1 => occs2.Contains(occ1 + FixedGap + Tree[int1].DistanceToRoot)));
@@ -60,7 +52,8 @@ namespace ConsoleApp.DataStructures.Existence
 
         public override bool Matches(string pattern)
         {
-            throw new NotImplementedException();
+            (var a, var b) = SA.ExactStringMatchingWithESA(pattern);
+            return ((a, b) != (-1, -1));
         }
 
         public override bool MatchesFixedGap(string pattern1, string pattern2)

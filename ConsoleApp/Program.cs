@@ -89,6 +89,11 @@ namespace ConsoleApp
             return new BaratgaborSuffixTree(str);
         }
 
+        public static ExistDataStructure BuildSA_E_V0(string str, int x, int ymin, int ymax)
+        {
+            return new SA_E_V0(str, x, ymin, ymax);
+        }
+
         public static ExistDataStructure BuildSA_E_V1(string str, int x, int ymin, int ymax)
         {
             return new SA_E_V1(str, x, ymin, ymax);
@@ -110,7 +115,21 @@ namespace ConsoleApp
         public static Benchmark[] BenchReportDataStructure(string dsname, BuildReportDataStructure matcher, string name, string str, params Query[] queries)       
         {
             Benchmark[] benchmarks = new Benchmark[queries.Length];
-            
+            if (timedout.Contains(dsname))
+            {
+                for (int i = 0; i < benchmarks.Length; i++)
+                {
+                    benchmarks[i] = new Benchmark();
+                    benchmarks[i].ConstructionTimeMilliseconds = -1;
+                    benchmarks[i].DataStructureName = dsname;
+                    benchmarks[i].DataName = name;
+                    benchmarks[i].QueryName = queries[i].QueryName;
+                    benchmarks[i].SinglePatternMatchesQuery = -1;
+                    benchmarks[i].DoublePatternFixedMatchesQuery = -1;
+                    benchmarks[i].DoublePatternVariableMatchesQuery = -1;
+                }
+                return benchmarks;
+            }
             Stopwatch stopwatch = Stopwatch.StartNew();
             // Construction
             ReportDataStructure patternMatcher = null;
@@ -124,7 +143,7 @@ namespace ConsoleApp
                 for (int i = 0; i < benchmarks.Length; i++)
                 {
                     benchmarks[i] = new Benchmark();
-                    benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+                    benchmarks[i].ConstructionTimeMilliseconds = -1;
                     benchmarks[i].DataStructureName = dsname;
                     benchmarks[i].DataName = name;
                     benchmarks[i].QueryName = queries[i].QueryName;
@@ -229,7 +248,21 @@ namespace ConsoleApp
         public static Benchmark[] BenchCountDataStructure(string dsname, BuildCountDataStructure matcher, string name, string str, int x, int ymin, int ymax, params Query[] queries)
         {
             Benchmark[] benchmarks = new Benchmark[queries.Length];
-
+            if (timedout.Contains(dsname))
+            {
+                for (int i = 0; i < benchmarks.Length; i++)
+                {
+                    benchmarks[i] = new Benchmark();
+                    benchmarks[i].ConstructionTimeMilliseconds = -1;
+                    benchmarks[i].DataStructureName = dsname;
+                    benchmarks[i].DataName = name;
+                    benchmarks[i].QueryName = queries[i].QueryName;
+                    benchmarks[i].SinglePatternMatchesQuery = -1;
+                    benchmarks[i].DoublePatternFixedMatchesQuery = -1;
+                    benchmarks[i].DoublePatternVariableMatchesQuery = -1;
+                }
+                return benchmarks;
+            }
             Stopwatch stopwatch = Stopwatch.StartNew();
             // Construction
             CountDataStructure patternMatcher = null;
@@ -243,7 +276,7 @@ namespace ConsoleApp
                 for (int i = 0; i < benchmarks.Length; i++)
                 {
                     benchmarks[i] = new Benchmark();
-                    benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+                    benchmarks[i].ConstructionTimeMilliseconds = -1;
                     benchmarks[i].DataStructureName = dsname;
                     benchmarks[i].DataName = name;
                     benchmarks[i].QueryName = queries[i].QueryName;
@@ -348,7 +381,21 @@ namespace ConsoleApp
         public static Benchmark[] BenchExistDataStructure(string dsname, BuildExistDataStructure matcher, string name, string str, int x, int ymin, int ymax, params Query[] queries)
         {
             Benchmark[] benchmarks = new Benchmark[queries.Length];
-
+            if (timedout.Contains(dsname))
+            {
+                for (int i = 0; i < benchmarks.Length; i++)
+                {
+                    benchmarks[i] = new Benchmark();
+                    benchmarks[i].ConstructionTimeMilliseconds = -1;
+                    benchmarks[i].DataStructureName = dsname;
+                    benchmarks[i].DataName = name;
+                    benchmarks[i].QueryName = queries[i].QueryName;
+                    benchmarks[i].SinglePatternMatchesQuery = -1;
+                    benchmarks[i].DoublePatternFixedMatchesQuery = -1;
+                    benchmarks[i].DoublePatternVariableMatchesQuery = -1;
+                }
+                return benchmarks;
+            }
             Stopwatch stopwatch = Stopwatch.StartNew();
             // Construction
             ExistDataStructure patternMatcher = null;
@@ -362,7 +409,7 @@ namespace ConsoleApp
                 for (int i = 0; i < benchmarks.Length; i++)
                 {
                     benchmarks[i] = new Benchmark();
-                    benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
+                    benchmarks[i].ConstructionTimeMilliseconds = -1;
                     benchmarks[i].DataStructureName = dsname;
                     benchmarks[i].DataName = name;
                     benchmarks[i].QueryName = queries[i].QueryName;
@@ -481,6 +528,8 @@ namespace ConsoleApp
             public object DoublePatternVariableMatchesQueryOccs { get; internal set; }
         }
 
+        static HashSet<string> timedout = new HashSet<string>();
+
         static void Main(string[] args)
         {
 
@@ -525,7 +574,8 @@ namespace ConsoleApp
 
             var existenceDataStructures = new(string, BuildExistDataStructure)[]
             {
-                ("SA_E_V1", BuildSA_E_V1),
+                ("SA_E_V0", BuildSA_E_V0),
+                //("SA_E_V1", BuildSA_E_V1),
                 ("SA_E_V2", BuildSA_E_V2),
                 ("SA_E_V3", BuildSA_E_V3),
                 ("SA_E_V4", BuildSA_E_V4)
@@ -562,31 +612,41 @@ namespace ConsoleApp
                 query.Y =  (1, (int)Math.Sqrt(sequence.Item2.Length));
                 //Console.WriteLine(query3.P1);
 
-
+                File.AppendAllLines(sequence.Item1 + ".csv", new string[] { $"Data Structure Name, Construction Time, Query, Single Pattern Query Time, Fixed Gap Query Time, Variable Gap Query Time" });
                 foreach ((var name, var dataStructure) in reportingDataStructures)
                 {
+                    Console.WriteLine($"Running + {name} on {sequence.Item1}");
                     var b = BenchReportDataStructure(name, dataStructure, sequence.Item1, sequence.Item2, queries);
                     foreach (var bench in b)
                     {
                         table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
+                        Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
+                        File.AppendAllLines(bench.DataName + ".csv", new string[] { $"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}" });
                     }
                 }
 
                 foreach ((var name, var dataStructure) in countingDataStructures)
                 {
+                    Console.WriteLine($"Running + {name} on {sequence.Item1}");
                     var b = BenchCountDataStructure(name, dataStructure, sequence.Item1, sequence.Item2, query.X, query.Y.Min, query.Y.Max, queries);
                     foreach (var bench in b)
                     {
+
                         table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
+                        Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
+                        File.AppendAllLines(bench.DataName + ".csv", new string[] { $"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}" });
                     }
                 }
 
                 foreach ((var name, var dataStructure) in existenceDataStructures)
                 {
+                    Console.WriteLine($"Running + {name} on {sequence.Item1}");
                     var b = BenchExistDataStructure(name, dataStructure, sequence.Item1, sequence.Item2, query.X, query.Y.Min, query.Y.Max, queries);
                     foreach (var bench in b)
                     {
                         table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
+                        Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
+                        File.AppendAllLines(bench.DataName + ".csv", new string[] { $"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}" });
                     }
                 }
             }
