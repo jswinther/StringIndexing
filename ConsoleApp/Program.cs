@@ -409,23 +409,23 @@ namespace ConsoleApp
             var reportingDataStructures = new(string, BuildReportDataStructure)[]
             {
                 //("SA_R_V1", BuildSuffixArray_V1),
-                //("SA_R_V2", BuildSuffixArray_V2),
+                ("SA_R_V2", BuildSuffixArray_V2),
                 ("SA_R_V3", BuildSuffixArray_V3),
-                //("SA_R_V4_1", BuildSuffixArray_V4_1),
-                //("SA_R_V4_2", BuildSuffixArray_V4_2),
-                //("SA_R_V4_3", BuildSuffixArray_V4_3),
+                ("SA_R_V4_1", BuildSuffixArray_V4_1),
+                ("SA_R_V4_2", BuildSuffixArray_V4_2),
+                ("SA_R_V4_3", BuildSuffixArray_V4_3),
             };
 
             var countingDataStructures = new(string, BuildCountDataStructure)[]
             {
                 //  // ALTID BAD, IKKE KØR PÅ ANDET END 512
-                //("SA_C_V1", BuildSA_C_V1),
+                ("SA_C_V1", BuildSA_C_V1),
                 //("SA_C_V2", BuildSA_C_V2)
             };
 
             var existenceDataStructures = new(string, BuildExistDataStructure)[]
             {
-                //("SA_E_V0", BuildSA_E_V0),
+                ("SA_E_V0", BuildSA_E_V0),
                 //("SA_E_V1", BuildSA_E_V1),
                 //("SA_E_V2", BuildSA_E_V2),
                 //("SA_E_V3", BuildSA_E_V3),
@@ -442,7 +442,15 @@ namespace ConsoleApp
             Query query = new Query(p1, x, p2);
             query.Y = (1, 45);
 
-            
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+            Directory.CreateDirectory($"{path}\\StringIndexingGapResults");
+            var files = Directory.GetFileSystemEntries($"{path}\\StringIndexingGapResults", "Results_*");
+            int last = 0;
+            if (files.Length > 0)
+            {
+                last = files.Select(s => Convert.ToInt32(s.Split('_')[1])).Max() + 1;
+            }
+            var directory = Directory.CreateDirectory($"{path}\\StringIndexingGapResults\\Results_{last}");
 
             foreach (var test in testData)
             {
@@ -466,7 +474,8 @@ namespace ConsoleApp
                 query.Y =  (1, (int)Math.Sqrt(sequence.Length));
                 suffixArray_Scanner = null;
                 //Console.WriteLine(query3.P1);
-                var file = $"testResults\\{textName}.csv";
+                
+                var file = $"{path}\\StringIndexingGapResults\\Results_{last}\\{textName}.csv";
                 File.AppendAllLines(file, new string[] { $"Data Structure Name, Construction Time, Query, Single Pattern Query Time, Fixed Gap Query Time, Variable Gap Query Time" });
                 foreach ((var name, var dataStructure) in reportingDataStructures)
                 {
