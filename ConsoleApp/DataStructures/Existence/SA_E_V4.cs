@@ -20,8 +20,8 @@ namespace ConsoleApp.DataStructures.Existence
         {
             this.x = x;
             SA = new SuffixArrayFinal(str);
-            SA.BuildChildTable();
-            SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n), out Tree, out Leaves, out Root);
+            
+            SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n.Value), out Tree, out Leaves, out Root);
             var hashed = Leaves.Values.Select(s => new { interval = s.Interval, occs = new HashSet<int>(SA.GetOccurrencesForInterval(s.Interval)) }).ToArray();
 
             foreach (var item in hashed)

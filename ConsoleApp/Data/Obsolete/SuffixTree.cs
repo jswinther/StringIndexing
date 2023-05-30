@@ -1,4 +1,5 @@
 ﻿using C5;
+using ConsoleApp.DataStructures;
 using ConsoleApp.DataStructures.Reporting;
 using System;
 using System.Collections.Generic;

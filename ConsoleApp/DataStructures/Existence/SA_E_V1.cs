@@ -26,8 +26,8 @@ namespace ConsoleApp.DataStructures.Existence
             FixedGap = fixedGap;
             MinGap = minGap;
             MaxGap = maxGap;
-            SA.BuildChildTable();
-            int minSizeForLcpIntervals = (int)Math.Sqrt(SA.n);
+            
+            int minSizeForLcpIntervals = (int)Math.Sqrt(SA.n.Value);
             SA.GetAllLcpIntervals(minSizeForLcpIntervals, out Tree, out Leaves, out Root);
 
             var tree = Tree.Keys.Skip(1);

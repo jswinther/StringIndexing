@@ -34,7 +34,6 @@ namespace ConsoleApp.DataStructures
         {
             (string name, string str) = args;
             SA = new SuffixArrayFinal(str);
-            SA.BuildChildTable();
             SA.GetAllLcpIntervals(1, out Tree, out Leaves1, out Root);
 
             Queue<IntervalNode> findTestNodes = new Queue<IntervalNode>();
@@ -43,7 +42,7 @@ namespace ConsoleApp.DataStructures
             //HashSet<(int, int)> top = new HashSet<(int, int)>();
             Random r = new Random();
             double probRoll = 0.0;
-            double minSize = Math.Log(SA.n);
+            double minSize = Math.Log(SA.n.Value);
             while (findTestNodes.Count > 0)
             {
                 var n = findTestNodes.Dequeue();
@@ -53,7 +52,7 @@ namespace ConsoleApp.DataStructures
                     if (r.NextDouble() <= probRoll || topPattern == null)
                     {
                         var patLength = SA.GetLcp(n.Interval.start, n.Interval.end);
-                        topPattern = string.Concat(SA.S.Take(new Range(SA.Sa[n.Interval.start], SA.Sa[n.Interval.start] + patLength)));
+                        topPattern = string.Concat(SA.m_str.Take(new Range(SA.m_sa[n.Interval.start], SA.m_sa[n.Interval.start] + patLength)));
                     }
 
                 }
@@ -63,7 +62,7 @@ namespace ConsoleApp.DataStructures
                     if (r.NextDouble() <= probRoll || botPattern == null)
                     {
                         var patLength = SA.GetLcp(n.Interval.start, n.Interval.end);
-                        botPattern = string.Concat(SA.S.Take(new Range(SA.Sa[n.Interval.start], SA.Sa[n.Interval.start] + patLength)));
+                        botPattern = string.Concat(SA.m_str.Take(new Range(SA.m_sa[n.Interval.start], SA.m_sa[n.Interval.start] + patLength)));
                     }
                 }
 
@@ -74,13 +73,13 @@ namespace ConsoleApp.DataStructures
             }
 
 
-            var midNodes = Tree.Values.Where(n => n.SubtreeSize > Math.Sqrt(SA.n));
+            var midNodes = Tree.Values.Where(n => n.SubtreeSize > Math.Sqrt(SA.n.Value));
             for (int i = 0; i < 5; i++)
             {
                 int index = r.Next(0, midNodes.Count());
                 var node = midNodes.ElementAt(index);
                 var patLength = SA.GetLcp(node.Interval.start, node.Interval.end);
-                midPatterns[i] = string.Concat(SA.S.Take(new Range(SA.Sa[node.Interval.start], SA.Sa[node.Interval.start] + patLength)));
+                midPatterns[i] = string.Concat(SA.m_str.Take(new Range(SA.m_sa[node.Interval.start], SA.m_sa[node.Interval.start] + patLength)));
             }
 
 

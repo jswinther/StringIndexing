@@ -13,7 +13,7 @@ namespace ConsoleApp.DataStructures.Reporting
         public SA_R_V2(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
-            SA.BuildChildTable();
+            
         }
 
         public override IEnumerable<int> Matches(string pattern)
@@ -31,7 +31,7 @@ namespace ConsoleApp.DataStructures.Reporting
             List<int> ints = new(int2.j - int2.i + 1);
             for (int i = int1.i; i <= int1.j; i++)
             {
-                if (i + pattern1.Length + x < SA.n)
+                if (i + pattern1.Length + x < SA.n.Value)
                 {
                     ints.Add(SA[i + pattern1.Length + x]);
                 }

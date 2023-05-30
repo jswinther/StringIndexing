@@ -26,8 +26,8 @@ namespace ConsoleApp.DataStructures.Reporting
         {
             SA = new SuffixArrayFinal(str);
             // Populates _nodes and _leaves
-            int minIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n));
-            SA.BuildChildTable();
+            int minIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
+            
             SA.GetAllLcpIntervals(1, out Tree, out Leaves1, out Root);
             Leaves = Leaves1.Keys.ToArray();
             UpdateDeepestLeaf();

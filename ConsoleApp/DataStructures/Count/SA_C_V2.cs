@@ -20,15 +20,15 @@ namespace ConsoleApp.DataStructures.Count
         public SA_C_V2(string str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
         {
             SA = new SuffixArrayFinal(str);
-            SA.BuildChildTable();
+            
             //SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
-            int n = SA.n;
+            int n = SA.n.Value;
             variableLeafPairs = new int[n][];
             fixedLeafPairs = new int[n];
             for (int lcpPos = 0; lcpPos < n; lcpPos++)
             {
                 List<int> variable = new List<int>();
-                var suffPos = SA[lcpPos];
+                var suffPos = SA.m_sa[lcpPos];
 
                 for (int realOffset = ymin; realOffset <= ymax; realOffset++)
                 {

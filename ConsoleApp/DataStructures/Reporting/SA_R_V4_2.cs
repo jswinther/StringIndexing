@@ -30,9 +30,9 @@ namespace ConsoleApp.DataStructures.Reporting
         {
             SA = new SuffixArrayFinal(str);
             // Populates _nodes and _leaves
-            MinIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n));
-            MaxIntervalSize = (int)Math.Floor(Math.Pow(SA.n,(0.667)));
-            SA.BuildChildTable();
+            MinIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
+            MaxIntervalSize = (int)Math.Floor(Math.Pow(SA.n.Value,(0.667)));
+            
             SA.GetAllLcpIntervals(MinIntervalSize, out Tree, out Leaves1, out Root);
             Leaves = Leaves1.Keys.ToArray();
             //UpdateDeepestLeaf();

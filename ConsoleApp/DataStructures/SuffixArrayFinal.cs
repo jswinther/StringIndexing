@@ -1,37 +1,50 @@
-﻿using C5;
-using ConsoleApp.Data.Obsolete;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static ConsoleApp.DataStructures.SuffixArrayFinal;
-
-namespace ConsoleApp.DataStructures
+﻿namespace ConsoleApp.DataStructures
 {
-    internal partial class SuffixArrayFinal
+    public class SuffixArrayFinal
     {
-        public const int EOC = int.MaxValue;
-        public int[] m_sa;
-        public int[] m_isa;
-        public int[] m_lcp;
-        public HashDictionary<char, int> m_chainHeadsDict = new HashDictionary<char, int>(new CharComparer());
-        public List<Chain> m_chainStack = new List<Chain>();
-        public ArrayList<Chain> m_subChains = new ArrayList<Chain>();
+        public static int? k = 0;
+        public int? n { get; set; }
+        public int[]? m_sa { get; set; }
+        public int[]? m_isa { get; set; }
+        public int[]? m_lcp { get; set; }
+        public string? m_str { get; set; }
+        public ChildNode[]? m_ctable { get; set; }
+        public Dictionary<char, int>? m_chainHeadsDict = new(new CharComparer());
+        public List<Chain>? m_chainStack = new();
+        public List<Chain>? m_subChains = new();
         public int m_nextRank = 1;
-        public string m_str;
-        public int n;
-        public (int Up, int Down, int Next)[] Children;
-        public static int k; // number of digits
+
+        public struct ChildNode
+        {
+            public ChildNode()
+            {
+                
+            }
+            public ChildNode(int up, int down, int next)
+            {
+                Up = up;
+                Down = down;
+                Next = next;
+            }
+
+            public int Up { get; set; } = -1;
+            public int Down { get; set; } = -1;
+            public int Next { get; set; } = -1;
+        }
+
+        public SuffixArrayFinal()
+        {
+            
+        }
 
         public SuffixArrayFinal(string str)
         {
-            m_str = str;
-            m_str += "|";
+            m_str = str + "|";
             n = m_str.Length;
-            m_sa = new int[n];
-            m_isa = new int[n];
-
+            m_sa = new int[n.Value];
+            m_isa = new int[n.Value];
+            m_ctable = new ChildNode[n.Value];
+            
             do
             {
                 n /= 10;
@@ -41,86 +54,18 @@ namespace ConsoleApp.DataStructures
             FormInitialChains();
             BuildSuffixArray();
             BuildLcpArray();
-            Children = new (int Up, int Down, int Next)[n];
-
+            BuildChildTable();
         }
 
-        public int this[int index]
-        {
-            get { return Sa[index]; }
-        }
-
-        public int Length
-        {
-            get { return Sa.Length; }
-        }
-
-        public int[] Sa { get => m_sa; set => m_sa = value; }
-        public int[] Lcp1 { get => m_lcp; set => m_lcp = value; }
-        public string S { get => m_str; }
-
-        public void ComputeLCP()
-        {
-            int n = m_str.Length;
-            Lcp1 = new int[n];
-            int[] rank = new int[n];
-
-            // Compute rank array
-            for (int i = 0; i < n; i++)
-            {
-                rank[Sa[i]] = i;
-            }
-
-            int k = 0;
-
-            // Compute LCP array
-            for (int i = 0; i < n; i++)
-            {
-                if (rank[i] == n - 1)
-                {
-                    k = 0;
-                    continue;
-                }
-
-                int j = Sa[rank[i] + 1];
-
-                while (i + k < n && j + k < n && m_str[i + k] == m_str[j + k])
-                {
-                    k++;
-                }
-
-                Lcp1[rank[i]] = k;
-
-                if (k > 0)
-                {
-                    k--;
-                }
-            }
-        }
-
-        public int Lcp(string s1, string s2)
-        {
-            int n = Math.Min(s1.Length, s2.Length);
-            for (int i = 0; i < n; i++)
-            {
-                if (s1[i] != s2[i])
-                {
-                    return i;
-                }
-            }
-            return n;
-        }
-
-
-
+        #region Construction
         private void BuildLcpArray()
         {
-            Lcp1 = new int[Sa.Length + 1];
-            Lcp1[0] = Lcp1[Sa.Length] = 0;
+            m_lcp = new int[m_sa.Length + 1];
+            m_lcp[0] = m_lcp[m_sa.Length] = 0;
 
-            for (int i = 1; i < Sa.Length; i++)
+            for (int i = 1; i < m_sa.Length; i++)
             {
-                Lcp1[i] = CalcLcp(Sa[i - 1], Sa[i]);
+                m_lcp[i] = CalcLcp(m_sa[i - 1], m_sa[i]);
             }
         }
 
@@ -132,7 +77,7 @@ namespace ConsoleApp.DataStructures
                 Chain chain = m_chainStack[m_chainStack.Count - 1];
                 m_chainStack.RemoveAt(m_chainStack.Count - 1);
 
-                if (m_isa[chain.head] == EOC)
+                if (m_isa[chain.head] == int.MaxValue)
                 {
                     // Singleton (A chain that contain only 1 suffix)
                     RankSuffix(chain.head);
@@ -156,23 +101,23 @@ namespace ConsoleApp.DataStructures
         private void ExtendChain(Chain chain)
         {
             char sym = m_str[chain.head + chain.length];
-            if (m_chainHeadsDict.Contains(sym))
+            if (m_chainHeadsDict.ContainsKey(sym))
             {
                 // Continuation of an existing chain, this is the leftmost
                 // occurence currently known (others may come up later)
                 m_isa[m_chainHeadsDict[sym]] = chain.head;
-                m_isa[chain.head] = EOC;
+                m_isa[chain.head] = int.MaxValue;
             }
             else
             {
                 // This is the beginning of a new subchain
-                m_isa[chain.head] = EOC;
+                m_isa[chain.head] = int.MaxValue;
                 Chain newChain = new Chain(m_str);
                 newChain.head = chain.head;
                 newChain.length = chain.length + 1;
                 m_subChains.Add(newChain);
             }
-            // Save index in case we find a continuation of this chain
+            // m_save index in case we find a continuation of this chain
             m_chainHeadsDict[sym] = chain.head;
         }
 
@@ -181,13 +126,13 @@ namespace ConsoleApp.DataStructures
             // Scan the string left to right, keeping rightmost occurences of characters as the chain heads
             for (int i = 0; i < m_str.Length; i++)
             {
-                if (m_chainHeadsDict.Contains(m_str[i]))
+                if (m_chainHeadsDict.ContainsKey(m_str[i]))
                 {
                     m_isa[i] = m_chainHeadsDict[m_str[i]];
                 }
                 else
                 {
-                    m_isa[i] = EOC;
+                    m_isa[i] = int.MaxValue;
                 }
                 m_chainHeadsDict[m_str[i]] = i;
             }
@@ -205,28 +150,28 @@ namespace ConsoleApp.DataStructures
 
         // 6.2, 6.5
 
-        public void BuildChildTable()
+        private void BuildChildTable()
         {
             Stack<int> stack = new Stack<int>();
             int lastIndex = -1;
             stack.Push(0);
             for (int i = 1; i < n; i++)
             {
-                Children[i].Next = -1;
-                Children[i].Up = -1;
-                Children[i].Down = -1;
-                while (Lcp1[i] < Lcp1[stack.Peek()])
+                m_ctable[i].Next = -1;
+                m_ctable[i].Up = -1;
+                m_ctable[i].Down = -1;
+                while (m_lcp[i] < m_lcp[stack.Peek()])
                 {
                     lastIndex = stack.Pop();
-                    if (Lcp1[i] <= Lcp1[stack.Peek()] && Lcp1[stack.Peek()] != Lcp1[lastIndex])
+                    if (m_lcp[i] <= m_lcp[stack.Peek()] && m_lcp[stack.Peek()] != m_lcp[lastIndex])
                     {
-                        Children[stack.Peek()].Down = lastIndex;
+                        m_ctable[stack.Peek()].Down = lastIndex;
                     }
                 }
 
                 if (lastIndex != -1)
                 {
-                    Children[i].Up = lastIndex;
+                    m_ctable[i].Up = lastIndex;
                     lastIndex = -1;
                 }
                 stack.Push(i);
@@ -235,15 +180,15 @@ namespace ConsoleApp.DataStructures
             stack2.Push(0);
             for (int i = 1; i < n; i++)
             {
-                while (Lcp1[i] < Lcp1[stack2.Peek()])
+                while (m_lcp[i] < m_lcp[stack2.Peek()])
                 {
                     stack2.Pop();
                 }
 
-                if (Lcp1[i] == Lcp1[stack2.Peek()])
+                if (m_lcp[i] == m_lcp[stack2.Peek()])
                 {
                     lastIndex = stack2.Pop();
-                    Children[lastIndex].Next = i;
+                    m_ctable[lastIndex].Next = i;
                 }
                 stack2.Push(i);
             }
@@ -251,25 +196,25 @@ namespace ConsoleApp.DataStructures
 
         //6.7
 
-        public List<(int, int)> GetChildIntervals(int i, int j)
+        private List<(int, int)> GetChildIntervals(int i, int j)
         {
             if (j < i) return new List<(int, int)>();
-            if (j + 1 == Children.Length) return new List<(int, int)>();
+            if (j + 1 == m_ctable.Length) return new List<(int, int)>();
             List<(int, int)> intervals = new List<(int, int)>();
             int i1 = 0;
-            if (i != -1 && i < Children[j + 1].Up && Children[j + 1].Up <= j)
+            if (i != -1 && i < m_ctable[j + 1].Up && m_ctable[j + 1].Up <= j)
             {
-                i1 = Children[j + 1].Up;
+                i1 = m_ctable[j + 1].Up;
             }
             else if (i != -1)
             {
-                i1 = Children[i].Down;
+                i1 = m_ctable[i].Down;
             }
             i = i == -1 ? 0 : i;
             intervals.Add((i, i1 - 1));
-            while (i1 != -1 && Children[i1].Next != -1)
+            while (i1 != -1 && m_ctable[i1].Next != -1)
             {
-                var i2 = Children[i1].Next;
+                var i2 = m_ctable[i1].Next;
                 i1 = i1 == -1 ? 0 : i1;
                 intervals.Add((i1, i2 - 1));
                 i1 = i2;
@@ -282,21 +227,21 @@ namespace ConsoleApp.DataStructures
 
         //Only works on interval [0..n]
 
-        public (int, int) GetIntervalInit(int i, int j, char c, int ci)
+        private (int, int) GetIntervalInit(int i, int j, char c, int ci)
         {
             if (j < i) return (-1, -1);
-            int i1 = Children[i].Next;
+            int i1 = m_ctable[i].Next;
 
-            if (S[Sa[i] + ci] == c && S[Sa[i1 - 1] + ci] == c)
+            if (m_str[m_sa[i] + ci] == c && m_str[m_sa[i1 - 1] + ci] == c)
             {
                 return (i, i1 - 1);
             }
             //intervals.Add((i, i1 - 1));
             int i2 = -1;
-            while (Children[i1].Next != -1)
+            while (m_ctable[i1].Next != -1)
             {
-                i2 = Children[i1].Next;
-                if (S[Sa[i1] + ci] == c && S[Sa[i2 - 1] + ci] == c)
+                i2 = m_ctable[i1].Next;
+                if (m_str[m_sa[i1] + ci] == c && m_str[m_sa[i2 - 1] + ci] == c)
                 {
                     return (i1, i2 - 1);
                 }
@@ -304,7 +249,7 @@ namespace ConsoleApp.DataStructures
                 i1 = i2;
             }
             //intervals.Add((i1, j));
-            if (S[Sa[i1] + ci] == c)
+            if (m_str[m_sa[i1] + ci] == c)
             {
                 return (i1, j);
             }
@@ -313,28 +258,28 @@ namespace ConsoleApp.DataStructures
         }
 
 
-        public (int, int) GetInterval(int i, int j, char c, int ci)
+        private (int, int) GetInterval(int i, int j, char c, int ci)
         {
             int i1;
-            if (i < Children[j + 1].Up && Children[j + 1].Up <= j)
+            if (i < m_ctable[j + 1].Up && m_ctable[j + 1].Up <= j)
             {
-                i1 = Children[j + 1].Up;
+                i1 = m_ctable[j + 1].Up;
 
             }
             else
             {
-                i1 = Children[i].Down;
+                i1 = m_ctable[i].Down;
             }
-            if (S[Sa[i] + ci] == c && S[Sa[i1 - 1] + ci] == c)
+            if (m_str[m_sa[i] + ci] == c && m_str[m_sa[i1 - 1] + ci] == c)
             {
                 return (i, i1 - 1);
             }
             //intervals.Add((i, i1 - 1));
             int i2 = -1;
-            while (Children[i1].Next != -1)
+            while (m_ctable[i1].Next != -1)
             {
-                i2 = Children[i1].Next;
-                if (S[Sa[i1] + ci] == c && S[Sa[i2 - 1] + ci] == c)
+                i2 = m_ctable[i1].Next;
+                if (m_str[m_sa[i1] + ci] == c && m_str[m_sa[i2 - 1] + ci] == c)
                 {
                     return (i1, i2 - 1);
                 }
@@ -342,240 +287,12 @@ namespace ConsoleApp.DataStructures
                 i1 = i2;
             }
             //intervals.Add((i1, j));
-            if (S[Sa[i1] + ci] == c && S[Sa[j] + ci] == c)
+            if (m_str[m_sa[i1] + ci] == c && m_str[m_sa[j] + ci] == c)
             {
                 return (i1, j);
             }
             else return (-1, -1);
         }
-
-        public (int i, int j) ExactStringMatchingWithESA(string pattern)
-        {
-            int c = 0;
-            bool queryFound = true;
-            //(int i, int j) = GetInterval(0, N - 1, pattern[c], c);
-            (int i, int j) = GetIntervalInit(0, n - 1, pattern[c], c);
-            while (i != -1 && j != -1 && c < pattern.Length && queryFound)
-            {
-                int idx = Sa[i];
-                if (i != j)
-                {
-                    int l = GetLcp(i, j);
-                    int min = Math.Min(l, pattern.Length);
-                    queryFound = (i, j) != (-1, -1);
-                    c = min;
-                    if (c == pattern.Length) return (i, j);
-                    (i, j) = GetInterval(i, j, pattern[c], c);
-                }
-                else
-                {
-                    queryFound = ComparePrefix(pattern, S.Substring(idx)) == 0;
-                    if (queryFound) break;
-                }
-            }
-            if (queryFound)
-            {
-                return (i, j);
-            }
-            else
-            {
-                return (-1, -1);
-            }
-        }
-
-        int ComparePrefix(string pattern, string suffix)
-        {
-            int n = Math.Min(pattern.Length, suffix.Length);
-            for (int i = 0; i < n; i++)
-            {
-                if (pattern[i] < suffix[i])
-                {
-                    return -1;
-                }
-                else if (pattern[i] > suffix[i])
-                {
-                    return 1;
-                }
-            }
-            return 0;
-        }
-
-        public IEnumerable<(int, int)> ReportOccurences(string pattern1, int y_min, int y_max, string pattern2, IEnumerable<int> occurrencesP1, SortedSet<int> occurencesP2)
-        {
-            List<(int, int)> occs = new();
-            foreach (var occ1 in occurrencesP1)
-            {
-                int min = occ1 + y_min + pattern1.Length;
-                int max = occ1 + y_max + pattern1.Length;
-                foreach (var occ2 in occurencesP2.GetViewBetween(min, max))
-                {
-                    occs.Add((occ1, occ2 - occ1 + pattern2.Length));
-                }
-            }
-
-
-            return occs;
-        }
-
-
-
-
-        public void GetAllLcpIntervals(int minSize, out Dictionary<(int, int), IntervalNode> _nodes, out Dictionary<(int, int), IntervalNode> _leaves, out IntervalNode root)
-        {
-
-            _nodes = new();
-            _leaves = new();
-            System.Collections.Generic.HashSet<(int, int)> hashSet = new();
-            Queue<(int, int)> intervals = new Queue<(int, int)>();
-            intervals.Enqueue((0, n - 1));
-            // First add child intervals for the interval [0..n]
-            var Initinterval = intervals.Dequeue();
-            hashSet.Add((Initinterval.Item1, Initinterval.Item2));
-            root = new IntervalNode(Initinterval, null, 0);
-            _nodes.Add(Initinterval, root);
-            var currNode = _nodes[Initinterval];
-            foreach (var item in GetChildIntervalsInit(Initinterval.Item1, Initinterval.Item2))
-            {
-                if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize - 1)
-                {
-                    if (!hashSet.Contains(item)) intervals.Enqueue(item);
-                    hashSet.Add(item);
-                    var child = new IntervalNode(item, currNode, currNode.DistanceToRoot + 1);
-                    currNode.Children.Add(child);
-                    var occs = GetOccurrencesForInterval(item);
-                    currNode.Min = occs.Min();
-                    currNode.Max = occs.Max();
-                    _nodes.Add(item, child);
-                }
-            }
-            while (intervals.Count > 0)
-            {
-                var interval = intervals.Dequeue();
-                hashSet.Add(interval);
-                _nodes.TryGetValue(interval, out currNode);
-                if (interval.Item1 == interval.Item2)
-                {
-                    _leaves.Add(interval, currNode);
-                }
-                else
-                {
-                    foreach (var item in GetChildIntervals(interval.Item1, interval.Item2))
-                    {
-                        if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize - 1)
-                        {
-
-                            intervals.Enqueue(item);
-                            var child = new IntervalNode(item, currNode, currNode.DistanceToRoot + 1);
-                            currNode.Children.Add(child);
-                            var occs = GetOccurrencesForInterval(item);
-                            currNode.Min = occs.Min();
-                            currNode.Max = occs.Max();
-                            _nodes.Add(item, child);
-                        }
-                    }
-
-                    if (currNode.Children.Count == 0)
-                    {
-                        _leaves.Add(currNode.Interval, currNode);
-                    }
-                }
-
-            }
-            root.SubtreeSize = Update(root);
-        }
-
-
-
-
-
-
-        //Only works on interval [0..n]
-        public List<(int, int)> GetChildIntervalsInit(int i, int j)
-        {
-            if (j < i) return new List<(int, int)>();
-            List<(int, int)> intervals = new List<(int, int)>();
-            int i1 = Children[i].Next;
-            intervals.Add((i, i1 - 1));
-            while (Children[i1].Next != -1)
-            {
-                var i2 = Children[i1].Next;
-                intervals.Add((i1, i2 - 1));
-                i1 = i2;
-
-            }
-            intervals.Add((i1, j));
-            return intervals;
-
-        }
-
-        // expects two sorted arrays
-        public IEnumerable<(int, int)> FindFirstOccurrenceForEachPattern1Occurrence(string pattern1, int y_min, int y_max, string pattern2, int[] occs1, int[] occs2)
-        {
-            List<(int, int)> occs = new List<(int, int)>();
-            int k = 0;
-            for (int i = 0; i < occs1.Length; i++)
-            {
-                int occ1 = occs1[i];
-
-                int min = occ1 + pattern1.Length + y_min;
-                int max = occ1 + pattern1.Length + y_max;
-
-                for (int j = k; j < occs2.Length; j++)
-                {
-                    int occ2 = occs2[j];
-                    if (min <= occ2 && occ2 <= max)
-                    {
-                        occs.Add((occ1, occs2[j] - occ1 + pattern2.Length));
-                        break;
-                    }
-                    else
-                    {
-                        k++;
-                    }
-                }
-            }
-            return occs;
-        }
-
-        public int[] GetOccurrencesForPattern(string pattern)
-        {
-            (int start, int end) = ExactStringMatchingWithESA(pattern);
-            return GetOccurrencesForInterval(start, end);
-        }
-
-        public int[] GetOccurrencesForInterval((int start, int end) interval)
-        {
-            return GetOccurrencesForInterval(interval.start, interval.end);
-        }
-
-        public int[] GetOccurrencesForInterval(int start, int end)
-        {
-            if (start == -1 && end == -1) return new int[] { };
-            int[] occurrences = new int[end + 1 - start];
-            for (int i = 0; i < occurrences.Length; i++)
-            {
-                occurrences[i] = Sa[i + start];
-            }
-            return occurrences;
-        }
-
-        public int GetLcp(int i, int j)
-        {
-            var sufi = S.Substring(Sa[i]);
-            var sufj = S.Substring(Sa[j]);
-            int minLength = Math.Min(sufi.Length, sufj.Length);
-            int k = 0;
-            while (k < minLength && sufi[k] == sufj[k])
-            {
-                ++k;
-            }
-            return k;
-        }
-
-
-
-
-
 
         private void FormInitialChains()
         {
@@ -589,7 +306,7 @@ namespace ConsoleApp.DataStructures
             // We use the ISA to hold both ranks and chain links, so we differentiate by setting
             // the sign.
             m_isa[index] = -m_nextRank;
-            Sa[m_nextRank - 1] = index;
+            m_sa[m_nextRank - 1] = index;
             m_nextRank++;
         }
 
@@ -597,7 +314,7 @@ namespace ConsoleApp.DataStructures
         {
             m_chainHeadsDict.Clear();
             m_subChains.Clear();
-            while (chain.head != EOC)
+            while (chain.head != int.MaxValue)
             {
                 int nextIndex = m_isa[chain.head];
                 if (chain.head + chain.length > m_str.Length - 1)
@@ -617,11 +334,11 @@ namespace ConsoleApp.DataStructures
         private void RefineChainWithInductionSorting(Chain chain)
         {
             // TODO - refactor/beautify some
-            ArrayList<SuffixRank> notedSuffixes = new ArrayList<SuffixRank>();
+            List<SuffixRank> notedSuffixes = new List<SuffixRank>();
             m_chainHeadsDict.Clear();
             m_subChains.Clear();
 
-            while (chain.head != EOC)
+            while (chain.head != int.MaxValue)
             {
                 int nextIndex = m_isa[chain.head];
                 if (chain.head + chain.length > m_str.Length - 1)
@@ -658,7 +375,7 @@ namespace ConsoleApp.DataStructures
             }
         }
 
-        private void SortAndRankNotedSuffixes(ArrayList<SuffixRank> notedSuffixes)
+        private void SortAndRankNotedSuffixes(List<SuffixRank> notedSuffixes)
         {
             notedSuffixes.Sort(new SuffixRankComparer());
             // Rank sorted noted suffixes 
@@ -666,6 +383,174 @@ namespace ConsoleApp.DataStructures
             {
                 RankSuffix(notedSuffixes[i].head);
             }
+        }
+        #endregion
+
+        #region public
+        private int ComparePrefix(string pattern, string suffix)
+        {
+            int n = Math.Min(pattern.Length, suffix.Length);
+            for (int i = 0; i < n; i++)
+            {
+                if (pattern[i] < suffix[i])
+                {
+                    return -1;
+                }
+                else if (pattern[i] > suffix[i])
+                {
+                    return 1;
+                }
+            }
+            return 0;
+        }
+
+
+        public (int i, int j) ExactStringMatchingWithESA(string pattern)
+        {
+            int c = 0;
+            bool queryFound = true;
+            //(int i, int j) = GetInterval(0, N - 1, pattern[c], c);
+            (int i, int j) = GetIntervalInit(0, n.Value - 1, pattern[c], c);
+            while (i != -1 && j != -1 && c < pattern.Length && queryFound)
+            {
+                int idx = m_sa[i];
+                if (i != j)
+                {
+                    int l = GetLcp(i, j);
+                    int min = Math.Min(l, pattern.Length);
+                    queryFound = (i, j) != (-1, -1);
+                    c = min;
+                    if (c == pattern.Length) return (i, j);
+                    (i, j) = GetInterval(i, j, pattern[c], c);
+                }
+                else
+                {
+                    queryFound = ComparePrefix(pattern, m_str.Substring(idx)) == 0;
+                    if (queryFound) break;
+                }
+            }
+            if (queryFound)
+            {
+                return (i, j);
+            }
+            else
+            {
+                return (-1, -1);
+            }
+        }
+
+        public void GetAllLcpIntervals(int minSize, out Dictionary<(int, int), IntervalNode> _nodes, out Dictionary<(int, int), IntervalNode> _leaves, out IntervalNode root)
+        {
+
+            _nodes = new();
+            _leaves = new();
+            System.Collections.Generic.HashSet<(int, int)> hashSet = new();
+            Queue<(int, int)> intervals = new Queue<(int, int)>();
+            intervals.Enqueue((0, n.Value - 1));
+            // First add child intervals for the interval [0..n]
+            var Initinterval = intervals.Dequeue();
+            hashSet.Add((Initinterval.Item1, Initinterval.Item2));
+            root = new IntervalNode(Initinterval, null, 0);
+            _nodes.Add(Initinterval, root);
+            var currNode = _nodes[Initinterval];
+            foreach (var item in GetChildIntervalsInit(Initinterval.Item1, Initinterval.Item2))
+            {
+                if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize - 1)
+                {
+                    if (!hashSet.Contains(item)) intervals.Enqueue(item);
+                    hashSet.Add(item);
+                    var child = new IntervalNode(item, currNode, currNode.DistanceToRoot + 1);
+                    currNode.Children.Add(child);
+                    var occs = GetOccurrencesForInterval(item);
+                    currNode.Min = occs.Min();
+                    currNode.Max = occs.Max();
+                    _nodes.Add(item, child);
+                }
+            }
+            while (intervals.Count > 0)
+            {
+                var interval = intervals.Dequeue();
+                hashSet.Add(interval);
+                _nodes.TryGetValue(interval, out currNode);
+                if (interval.Item1 == interval.Item2)
+                {
+                    _leaves.Add(interval, currNode);
+                }
+                else
+                {
+                    foreach (var item in GetChildIntervals(interval.Item1, interval.Item2))
+                    {
+                        if (item != (-1, -1) && item.Item2 - item.Item1 >= minSize - 1)
+                        {
+                            intervals.Enqueue(item);
+                            var child = new IntervalNode(item, currNode, currNode.DistanceToRoot + 1);
+                            currNode.Children.Add(child);
+                            _nodes.Add(item, child);
+                        }
+                    }
+
+                    if (currNode.Children.Count == 0)
+                    {
+                        _leaves.Add(currNode.Interval, currNode);
+                    }
+                }
+
+            }
+            root.SubtreeSize = Update(root);
+        }
+
+        public int[] GetOccurrencesForPattern(string pattern)
+        {
+            (int start, int end) = ExactStringMatchingWithESA(pattern);
+            return GetOccurrencesForInterval(start, end);
+        }
+
+        public int[] GetOccurrencesForInterval((int start, int end) interval)
+        {
+            return GetOccurrencesForInterval(interval.start, interval.end);
+        }
+
+        public int[] GetOccurrencesForInterval(int start, int end)
+        {
+            if (start == -1 && end == -1) return new int[] { };
+            int[] occurrences = new int[end + 1 - start];
+            for (int i = 0; i < occurrences.Length; i++)
+            {
+                occurrences[i] = m_sa[i + start];
+            }
+            return occurrences;
+        }
+
+        public int GetLcp(int i, int j)
+        {
+            var sufi = m_str.Substring(m_sa[i]);
+            var sufj = m_str.Substring(m_sa[j]);
+            int minLength = Math.Min(sufi.Length, sufj.Length);
+            int k = 0;
+            while (k < minLength && sufi[k] == sufj[k])
+            {
+                ++k;
+            }
+            return k;
+        }
+
+        //Only works on interval [0..n]
+        public List<(int, int)> GetChildIntervalsInit(int i, int j)
+        {
+            if (j < i) return new List<(int, int)>();
+            List<(int, int)> intervals = new List<(int, int)>();
+            int i1 = m_ctable[i].Next;
+            intervals.Add((i, i1 - 1));
+            while (m_ctable[i1].Next != -1)
+            {
+                var i2 = m_ctable[i1].Next;
+                intervals.Add((i1, i2 - 1));
+                i1 = i2;
+
+            }
+            intervals.Add((i1, j));
+            return intervals;
+
         }
 
         public int Update(IntervalNode node)
@@ -679,5 +564,82 @@ namespace ConsoleApp.DataStructures
             }
             return sum + 1;
         }
+        #endregion
     }
+
+    #region HelperClasses
+    [Serializable]
+    public class Chain : IComparable<Chain>
+    {
+        public int head;
+        public int length;
+        private string m_str;
+
+        public Chain(string str)
+        {
+            m_str = str;
+        }
+
+        public int CompareTo(Chain other)
+        {
+            return HomemadeCompare(head, other.head);
+            //return m_str.Substring(head, length).CompareTo(m_str.Substring(other.head, other.length));
+        }
+
+        private int HomemadeCompare(int x, int y)
+        {
+            int i = x, j = y;
+            while (i < m_str.Length && j < m_str.Length)
+            {
+                if (m_str[i] != m_str[j])
+                {
+                    return m_str[i].CompareTo(m_str[j]);
+                }
+                i++;
+                j++;
+            }
+            return i - j;
+        }
+
+        public override string ToString()
+        {
+            return m_str.Substring(head, length);
+        }
+    }
+
+    [Serializable]
+    internal class CharComparer : System.Collections.Generic.EqualityComparer<char>
+    {
+        public override bool Equals(char x, char y)
+        {
+            return x.Equals(y);
+        }
+
+        public override int GetHashCode(char obj)
+        {
+            return obj.GetHashCode();
+        }
+    }
+
+    [Serializable]
+    internal struct SuffixRank
+    {
+        public int head;
+        public int rank;
+    }
+
+    [Serializable]
+    internal class SuffixRankComparer : IComparer<SuffixRank>
+    {
+        public bool Equals(SuffixRank x, SuffixRank y)
+        {
+            return x.rank.Equals(y.rank);
+        }
+
+        public int Compare(SuffixRank x, SuffixRank y)
+        {
+            return x.rank.CompareTo(y.rank);
+        }
+    }
+    #endregion
 }

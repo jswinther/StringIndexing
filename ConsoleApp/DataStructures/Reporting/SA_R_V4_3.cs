@@ -26,10 +26,10 @@ namespace ConsoleApp.DataStructures.Reporting
         public SA_R_V4_3(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
-            MinSize = Math.Pow(SA.n, 0.33);
-            MaxSize = Math.Pow(SA.n, 0.75); 
+            MinSize = Math.Pow(SA.n.Value, 0.33);
+            MaxSize = Math.Pow(SA.n.Value, 0.75); 
             
-            SA.BuildChildTable();
+            
             SA.GetAllLcpIntervals((int)MinSize, out Tree, out Leaves1, out Root);
             Leaves = Leaves1.Keys.ToArray();
             UpdateDeepestLeaf();

@@ -22,7 +22,7 @@ namespace ConsoleApp.DataStructures.Reporting
         public SA_R_V3(string S) : base(S)
         {
             SA = new SuffixArrayFinal(S);
-            SA.BuildChildTable();
+            
             SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
             var keys = Tree.Keys.ToList();
 
@@ -47,7 +47,7 @@ namespace ConsoleApp.DataStructures.Reporting
         {
             var interval = SA.ExactStringMatchingWithESA(pattern);
             if (interval == (-1, -1)) return new int[] { };
-            if (interval.j - interval.i == 0) return new int[] { SA[interval.i] };
+            if (interval.j - interval.i == 0) return new int[] { SA.m_sa[interval.i] };
             return sorted[interval];
         }
 

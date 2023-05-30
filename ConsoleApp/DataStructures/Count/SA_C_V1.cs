@@ -14,7 +14,6 @@ namespace ConsoleApp.DataStructures.Count
         public SA_C_V1(string str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
         {
             SA = new SuffixArrayFinal(str);
-            SA.BuildChildTable();
         }
 
         public override int Matches(string pattern)

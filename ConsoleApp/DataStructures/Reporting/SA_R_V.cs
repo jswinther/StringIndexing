@@ -16,7 +16,7 @@ namespace ConsoleApp.DataStructures.Reporting
         public SA_R_V(string str) : base(str)
         {
             SA = new(str);
-            SA.BuildChildTable();
+            
             SA.GetAllLcpIntervals(0, out Tree, out Leaves, out Root);
             int x = 5;
             foreach (((int start, int end), IntervalNode leafNode) in Leaves)

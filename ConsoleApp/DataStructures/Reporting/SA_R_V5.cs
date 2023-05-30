@@ -12,7 +12,7 @@ namespace ConsoleApp.DataStructures.Reporting
         public SA_R_V5(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
-            SA.BuildChildTable();
+            
         }
 
         public override IEnumerable<int> Matches(string pattern)

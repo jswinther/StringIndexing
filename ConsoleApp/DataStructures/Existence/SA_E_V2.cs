@@ -33,16 +33,16 @@ namespace ConsoleApp.DataStructures.Existence
             FixedGap = fixedGap;
             MinGap = minGap;
             MaxGap = maxGap;
-            SA.BuildChildTable();
+            
             int minSizeForLcpIntervals = 0;
-            int minSizeSaved = (int)Math.Sqrt(SA.n);
+            int minSizeSaved = (int)Math.Sqrt(SA.n.Value);
             SA.GetAllLcpIntervals(minSizeForLcpIntervals, out Tree, out Leaves, out Root);
-            //SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n), out TreeSqrt, out LeavesSqrt);
+            //SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n.Value), out TreeSqrt, out LeavesSqrt);
            
 
 
             /*Precomputation 1
-            foreach (var int1 in Tree.Keys.Where(s => s.Item2 - s.Item1 > Math.Sqrt(SA.n)))
+            foreach (var int1 in Tree.Keys.Where(s => s.Item2 - s.Item1 > Math.Sqrt(SA.n.Value)))
             {
                 //var occs2 = new HashSet<int>(SA.GetOccurrencesForInterval(int2));
                 var occs1 = SA.GetOccurrencesForInterval(int1);
@@ -108,7 +108,7 @@ namespace ConsoleApp.DataStructures.Existence
 
         private void findBotLevelRec(IntervalNode node, int minSize)
         {
-            //!SA.S.Substring(SA[child.Interval.start],1).Equals("|")
+            //!SA.m_str.Substring(SA[child.Interval.start],1).Equals("|")
             if (node.Children.Any(child => child.Size < minSize && child.Size != 1))
             {
                 BotLevel.Add(node);

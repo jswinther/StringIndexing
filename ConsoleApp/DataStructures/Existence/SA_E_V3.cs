@@ -21,10 +21,10 @@ namespace ConsoleApp.DataStructures.Existence
             this.x = x;
             SA = new SuffixArrayFinal(str);
 
-            SA.BuildChildTable();
-            SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n), out Tree, out Leaves, out Root);
             
-            foreach (var item in Tree.OrderBy(s => s.Value.Size).Take((int)Math.Sqrt(SA.n)))
+            SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n.Value), out Tree, out Leaves, out Root);
+            
+            foreach (var item in Tree.OrderBy(s => s.Value.Size).Take((int)Math.Sqrt(SA.n.Value)))
             {
                 HashedNodes.Add(item.Key, new HashSet<int>(SA.GetOccurrencesForInterval(item.Key)));
             }
@@ -46,7 +46,7 @@ namespace ConsoleApp.DataStructures.Existence
 
         public bool IsIntervalSizeLessThan((int, int) interval, out HashSet<int> occs)
         {
-            var b = interval.Item2 - interval.Item1 < (int)Math.Sqrt(SA.n);
+            var b = interval.Item2 - interval.Item1 < (int)Math.Sqrt(SA.n.Value);
             if (b)
             {
                 occs = new HashSet<int>(SA.GetOccurrencesForInterval(interval));
