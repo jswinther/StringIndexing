@@ -25,37 +25,20 @@ namespace ConsoleApp.DataStructures.Reporting
         public SA_R_V4_1(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
-            // Populates _nodes and _leaves
-            int minIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
-            
-            SA.GetAllLcpIntervals(1, out Tree, out Leaves1, out Root);
-            Leaves = Leaves1.Keys.ToArray();
-            UpdateDeepestLeaf();
-
-
             BuildDataStructure();
-    
-
-            
-
         }
 
         public SA_R_V4_1(SuffixArrayFinal str) : base(str)
         {
             SA = str;
-            // Populates _nodes and _leaves
-            int minIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
-
-            SA.GetAllLcpIntervals(1, out Tree, out Leaves1, out Root);
-            Leaves = Leaves1.Keys.ToArray();
-            UpdateDeepestLeaf();
-
-
             BuildDataStructure();
         }
 
         private void BuildDataStructure()
         {
+            SA.GetAllLcpIntervals(1, out Tree, out Leaves1, out Root);
+            Leaves = Leaves1.Keys.ToArray();
+            UpdateDeepestLeaf();
             SortedTree = new();
             Height = Tree.Last().Value.DistanceToRoot/2;
             Nodes = Tree.Values.ToArray();
@@ -171,8 +154,7 @@ namespace ConsoleApp.DataStructures.Reporting
             List<IntervalNode> nodes = new List<IntervalNode> ();
             
             Queue<IntervalNode> intervalNodes = new Queue<IntervalNode>();
-            var root = Tree.Values.First();
-            foreach (var node in root.Children) intervalNodes.Enqueue(node);
+            foreach (var node in Root.Children) intervalNodes.Enqueue(node);
             while (intervalNodes.Count > 0)
             {
                 IntervalNode node = intervalNodes.Dequeue();
@@ -185,10 +167,7 @@ namespace ConsoleApp.DataStructures.Reporting
                     }
                 }
             }
-
-            var non = nodes.OrderBy(s => s.Interval.start).Select(s => s.Interval);
             TopNodes = nodes.Select(s => s.Interval).ToList();
-            var sum = nodes.Sum(s => s.Size);
         }
 
 

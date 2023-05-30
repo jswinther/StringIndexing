@@ -29,67 +29,31 @@ namespace ConsoleApp.DataStructures.Reporting
         public SA_R_V4_2(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
-            // Populates _nodes and _leaves
-            MinIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
-            MaxIntervalSize = (int)Math.Floor(Math.Pow(SA.n.Value,(0.667)));
-            
-            SA.GetAllLcpIntervals(MinIntervalSize, out Tree, out Leaves1, out Root);
-            Leaves = Leaves1.Keys.ToArray();
-            //UpdateDeepestLeaf();
-
             BuildDataStructure();
-    
-
-            
-
         }
 
         public SA_R_V4_2(SuffixArrayFinal str) : base(str)
         {
             SA = str;
-            // Populates _nodes and _leaves
-            MinIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
-            MaxIntervalSize = (int)Math.Floor(Math.Pow(SA.n.Value, (0.667)));
-
-            SA.GetAllLcpIntervals(MinIntervalSize, out Tree, out Leaves1, out Root);
-            Leaves = Leaves1.Keys.ToArray();
-            //UpdateDeepestLeaf();
-
             BuildDataStructure();
         }
 
         private void BuildDataStructure()
         {
-            SortedTree = new();
-            //Height = Tree.Last().Value.DistanceToRoot/2;
-            Nodes = Tree.Values.ToArray();
-           
+            MinIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
+            MaxIntervalSize = (int)Math.Floor(Math.Pow(SA.n.Value, (0.667)));
+            SA.GetAllLcpIntervals(MinIntervalSize, out Tree, out Leaves1, out Root);
+            Leaves = Leaves1.Keys.ToArray();
 
-            
-           
+
+            SortedTree = new();
+            Nodes = Tree.Values.ToArray();
             foreach (var intervalToBeSorted in Nodes.Where(n => n.Size <= MaxIntervalSize))
             {
                 var occs = SA.GetOccurrencesForInterval(intervalToBeSorted.Interval);
                 occs.Sort();
                 SortedTree.Add(intervalToBeSorted.Interval, occs);
-            }
-            /*HashSet<IntervalNode> parents = new();
-            for (int i = 0; i < TopNodes.Count; i++)
-            {
-                (int, int) leafInterval = TopNodes[i];
-                var leaf = Tree[leafInterval];
-                var parentInterval = leaf.Parent.Interval;
-                while (Tree.ContainsKey(parentInterval))
-                {
-                    var parent = Tree[parentInterval];
-                    parents.Add(parent);
-                    if (parent.LeftMostLeaf > i) Tree[parentInterval].LeftMostLeaf = i;
-                    if (parent.RightMostLeaf < i) Tree[parentInterval].RightMostLeaf = i;
-                    if (parent.Parent == null) break;
-                    parentInterval = parent.Parent.Interval;
-                }
-            }*/
-            
+            }  
         }
 
         private int[] UnsortedOccurrencesForPattern(string pattern)
@@ -197,12 +161,6 @@ namespace ConsoleApp.DataStructures.Reporting
 
 
         #region Query Methods
-
-
-     
-
-
-
         public int[] GetSortedLeavesForInterval((int, int) interval)
         {
             if (!SortedTree.ContainsKey(interval))

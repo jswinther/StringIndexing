@@ -26,35 +26,25 @@ namespace ConsoleApp.DataStructures.Reporting
         public SA_R_V4_3(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
-            MinSize = Math.Pow(SA.n.Value, 0.33);
-            MaxSize = Math.Pow(SA.n.Value, 0.75); 
-            
-            
-            SA.GetAllLcpIntervals((int)MinSize, out Tree, out Leaves1, out Root);
-            Leaves = Leaves1.Keys.ToArray();
-            UpdateDeepestLeaf();
-            Root.SubtreeSize = Update(Root);
             BuildDataStructure();
         }
 
         public SA_R_V4_3(SuffixArrayFinal str) : base(str)
         {
             SA = str;
+            BuildDataStructure();
+        }
+
+        private void BuildDataStructure()
+        {
             MinSize = Math.Pow(SA.n.Value, 0.33);
             MaxSize = Math.Pow(SA.n.Value, 0.75);
 
 
             SA.GetAllLcpIntervals((int)MinSize, out Tree, out Leaves1, out Root);
             Leaves = Leaves1.Keys.ToArray();
-            UpdateDeepestLeaf();
             Root.SubtreeSize = Update(Root);
-            BuildDataStructure();
-        }
-
-        private void BuildDataStructure()
-        {
             SortedTree = new();
-            Height = Tree.Last().Value.DistanceToRoot/2;
             Nodes = Tree.Values.Skip(1).ToArray();
             
 
