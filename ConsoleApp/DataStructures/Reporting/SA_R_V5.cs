@@ -15,6 +15,11 @@ namespace ConsoleApp.DataStructures.Reporting
             
         }
 
+        public SA_R_V5(SuffixArrayFinal str) : base(str)
+        {
+            SA = str;
+        }
+
         public override IEnumerable<int> Matches(string pattern)
         {
             var occs = SA.GetOccurrencesForPattern(pattern);

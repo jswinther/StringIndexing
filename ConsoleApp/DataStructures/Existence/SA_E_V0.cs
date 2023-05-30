@@ -16,6 +16,11 @@ namespace ConsoleApp.DataStructures.Existence
             
         }
 
+        public SA_E_V0(SuffixArrayFinal str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
+        {
+            SA = str;
+        }
+
         public override bool Matches(string pattern)
         {
             (var a, var b) = SA.ExactStringMatchingWithESA(pattern);

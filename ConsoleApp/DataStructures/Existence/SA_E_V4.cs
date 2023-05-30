@@ -52,6 +52,40 @@ namespace ConsoleApp.DataStructures.Existence
 
         }
 
+        public SA_E_V4(SuffixArrayFinal str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
+        {
+            this.x = x;
+            SA = str;
+
+            SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n.Value), out Tree, out Leaves, out Root);
+            var hashed = Leaves.Values.Select(s => new { interval = s.Interval, occs = new HashSet<int>(SA.GetOccurrencesForInterval(s.Interval)) }).ToArray();
+
+            foreach (var item in hashed)
+            {
+                var hs1 = item.occs;
+                Nodes.Add(item.interval, new List<HashSet<(int, int)>>());
+                var no = Nodes[item.interval];
+                for (int i = 0; i < Tree[item.interval].DistanceToRoot + 1; i++)
+                {
+                    no.Add(new HashSet<(int, int)>());
+                    foreach (var item1 in hashed)
+                    {
+                        var hs2 = item1.occs;
+                        if (hs1.Any(o1 => hs2.Contains(o1 + x + i)))
+                        {
+                            no[i].Add(item1.interval);
+                            var parent = Tree[item1.interval].Parent;
+                            while (no[i].Add(parent.Interval))
+                            {
+                                parent = parent.Parent;
+                                if (parent == null) break;
+                            }
+                        }
+                    }
+                }
+            }
+            ComputeLeafIntervals();
+        }
 
         public void ComputeLeafIntervals()
         {

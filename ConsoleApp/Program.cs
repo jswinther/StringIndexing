@@ -6,6 +6,7 @@ using ConsoleApp.DataStructures.Reporting;
 using System;
 using System.Diagnostics;
 using System.Reflection;
+using System.Text.Json;
 using System.Threading.Tasks;
 using static ConsoleApp.Data.Obsolete.AlgoSuffixTreeProblem;
 using static ConsoleApp.Program;
@@ -15,50 +16,50 @@ namespace ConsoleApp
 {
     public class Program
     {
-        public delegate ReportDataStructure BuildReportDataStructure(string str);
-        public delegate ExistDataStructure BuildExistDataStructure(string str, int x, int ymin, int ymax);
-        public delegate CountDataStructure BuildCountDataStructure(string str, int x, int ymin, int ymax);
+        public delegate ReportDataStructure BuildReportDataStructure(SuffixArrayFinal str);
+        public delegate ExistDataStructure BuildExistDataStructure(SuffixArrayFinal str, int x, int ymin, int ymax);
+        public delegate CountDataStructure BuildCountDataStructure(SuffixArrayFinal str, int x, int ymin, int ymax);
         public delegate string GetData(string str);
 
-        public static ReportDataStructure BuildSuffixArray_V1(string str)
+        public static ReportDataStructure BuildSuffixArray_V1(SuffixArrayFinal str)
         {
             return new SA_R_V1(str);
         }
 
-        public static ReportDataStructure BuildSuffixArray_V2(string str)
+        public static ReportDataStructure BuildSuffixArray_V2(SuffixArrayFinal str)
         {
             return new SA_R_V2(str);
         }
 
-        public static ReportDataStructure BuildSuffixArray_V3(string str)
+        public static ReportDataStructure BuildSuffixArray_V3(SuffixArrayFinal str)
         {
             return new SA_R_V3(str);
         }
 
-        public static ReportDataStructure BuildSuffixArray_V4_1(string str)
+        public static ReportDataStructure BuildSuffixArray_V4_1(SuffixArrayFinal str)
         {
             return new SA_R_V4_1(str);
         }
 
-        public static ReportDataStructure BuildSuffixArray_V5(string str)
+        public static ReportDataStructure BuildSuffixArray_V5(SuffixArrayFinal str)
         {
             return new SA_R_V5(str);
         }
 
-        public static ReportDataStructure BuildSuffixArray_V4_2(string str)
+        public static ReportDataStructure BuildSuffixArray_V4_2(SuffixArrayFinal str)
         {
             return new SA_R_V4_2(str);
         }
 
-        public static ReportDataStructure BuildSuffixArray_V4_3(string str)
+        public static ReportDataStructure BuildSuffixArray_V4_3(SuffixArrayFinal str)
         {
             return new SA_R_V4_3(str);
         }
-        public static CountDataStructure BuildSA_C_V1(string str, int x, int ymin, int ymax)
+        public static CountDataStructure BuildSA_C_V1(SuffixArrayFinal str, int x, int ymin, int ymax)
         {
             return new SA_C_V1(str, x, ymin, ymax);
         }
-        public static CountDataStructure BuildSA_C_V2(string str, int x, int ymin, int ymax)
+        public static CountDataStructure BuildSA_C_V2(SuffixArrayFinal str, int x, int ymin, int ymax)
         {
             return new SA_C_V2(str, x, ymin, ymax);
         }
@@ -89,30 +90,30 @@ namespace ConsoleApp
             return new BaratgaborSuffixTree(str);
         }
 
-        public static ExistDataStructure BuildSA_E_V0(string str, int x, int ymin, int ymax)
+        public static ExistDataStructure BuildSA_E_V0(SuffixArrayFinal str, int x, int ymin, int ymax)
         {
             return new SA_E_V0(str, x, ymin, ymax);
         }
 
-        public static ExistDataStructure BuildSA_E_V1(string str, int x, int ymin, int ymax)
+        public static ExistDataStructure BuildSA_E_V1(SuffixArrayFinal str, int x, int ymin, int ymax)
         {
             return new SA_E_V1(str, x, ymin, ymax);
         }
 
-        public static ExistDataStructure BuildSA_E_V2(string str, int x, int ymin, int ymax)
+        public static ExistDataStructure BuildSA_E_V2(SuffixArrayFinal str, int x, int ymin, int ymax)
         {
             return new SA_E_V2(str, x, ymin, ymax);
         }
-        public static ExistDataStructure BuildSA_E_V3(string str, int x, int ymin, int ymax)
+        public static ExistDataStructure BuildSA_E_V3(SuffixArrayFinal str, int x, int ymin, int ymax)
         {
             return new SA_E_V3(str, x, ymin, ymax);
         }
-        public static ExistDataStructure BuildSA_E_V4(string str, int x, int ymin, int ymax)
+        public static ExistDataStructure BuildSA_E_V4(SuffixArrayFinal str, int x, int ymin, int ymax)
         {
             return new SA_E_V4(str, x, ymin, ymax);
         }
 
-        public static Benchmark[] BenchReportDataStructure(string dsname, BuildReportDataStructure matcher, string name, string str, params Query[] queries)       
+        public static Benchmark[] BenchReportDataStructure(string dsname, BuildReportDataStructure matcher, string name, SuffixArrayFinal str, params Query[] queries)       
         {
             Benchmark[] benchmarks = new Benchmark[queries.Length];
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -193,7 +194,7 @@ namespace ConsoleApp
             return benchmarks;
         }
 
-        public static Benchmark[] BenchCountDataStructure(string dsname, BuildCountDataStructure matcher, string name, string str, int x, int ymin, int ymax, params Query[] queries)
+        public static Benchmark[] BenchCountDataStructure(string dsname, BuildCountDataStructure matcher, string name, SuffixArrayFinal str, int x, int ymin, int ymax, params Query[] queries)
         {
             Benchmark[] benchmarks = new Benchmark[queries.Length];
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -276,7 +277,7 @@ namespace ConsoleApp
             return benchmarks;
         }
 
-        public static Benchmark[] BenchExistDataStructure(string dsname, BuildExistDataStructure matcher, string name, string str, int x, int ymin, int ymax, params Query[] queries)
+        public static Benchmark[] BenchExistDataStructure(string dsname, BuildExistDataStructure matcher, string name, SuffixArrayFinal str, int x, int ymin, int ymax, params Query[] queries)
         {
             Benchmark[] benchmarks = new Benchmark[queries.Length];
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -473,6 +474,9 @@ namespace ConsoleApp
                 queries[2] = query3;
                 query.Y =  (1, (int)Math.Sqrt(sequence.Length));
                 suffixArray_Scanner = null;
+
+                var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(File.ReadAllText($"C:\\Users\\Jonathan\\source\\repos\\jswinther\\StringIndexing\\Prebuilt\\{textName}.json"));
+
                 //Console.WriteLine(query3.P1);
                 
                 var file = $"{path}\\StringIndexingGapResults\\Results_{last}\\{textName}.csv";
@@ -480,7 +484,7 @@ namespace ConsoleApp
                 foreach ((var name, var dataStructure) in reportingDataStructures)
                 {
                     Console.WriteLine($"Running + {name} on {textName}");
-                    var b = BenchReportDataStructure(name, dataStructure, textName, sequence, queries);
+                    var b = BenchReportDataStructure(name, dataStructure, textName, suffixA, queries);
                     foreach (var bench in b)
                     {
                         table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
@@ -492,7 +496,7 @@ namespace ConsoleApp
                 foreach ((var name, var dataStructure) in countingDataStructures)
                 {
                     Console.WriteLine($"Running + {name} on {textName}");
-                    var b = BenchCountDataStructure(name, dataStructure, textName, sequence, query.X, query.Y.Min, query.Y.Max, queries);
+                    var b = BenchCountDataStructure(name, dataStructure, textName, suffixA, query.X, query.Y.Min, query.Y.Max, queries);
                     foreach (var bench in b)
                     {
 
@@ -505,7 +509,7 @@ namespace ConsoleApp
                 foreach ((var name, var dataStructure) in existenceDataStructures)
                 {
                     Console.WriteLine($"Running + {name} on {textName}");
-                    var b = BenchExistDataStructure(name, dataStructure, textName, sequence, query.X, query.Y.Min, query.Y.Max, queries);
+                    var b = BenchExistDataStructure(name, dataStructure, textName, suffixA, query.X, query.Y.Min, query.Y.Max, queries);
                     foreach (var bench in b)
                     {
                         table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");

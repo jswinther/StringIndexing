@@ -44,6 +44,32 @@ namespace ConsoleApp.DataStructures.Existence
             }
         }
 
+        public SA_E_V3(SuffixArrayFinal str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
+        {
+            SA = str;
+            this.x = x;
+            SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n.Value), out Tree, out Leaves, out Root);
+
+            foreach (var item in Tree.OrderBy(s => s.Value.Size).Take((int)Math.Sqrt(SA.n.Value)))
+            {
+                HashedNodes.Add(item.Key, new HashSet<int>(SA.GetOccurrencesForInterval(item.Key)));
+            }
+
+
+            foreach ((var key1, var occs1) in HashedNodes)
+            {
+                var int1 = Tree[key1];
+                Exists.Add(int1.Interval, new HashSet<(int, int)>());
+                foreach ((var int2, var occs2) in HashedNodes)
+                {
+                    if (occs1.Any(occ1 => occs2.Contains(occ1 + int1.DistanceToRoot + x)))
+                    {
+                        Exists[key1].Add(int2);
+                    }
+                }
+            }
+        }
+
         public bool IsIntervalSizeLessThan((int, int) interval, out HashSet<int> occs)
         {
             var b = interval.Item2 - interval.Item1 < (int)Math.Sqrt(SA.n.Value);

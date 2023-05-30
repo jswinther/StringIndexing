@@ -22,7 +22,7 @@ namespace ConsoleApp.DataStructures.Reporting
         public SA_R_V3(string S) : base(S)
         {
             SA = new SuffixArrayFinal(S);
-            
+
             SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
             var keys = Tree.Keys.ToList();
 
@@ -33,7 +33,22 @@ namespace ConsoleApp.DataStructures.Reporting
                 originalPlacesOfSuffixes.Sort();
                 sorted.Add(interval, originalPlacesOfSuffixes);
             }
-           
+
+        }
+
+        public SA_R_V3(SuffixArrayFinal str) : base(str)
+        {
+            SA = str;
+            SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
+            var keys = Tree.Keys.ToList();
+
+            for (int i = 1; i < keys.Count; i++)
+            {
+                var interval = keys[i];
+                var originalPlacesOfSuffixes = SA.GetOccurrencesForInterval(interval);
+                originalPlacesOfSuffixes.Sort();
+                sorted.Add(interval, originalPlacesOfSuffixes);
+            }
         }
 
 

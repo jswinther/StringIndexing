@@ -106,6 +106,84 @@ namespace ConsoleApp.DataStructures.Existence
 
         }
 
+        public SA_E_V2(SuffixArrayFinal str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
+        {
+            SA = str;
+            FixedGap = x;
+            MinGap = ymin;
+            MaxGap = ymax;
+
+            int minSizeForLcpIntervals = 0;
+            int minSizeSaved = (int)Math.Sqrt(SA.n.Value);
+            SA.GetAllLcpIntervals(minSizeForLcpIntervals, out Tree, out Leaves, out Root);
+            //SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n.Value), out TreeSqrt, out LeavesSqrt);
+
+
+
+            /*Precomputation 1
+            foreach (var int1 in Tree.Keys.Where(s => s.Item2 - s.Item1 > Math.Sqrt(SA.n.Value)))
+            {
+                //var occs2 = new HashSet<int>(SA.GetOccurrencesForInterval(int2));
+                var occs1 = SA.GetOccurrencesForInterval(int1);
+
+                foreach (var int2 in Tree.Keys)
+                {
+                    var occs2 = SA.GetOccurrencesForInterval(int2);
+                    if (occs1.Any(occ1 => occs2.Contains(occ1 + Tree[int1].DistanceToRoot + FixedGap)))
+                    {
+                        ExistsForward[int1].Add(int2);
+                    }
+                    if (occs1.Any(occ1 => occs2.Contains(occ1 - Tree[int1].DistanceToRoot - FixedGap)))
+                    {
+                        ExistsBackward[int1].Add(int2);
+                    }
+                    //Exists.Add((int1, int2), occs1.Any(occ1 => occs2.Contains(occ1 + FixedGap)));
+                }
+            }*/
+
+            /*Precomputation 2 */
+            BotLevel = new List<IntervalNode>();
+            findBotLevelRec(Tree.Values.First(), minSizeSaved);
+
+            //var botLevel = Tree.Values.Where(s => s.Size >= minSizeSaved && s.Children.All(e => e.Size < minSizeSaved));
+
+            foreach (var interval1 in BotLevel)
+            {
+                var occs1 = new HashSet<int>(SA.GetOccurrencesForInterval(interval1.Interval));
+
+                foreach (var interval2 in BotLevel)
+                {
+                    var occs2 = SA.GetOccurrencesForInterval(interval2.Interval);
+                    if (occs2.Any(occ2 => occs1.Contains(occ2 - Tree[interval1.Interval].DistanceToRoot - FixedGap)))
+                    {
+                        if (ExistsForward.ContainsKey(interval1.Interval))
+                        {
+                            ExistsForward[interval1.Interval].Add(interval2.Interval);
+                        }
+                        else
+                        {
+                            ExistsForward.Add(interval1.Interval, new HashSet<(int, int)>(new (int, int)[] { interval2.Interval }));
+                        }
+
+                    }
+                    if (occs2.Any(occ2 => occs1.Contains(occ2 + Tree[interval2.Interval].DistanceToRoot + FixedGap)))
+                    {
+                        if (ExistsBackward.ContainsKey(interval1.Interval))
+                        {
+                            ExistsBackward[interval1.Interval].Add(interval2.Interval);
+                        }
+                        else
+                        {
+                            ExistsBackward.Add(interval1.Interval, new HashSet<(int, int)>(new (int, int)[] { interval2.Interval }));
+                        }
+
+                    }
+                }
+                interval1.Merged = true;
+            }
+            RecurseMerge(Tree.Values.First(), minSizeSaved);
+        }
+
         private void findBotLevelRec(IntervalNode node, int minSize)
         {
             //!SA.m_str.Substring(SA[child.Interval.start],1).Equals("|")

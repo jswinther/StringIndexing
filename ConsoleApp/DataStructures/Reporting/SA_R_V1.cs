@@ -20,6 +20,11 @@ namespace ConsoleApp.DataStructures.Reporting
             SA = new SuffixArrayFinal(str); 
         }
 
+        public SA_R_V1(SuffixArrayFinal str) : base(str)
+        {
+            SA = str;
+        }
+
         public override IEnumerable<int> Matches(string pattern)
         {
             List<int> occurrences = new List<int>();

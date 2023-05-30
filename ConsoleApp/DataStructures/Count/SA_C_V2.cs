@@ -42,6 +42,31 @@ namespace ConsoleApp.DataStructures.Count
             }
         }
 
+        public SA_C_V2(SuffixArrayFinal str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
+        {
+            SA = str;
+
+            //SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
+            int n = SA.n.Value;
+            variableLeafPairs = new int[n][];
+            fixedLeafPairs = new int[n];
+            for (int lcpPos = 0; lcpPos < n; lcpPos++)
+            {
+                List<int> variable = new List<int>();
+                var suffPos = SA.m_sa[lcpPos];
+
+                for (int realOffset = ymin; realOffset <= ymax; realOffset++)
+                {
+                    if (realOffset + suffPos >= SA.m_isa.Length) break;
+                    variable.Add(Math.Abs(SA.m_isa[suffPos + realOffset]));
+
+                }
+                variableLeafPairs[lcpPos] = variable.ToArray().Sort();
+                if (suffPos + x < SA.m_isa.Length)
+                    fixedLeafPairs[lcpPos] = Math.Abs(SA.m_isa[suffPos + x]);
+            }
+        }
+
         public override int Matches(string pattern)
         {
             (var a, var b) = SA.ExactStringMatchingWithESA(pattern);

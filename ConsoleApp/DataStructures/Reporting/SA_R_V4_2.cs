@@ -44,6 +44,20 @@ namespace ConsoleApp.DataStructures.Reporting
 
         }
 
+        public SA_R_V4_2(SuffixArrayFinal str) : base(str)
+        {
+            SA = str;
+            // Populates _nodes and _leaves
+            MinIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
+            MaxIntervalSize = (int)Math.Floor(Math.Pow(SA.n.Value, (0.667)));
+
+            SA.GetAllLcpIntervals(MinIntervalSize, out Tree, out Leaves1, out Root);
+            Leaves = Leaves1.Keys.ToArray();
+            //UpdateDeepestLeaf();
+
+            BuildDataStructure();
+        }
+
         private void BuildDataStructure()
         {
             SortedTree = new();

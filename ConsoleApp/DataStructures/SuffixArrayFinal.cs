@@ -8,29 +8,13 @@
         public int[]? m_isa { get; set; }
         public int[]? m_lcp { get; set; }
         public string? m_str { get; set; }
-        public ChildNode[]? m_ctable { get; set; }
+        public int[]? m_ct_up { get; set; }
+        public int[]? m_ct_down { get; set; }
+        public int[]? m_ct_next { get; set; }
         public Dictionary<char, int>? m_chainHeadsDict = new(new CharComparer());
         public List<Chain>? m_chainStack = new();
         public List<Chain>? m_subChains = new();
         public int m_nextRank = 1;
-
-        public struct ChildNode
-        {
-            public ChildNode()
-            {
-                
-            }
-            public ChildNode(int up, int down, int next)
-            {
-                Up = up;
-                Down = down;
-                Next = next;
-            }
-
-            public int Up { get; set; } = -1;
-            public int Down { get; set; } = -1;
-            public int Next { get; set; } = -1;
-        }
 
         public SuffixArrayFinal()
         {
@@ -43,7 +27,9 @@
             n = m_str.Length;
             m_sa = new int[n.Value];
             m_isa = new int[n.Value];
-            m_ctable = new ChildNode[n.Value];
+            m_ct_up = new int[n.Value];
+            m_ct_down = new int[n.Value];
+            m_ct_next = new int[n.Value];
             
             do
             {
@@ -157,21 +143,21 @@
             stack.Push(0);
             for (int i = 1; i < n; i++)
             {
-                m_ctable[i].Next = -1;
-                m_ctable[i].Up = -1;
-                m_ctable[i].Down = -1;
+                m_ct_next[i] = -1;
+                m_ct_up[i] = -1;
+                m_ct_down[i] = -1;
                 while (m_lcp[i] < m_lcp[stack.Peek()])
                 {
                     lastIndex = stack.Pop();
                     if (m_lcp[i] <= m_lcp[stack.Peek()] && m_lcp[stack.Peek()] != m_lcp[lastIndex])
                     {
-                        m_ctable[stack.Peek()].Down = lastIndex;
+                        m_ct_down[stack.Peek()] = lastIndex;
                     }
                 }
 
                 if (lastIndex != -1)
                 {
-                    m_ctable[i].Up = lastIndex;
+                    m_ct_up[i] = lastIndex;
                     lastIndex = -1;
                 }
                 stack.Push(i);
@@ -188,7 +174,7 @@
                 if (m_lcp[i] == m_lcp[stack2.Peek()])
                 {
                     lastIndex = stack2.Pop();
-                    m_ctable[lastIndex].Next = i;
+                    m_ct_next[lastIndex] = i;
                 }
                 stack2.Push(i);
             }
@@ -199,22 +185,22 @@
         private List<(int, int)> GetChildIntervals(int i, int j)
         {
             if (j < i) return new List<(int, int)>();
-            if (j + 1 == m_ctable.Length) return new List<(int, int)>();
+            if (j + 1 == n) return new List<(int, int)>();
             List<(int, int)> intervals = new List<(int, int)>();
             int i1 = 0;
-            if (i != -1 && i < m_ctable[j + 1].Up && m_ctable[j + 1].Up <= j)
+            if (i != -1 && i < m_ct_up[j + 1] && m_ct_up[j + 1] <= j)
             {
-                i1 = m_ctable[j + 1].Up;
+                i1 = m_ct_up[j + 1];
             }
             else if (i != -1)
             {
-                i1 = m_ctable[i].Down;
+                i1 = m_ct_down[i];
             }
             i = i == -1 ? 0 : i;
             intervals.Add((i, i1 - 1));
-            while (i1 != -1 && m_ctable[i1].Next != -1)
+            while (i1 != -1 && m_ct_next[i1] != -1)
             {
-                var i2 = m_ctable[i1].Next;
+                var i2 = m_ct_next[i1];
                 i1 = i1 == -1 ? 0 : i1;
                 intervals.Add((i1, i2 - 1));
                 i1 = i2;
@@ -230,7 +216,7 @@
         private (int, int) GetIntervalInit(int i, int j, char c, int ci)
         {
             if (j < i) return (-1, -1);
-            int i1 = m_ctable[i].Next;
+            int i1 = m_ct_next[i];
 
             if (m_str[m_sa[i] + ci] == c && m_str[m_sa[i1 - 1] + ci] == c)
             {
@@ -238,9 +224,9 @@
             }
             //intervals.Add((i, i1 - 1));
             int i2 = -1;
-            while (m_ctable[i1].Next != -1)
+            while (m_ct_next[i1] != -1)
             {
-                i2 = m_ctable[i1].Next;
+                i2 = m_ct_next[i1];
                 if (m_str[m_sa[i1] + ci] == c && m_str[m_sa[i2 - 1] + ci] == c)
                 {
                     return (i1, i2 - 1);
@@ -261,14 +247,14 @@
         private (int, int) GetInterval(int i, int j, char c, int ci)
         {
             int i1;
-            if (i < m_ctable[j + 1].Up && m_ctable[j + 1].Up <= j)
+            if (i < m_ct_up[j + 1] && m_ct_up[j + 1] <= j)
             {
-                i1 = m_ctable[j + 1].Up;
+                i1 = m_ct_up[j + 1];
 
             }
             else
             {
-                i1 = m_ctable[i].Down;
+                i1 = m_ct_down[i];
             }
             if (m_str[m_sa[i] + ci] == c && m_str[m_sa[i1 - 1] + ci] == c)
             {
@@ -276,9 +262,9 @@
             }
             //intervals.Add((i, i1 - 1));
             int i2 = -1;
-            while (m_ctable[i1].Next != -1)
+            while (m_ct_next[i1] != -1)
             {
-                i2 = m_ctable[i1].Next;
+                i2 = m_ct_next[i1];
                 if (m_str[m_sa[i1] + ci] == c && m_str[m_sa[i2 - 1] + ci] == c)
                 {
                     return (i1, i2 - 1);
@@ -539,11 +525,11 @@
         {
             if (j < i) return new List<(int, int)>();
             List<(int, int)> intervals = new List<(int, int)>();
-            int i1 = m_ctable[i].Next;
+            int i1 = m_ct_next[i];
             intervals.Add((i, i1 - 1));
-            while (m_ctable[i1].Next != -1)
+            while (m_ct_next[i1] != -1)
             {
-                var i2 = m_ctable[i1].Next;
+                var i2 = m_ct_next[i1];
                 intervals.Add((i1, i2 - 1));
                 i1 = i2;
 

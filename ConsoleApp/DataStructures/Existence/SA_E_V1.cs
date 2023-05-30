@@ -44,11 +44,9 @@ namespace ConsoleApp.DataStructures.Existence
             }
         }
 
-
-
-
-
- 
+        public SA_E_V1(SuffixArrayFinal str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
+        {
+        }
 
         public override bool Matches(string pattern)
         {

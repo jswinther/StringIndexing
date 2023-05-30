@@ -22,7 +22,9 @@ namespace BuildDataStructures
                 AddField(fileName, "m_isa", saf.m_isa);
                 AddField(fileName, "m_lcp", saf.m_lcp);
                 AddField(fileName, "m_str", saf.m_str);
-                AddField(fileName, "m_ctable", saf.m_ctable);
+                AddField(fileName, "m_ct_up", saf.m_ct_up);
+                AddField(fileName, "m_ct_down", saf.m_ct_down);
+                AddField(fileName, "m_ct_next", saf.m_ct_next);
                 AddField(fileName, "m_chainHeadsDict", saf.m_chainHeadsDict);
                 AddField(fileName, "m_chainStack", saf.m_chainStack);
                 AddField(fileName, "m_subChains", saf.m_subChains);

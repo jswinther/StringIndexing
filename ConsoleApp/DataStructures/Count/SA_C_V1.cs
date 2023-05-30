@@ -16,6 +16,11 @@ namespace ConsoleApp.DataStructures.Count
             SA = new SuffixArrayFinal(str);
         }
 
+        public SA_C_V1(SuffixArrayFinal str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
+        {
+            SA = str;
+        }
+
         public override int Matches(string pattern)
         {
             (var a, var b) = SA.ExactStringMatchingWithESA(pattern);
