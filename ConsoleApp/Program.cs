@@ -476,7 +476,7 @@ namespace ConsoleApp
                 query.Y =  (1, (int)Math.Sqrt(sequence.Length));
                 suffixArray_Scanner = null;
 
-                var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(File.ReadAllText($"C:\\Users\\Jonathan\\source\\repos\\jswinther\\StringIndexing\\Prebuilt\\{textName}.json"));
+                var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(File.ReadAllText($"C:\\Users\\frede\\OneDrive\\Skrivebord\\MasterThesis\\StringIndexing\\BuildDataStructures\\bin\\Release\\net7.0\\publish\\{textName}.json"));
 
                 //Console.WriteLine(query3.P1);
                 

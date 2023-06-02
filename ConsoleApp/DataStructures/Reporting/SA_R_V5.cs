@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NetTopologySuite.Geometries;
-using NetTopologySuite.Index.KdTree;
+//using NetTopologySuite.Geometries;
+//using NetTopologySuite.Index.KdTree;
+using Shrulik.NKDBush;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
@@ -12,8 +13,8 @@ namespace ConsoleApp.DataStructures.Reporting
     {
         public class Node { }
         private readonly SuffixArrayFinal SA;
-        private readonly KdTree<Node> KdTree = new();
-        public HomemadeVeryQuickRangeTree Tree { get; set; }
+        //private readonly KdTree<Node> KdTree = new();
+        private KDBush<double[]> KDTree = null;
         public SA_R_V5(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
@@ -30,13 +31,15 @@ namespace ConsoleApp.DataStructures.Reporting
 
         private void BuildDataStructure()
         {
-            /*
-            for (int i = 0; i < SA.n; i++)
+            double[][] points = new double[(int)SA.n-1][];
+            for (int i = 0; i < SA.n-1; i++)
             {
-                KdTree.Insert(new Coordinate(i, SA.m_sa[i]), new Node());
+                points[i] = new double[2];
+                points[i][0] = i;
+                points[i][1] = SA.m_sa[i];
+                //KdTree.Insert(new Coordinate(i, SA.m_sa[i]), new Node());
             }
-            */
-            Tree = new HomemadeVeryQuickRangeTree(SA.m_sa);
+            KDTree = new KDBush<double[]>(points, nodeSize: 10);
         }
 
         public override IEnumerable<int> Matches(string pattern)
@@ -62,7 +65,8 @@ namespace ConsoleApp.DataStructures.Reporting
 
         public override IEnumerable<int> Matches(string pattern1, int y_min, int y_max, string pattern2)
         {
-            List<KdNode<Node>> occs = new();
+            List<int> occs = new();
+            //List<KdNode<Node>> occs = new();
             var occs1 = SA.GetOccurrencesForPattern(pattern1);
             var int2 = SA.ExactStringMatchingWithESA(pattern2);
             
@@ -70,11 +74,12 @@ namespace ConsoleApp.DataStructures.Reporting
             {
                 int min = occ1 + y_min + pattern1.Length;
                 int max = occ1 + y_max + pattern1.Length;
-                Envelope envelope = new Envelope(int2.i, int2.j, min, max);
-                var o = KdTree.Query(envelope);
+                //Envelope envelope = new Envelope(int2.i, int2.j, min, max);
+                //var o = KdTree.Query(envelope);
+                var o = KDTree.Range(int2.i, min, int2.j, max);
                 occs.AddRange(o);
             }
-            return occs.Select(s => (int)s.Y);
+            return occs.Select(s => SA.m_sa[(int)s]);
         }
     }
 }
