@@ -402,31 +402,32 @@ namespace ConsoleApp
                DS._16777216,
                DS._33554432,
             });
-                
-                
-               
-          
 
-            var reportingDataStructures = new(string, BuildReportDataStructure)[]
+
+
+
+
+            var reportingDataStructures = new (string, BuildReportDataStructure)[]
             {
                 //("SA_R_V1", BuildSuffixArray_V1),
                 ("SA_R_V2", BuildSuffixArray_V2),
-                ("SA_R_V3", BuildSuffixArray_V3),
-                ("SA_R_V4_1", BuildSuffixArray_V4_1),
-                ("SA_R_V4_2", BuildSuffixArray_V4_2),
-                ("SA_R_V4_3", BuildSuffixArray_V4_3),
+                //("SA_R_V3", BuildSuffixArray_V3),
+                //("SA_R_V4_1", BuildSuffixArray_V4_1),
+                //("SA_R_V4_2", BuildSuffixArray_V4_2),
+                //("SA_R_V4_3", BuildSuffixArray_V4_3),
+                ("SA_R_V5", BuildSuffixArray_V5)
             };
 
             var countingDataStructures = new(string, BuildCountDataStructure)[]
             {
                 //  // ALTID BAD, IKKE KØR PÅ ANDET END 512
-                ("SA_C_V1", BuildSA_C_V1),
+                //("SA_C_V1", BuildSA_C_V1),
                 //("SA_C_V2", BuildSA_C_V2)
             };
 
             var existenceDataStructures = new(string, BuildExistDataStructure)[]
             {
-                ("SA_E_V0", BuildSA_E_V0),
+                //("SA_E_V0", BuildSA_E_V0),
                 //("SA_E_V1", BuildSA_E_V1),
                 //("SA_E_V2", BuildSA_E_V2),
                 //("SA_E_V3", BuildSA_E_V3),
