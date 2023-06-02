@@ -14,6 +14,8 @@ namespace ConsoleApp.DataStructures
         private readonly int lgn;
         private int w = 0;
         private readonly int n;
+        private readonly int m;
+        private readonly RangeNode[] Nodes;
 
         private class RangeNode
         {
@@ -51,7 +53,9 @@ namespace ConsoleApp.DataStructures
             lgn = (int)Math.Round(Math.Log2(n));
             x = new int[n];
             y = new int[n];
-            z = new int[(int)Math.Round(Math.Pow(2, lgn + 1) - 1)][];
+            m = (int)Math.Round(Math.Pow(2, lgn + 1) - 1);
+            z = new int[m][];
+            Nodes = new RangeNode[m];
             for (int i = 0; i < n; i++)
             {
                 x[i] = i;
