@@ -13,6 +13,7 @@ namespace ConsoleApp.DataStructures.Reporting
         public class Node { }
         private readonly SuffixArrayFinal SA;
         private readonly KdTree<Node> KdTree = new();
+        public HomemadeVeryQuickRangeTree Tree { get; set; }
         public SA_R_V5(string str) : base(str)
         {
             SA = new SuffixArrayFinal(str);
@@ -29,10 +30,13 @@ namespace ConsoleApp.DataStructures.Reporting
 
         private void BuildDataStructure()
         {
+            /*
             for (int i = 0; i < SA.n; i++)
             {
                 KdTree.Insert(new Coordinate(i, SA.m_sa[i]), new Node());
             }
+            */
+            Tree = new HomemadeVeryQuickRangeTree(SA.m_sa);
         }
 
         public override IEnumerable<int> Matches(string pattern)
