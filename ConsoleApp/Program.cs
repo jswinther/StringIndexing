@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 using static ConsoleApp.Data.Obsolete.AlgoSuffixTreeProblem;
 using static ConsoleApp.Program;
 using static System.Net.Mime.MediaTypeNames;
@@ -415,7 +416,7 @@ namespace ConsoleApp
                 //("SA_R_V4_1", BuildSuffixArray_V4_1),
                 //("SA_R_V4_2", BuildSuffixArray_V4_2),
                 //("SA_R_V4_3", BuildSuffixArray_V4_3),
-                ("SA_R_V5", BuildSuffixArray_V5)
+                //("SA_R_V5", BuildSuffixArray_V5)
             };
 
             var countingDataStructures = new(string, BuildCountDataStructure)[]
@@ -454,10 +455,17 @@ namespace ConsoleApp
             }
             var directory = Directory.CreateDirectory($"{path}\\StringIndexingGapResults\\Results_{last}");
 
+
+            foreach (var item in reportingDataStructures)
+            {
+                File.AppendAllText($"{TryGetSolutionDirectoryInfo()}\\{item.Item1}.csv", "data,construction,topSingle,topFixed,topVariable,midSingle,midFixed,midVariable,bottomSingle,bottomFixed,bottomVariable\n");
+            }
+
             foreach (var test in testData)
             {
                 var textName = test.Item1;
                 var sequence = test.Item2.Invoke(textName);
+
 
                 SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner((textName, sequence));
                 if (suffixArray_Scanner.botPattern.EndsWith('|'))
@@ -482,8 +490,10 @@ namespace ConsoleApp
                 
                 var file = $"{path}\\StringIndexingGapResults\\Results_{last}\\{textName}.csv";
                 File.AppendAllLines(file, new string[] { $"Data Structure Name, Construction Time, Query, Single Pattern Query Time, Fixed Gap Query Time, Variable Gap Query Time" });
+                
                 foreach ((var name, var dataStructure) in reportingDataStructures)
                 {
+                    
                     Console.WriteLine($"Running + {name} on {textName}");
                     var b = BenchReportDataStructure(name, dataStructure, textName, suffixA, queries);
                     foreach (var bench in b)
@@ -491,7 +501,11 @@ namespace ConsoleApp
                         table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
                         Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
                         File.AppendAllLines(file, new string[] { $"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}" });
+                        
                     }
+                    var qs = b.Select(s => (s.SinglePatternMatchesQuery, s.DoublePatternFixedMatchesQuery, s.DoublePatternVariableMatchesQuery)).ToArray();
+                    var bb = b[0];
+                    File.AppendAllText($"{TryGetSolutionDirectoryInfo()}\\{name}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery}\n");
                 }
 
                 foreach ((var name, var dataStructure) in countingDataStructures)
