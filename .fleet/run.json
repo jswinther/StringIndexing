@@ -1,11 +1,3 @@
-{
-    "configurations": [
-        {
-            "type": "dotnet",
-            "name": "Dotnet configuration",
-            "projectPath": "C:/Users/Jonathan/Desktop/StringIndexing/ConsoleApp/ConsoleApp.csproj",
-            "args": [],
-        },
-        
-    ]
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:fad1dac0284a2b3f1cb221b7e8f4f0262ab30cc9639ae52be5342c9b0a94a8a3
+size 271
