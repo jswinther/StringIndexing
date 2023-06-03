@@ -476,7 +476,7 @@ namespace ConsoleApp
                 query.Y =  (1, (int)Math.Sqrt(sequence.Length));
                 suffixArray_Scanner = null;
 
-                var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(File.ReadAllText($"C:\\Users\\frede\\OneDrive\\Skrivebord\\MasterThesis\\StringIndexing\\BuildDataStructures\\bin\\Release\\net7.0\\publish\\{textName}.json"));
+                var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(File.ReadAllText($"{TryGetSolutionDirectoryInfo()}\\{textName}.json"));
 
                 //Console.WriteLine(query3.P1);
                 
@@ -564,6 +564,17 @@ namespace ConsoleApp
                 }
             }
             return result;
+        }
+
+        public static DirectoryInfo TryGetSolutionDirectoryInfo(string currentPath = null)
+        {
+            var directory = new DirectoryInfo(
+                currentPath ?? Directory.GetCurrentDirectory());
+            while (directory != null && !directory.GetFiles("*.sln").Any())
+            {
+                directory = directory.Parent;
+            }
+            return directory;
         }
     }
 }

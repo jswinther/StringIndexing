@@ -1,5 +1,6 @@
 ﻿using ConsoleApp;
 using ConsoleApp.DataStructures;
+using System.Diagnostics;
 using System.Globalization;
 using System.Text.Json;
 
@@ -10,12 +11,34 @@ namespace BuildDataStructures
         
         static void Main(string[] args)
         {
-            foreach (var set in DummyData.GetData(new DS[] { DS._512, DS._8192, DS._16384, DS._262144, DS._524288, DS._1048576, DS._2097152, DS._4194304, DS._8388608, DS._16777216, DS._33554432}))
+
+            foreach (var set in DummyData.GetData(new DS[] { DS._512, DS._8192, DS._16384, DS._262144, DS._524288, DS._1048576, DS._2097152, DS._4194304, DS._8388608, DS._16777216, DS._33554432 }))
             {
                 var name = set.Item1;
-                var fileName = $"{name}.json";
+
+            }
+        }
+
+        private static void CreateJSONFiles()
+        {
+            foreach (var set in DummyData.GetData(new DS[] { DS._512, DS._8192, DS._16384, DS._262144, DS._524288, DS._1048576, DS._2097152, DS._4194304, DS._8388608, DS._16777216, DS._33554432 }))
+            {
+
+                var name = set.Item1;
+                var fileName = $"{ConsoleApp.Program.TryGetSolutionDirectoryInfo()}\\{name}.json";
                 var data = set.Item2.Invoke(name);
-                var saf = new SuffixArrayFinal(data);
+                SuffixArrayFinal saf = null;
+                long elapsed = 0;
+                for (int i = 0; i < 10; i++)
+                {
+                    var sw = Stopwatch.StartNew();
+                    saf = new SuffixArrayFinal(data);
+                    sw.Stop();
+                    elapsed += sw.ElapsedMilliseconds;
+                }
+                Console.WriteLine("Written " + name + $" in time {elapsed / 10}");
+                File.AppendAllText("constructionTimes.txt", $"{name}, {elapsed / 10}\n");
+
                 File.WriteAllText(fileName, "{");
                 AddField(fileName, "n", saf.n);
                 AddField(fileName, "m_sa", saf.m_sa);
@@ -29,12 +52,13 @@ namespace BuildDataStructures
                 AddField(fileName, "m_chainStack", saf.m_chainStack);
                 AddField(fileName, "m_subChains", saf.m_subChains);
                 File.AppendAllText(fileName, "\"m_nextRank\":" + saf.m_nextRank + "}");
-                Console.WriteLine("Written " + name);
-                /*
-                var read = File.ReadAllText(fileName);
-                var suffixArray = JsonSerializer.Deserialize<SuffixArrayFinal>(read);
-                */
-            } 
+
+
+
+            }
+
+
+            
         }
 
         private static void AddField(string filename, string fieldName, object fieldValue)
