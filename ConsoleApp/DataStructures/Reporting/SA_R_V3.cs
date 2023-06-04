@@ -14,7 +14,6 @@ namespace ConsoleApp.DataStructures.Reporting
     internal class SA_R_V3 : ReportDataStructure
     {
 
-        private Dictionary<(int, int), int[]> sorted = new();
         Dictionary<(int, int), IntervalNode> Tree;
         Dictionary<(int, int), IntervalNode> Leaves;
         private IntervalNode Root;
@@ -22,8 +21,11 @@ namespace ConsoleApp.DataStructures.Reporting
         public SA_R_V3(string S) : base(S)
         {
             SA = new SuffixArrayFinal(S);
-
             SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
+            Sort(Root);
+
+
+            /*
             var keys = Tree.Keys.ToList();
 
             for (int i = 1; i < keys.Count; i++)
@@ -31,15 +33,37 @@ namespace ConsoleApp.DataStructures.Reporting
                 var interval = keys[i];
                 var originalPlacesOfSuffixes = SA.GetOccurrencesForInterval(interval);
                 originalPlacesOfSuffixes.Sort();
-                sorted.Add(interval, originalPlacesOfSuffixes);
+                Tree[interval].SortedOccurrences = originalPlacesOfSuffixes;
             }
+            */
+            
+        }
 
+        public static int[] Sort(IntervalNode node)
+        {
+            if (node.IsLeaf)
+            {
+                return new int[] { node.Interval.start };
+            }
+            else
+            {
+                int[][] children = new int[node.Children.Count][];
+                for (int i = 0; i < children.Length; i++)
+                {
+                    children[i] = Sort(node.Children[i]);
+                }
+                var sorted = Helper.KWayMerge(children);
+                node.SortedOccurrences = sorted;
+                return sorted;
+            }
         }
 
         public SA_R_V3(SuffixArrayFinal str) : base(str)
         {
             SA = str;
             SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
+            Sort(Root);
+            /*
             var keys = Tree.Keys.ToList();
 
             for (int i = 1; i < keys.Count; i++)
@@ -47,8 +71,9 @@ namespace ConsoleApp.DataStructures.Reporting
                 var interval = keys[i];
                 var originalPlacesOfSuffixes = SA.GetOccurrencesForInterval(interval);
                 originalPlacesOfSuffixes.Sort();
-                sorted.Add(interval, originalPlacesOfSuffixes);
+                Tree[interval].SortedOccurrences = originalPlacesOfSuffixes;
             }
+            */
         }
 
 
@@ -63,7 +88,7 @@ namespace ConsoleApp.DataStructures.Reporting
             var interval = SA.ExactStringMatchingWithESA(pattern);
             if (interval == (-1, -1)) return new int[] { };
             if (interval.j - interval.i == 0) return new int[] { SA.m_sa[interval.i] };
-            return sorted[interval];
+            return Tree[interval].SortedOccurrences;
         }
 
         public override IEnumerable<int> Matches(string pattern1, int x, string pattern2)

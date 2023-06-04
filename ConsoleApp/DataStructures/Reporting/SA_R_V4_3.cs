@@ -280,7 +280,7 @@ namespace ConsoleApp.DataStructures.Reporting
         {
 
             //return arrayOfSortedLeafOccurrences.SelectMany(s => s).OrderBy(key => key).ToArray();
-            return Program.KWayMerge(arrayOfSortedLeafOccurrences);
+            return Helper.KWayMerge(arrayOfSortedLeafOccurrences);
 
         }
 

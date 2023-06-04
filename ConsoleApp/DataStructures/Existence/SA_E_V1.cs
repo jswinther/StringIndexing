@@ -23,10 +23,15 @@ namespace ConsoleApp.DataStructures.Existence
         public SA_E_V1(string str, int fixedGap, int minGap, int maxGap) : base(str, fixedGap, minGap, maxGap)
         {
             SA = new SuffixArrayFinal(str);
+            BuildDs(fixedGap, minGap, maxGap);
+        }
+
+        private void BuildDs(int fixedGap, int minGap, int maxGap)
+        {
             FixedGap = fixedGap;
             MinGap = minGap;
             MaxGap = maxGap;
-            
+
             int minSizeForLcpIntervals = (int)Math.Sqrt(SA.n.Value);
             SA.GetAllLcpIntervals(minSizeForLcpIntervals, out Tree, out Leaves, out Root);
 
@@ -35,7 +40,7 @@ namespace ConsoleApp.DataStructures.Existence
             foreach (var int2 in tree)
             {
                 var occs2 = new HashSet<int>(SA.GetOccurrencesForInterval(int2));
-                
+
                 foreach (var int1 in tree)
                 {
                     var occs1 = SA.GetOccurrencesForInterval(int1);
@@ -46,6 +51,8 @@ namespace ConsoleApp.DataStructures.Existence
 
         public SA_E_V1(SuffixArrayFinal str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
         {
+            SA = str;
+            BuildDs(x, ymin, ymax);
         }
 
         public override bool Matches(string pattern)

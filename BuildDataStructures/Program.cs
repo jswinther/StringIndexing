@@ -25,7 +25,7 @@ namespace BuildDataStructures
             {
 
                 var name = set.Item1;
-                var fileName = $"{ConsoleApp.Program.TryGetSolutionDirectoryInfo()}\\{name}.json";
+                var fileName = $"{ConsoleApp.Helper.TryGetSolutionDirectoryInfo()}\\{name}.json";
                 var data = set.Item2.Invoke(name);
                 SuffixArrayFinal saf = null;
                 long elapsed = 0;

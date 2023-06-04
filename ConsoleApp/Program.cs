@@ -5,6 +5,7 @@ using ConsoleApp.DataStructures.Existence;
 using ConsoleApp.DataStructures.Reporting;
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -15,106 +16,104 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleApp
 {
-    public class Program
+    public partial class Program
     {
-        public delegate ReportDataStructure BuildReportDataStructure(SuffixArrayFinal str);
-        public delegate ExistDataStructure BuildExistDataStructure(SuffixArrayFinal str, int x, int ymin, int ymax);
-        public delegate CountDataStructure BuildCountDataStructure(SuffixArrayFinal str, int x, int ymin, int ymax);
-        public delegate string GetData(string str);
-
-        public static ReportDataStructure BuildSuffixArray_V1(SuffixArrayFinal str)
+        static void Main(string[] args)
         {
-            return new SA_R_V1(str);
-        }
-
-        public static ReportDataStructure BuildSuffixArray_V2(SuffixArrayFinal str)
-        {
-            return new SA_R_V2(str);
-        }
-
-        public static ReportDataStructure BuildSuffixArray_V3(SuffixArrayFinal str)
-        {
-            return new SA_R_V3(str);
-        }
-
-        public static ReportDataStructure BuildSuffixArray_V4_1(SuffixArrayFinal str)
-        {
-            return new SA_R_V4_1(str);
-        }
-
-        public static ReportDataStructure BuildSuffixArray_V5(SuffixArrayFinal str)
-        {
-            return new SA_R_V5(str);
-        }
-
-        public static ReportDataStructure BuildSuffixArray_V4_2(SuffixArrayFinal str)
-        {
-            return new SA_R_V4_2(str);
-        }
-
-        public static ReportDataStructure BuildSuffixArray_V4_3(SuffixArrayFinal str)
-        {
-            return new SA_R_V4_3(str);
-        }
-        public static CountDataStructure BuildSA_C_V1(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_C_V1(str, x, ymin, ymax);
-        }
-        public static CountDataStructure BuildSA_C_V2(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_C_V2(str, x, ymin, ymax);
-        }
-
-        public static ReportDataStructure BuildSuffixTree(string str)
-        {
-            return SuffixTree.Create(str);
-        }
-
-        public static ReportDataStructure BuildPrecomputed(string str)
-        {
-            return new PreCompSubs(str);
-        }
-
-        public static ReportDataStructure BuildUkkonen(string str)
-        {
+            IEnumerable<(string, GetData)> testData;
+            (string, BuildReportDataStructure)[] reportingDataStructures;
+            (string, BuildCountDataStructure)[] countingDataStructures;
+            (string, BuildExistDataStructure)[] existenceDataStructures;
+            string sln;
+            string resultsDir;
+            SetupDirectories(out sln, out resultsDir);
+            GetTestSetup(sln, resultsDir, out testData, out reportingDataStructures, out countingDataStructures, out existenceDataStructures);
+            InitConsoleTable();
             
-            return new UkkonenWrapper(str);
+
+
+            string p1 = "a";
+            Random random = new Random();
+            int x = 1;
+            string p2 = "a";
+            Query query = new Query(p1, x, p2);
+            query.Y = (1, 45);
+
+            foreach (var test in testData)
+            {
+                for (int i = 0; i < 10; i++)
+                {
+                    var textName = test.Item1;
+                    var sequence = test.Item2.Invoke(textName);
+
+
+                    SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner((textName, sequence));
+                    Query query1 = new Query(suffixArray_Scanner.topPattern, x, p2, "Top");
+                    Random random1 = new Random();
+                    Query query2 = new Query(suffixArray_Scanner.midPatterns.GetRandom(), x, p2, "Mid");
+                    Query query3 = new Query(suffixArray_Scanner.botPattern, x, p2, "Bot");
+                    Query[] queries = new Query[3];
+                    query1.Y = query.Y; query2.Y = query.Y; query3.Y = query.Y;
+                    queries[0] = query1;
+                    queries[1] = query2;
+                    queries[2] = query3;
+                    query.Y = (1, (int)Math.Sqrt(sequence.Length));
+                    suffixArray_Scanner = null;
+
+                    var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(File.ReadAllText($"{Helper.TryGetSolutionDirectoryInfo()}\\{textName}.json"));
+
+
+                    foreach ((var name, var dataStructure) in reportingDataStructures)
+                    {
+                        Console.WriteLine($"Running + {name + '_' + i} on {textName}");
+                        var b = BenchReportDataStructure(name + '_' + i, dataStructure, textName, suffixA, queries);
+                        foreach (var bench in b)
+                        {
+                            table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
+                            Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
+                        }
+                        var qs = b.Select(s => (s.SinglePatternMatchesQuery, s.DoublePatternFixedMatchesQuery, s.DoublePatternVariableMatchesQuery)).ToArray();
+                        var bb = b[0];
+                        File.AppendAllText($"{resultsDir}\\{name + '_' + i}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery}\n");
+                    }
+
+                    foreach ((var name, var dataStructure) in countingDataStructures)
+                    {
+                        Console.WriteLine($"Running + {name + '_' + i} on {textName}");
+                        var b = BenchCountDataStructure(name, dataStructure, textName, suffixA, query.X, query.Y.Min, query.Y.Max, queries);
+                        foreach (var bench in b)
+                        {
+                            table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
+                            Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
+                        }
+                        var qs = b.Select(s => (s.SinglePatternMatchesQuery, s.DoublePatternFixedMatchesQuery, s.DoublePatternVariableMatchesQuery)).ToArray();
+                        var bb = b[0];
+                        File.AppendAllText($"{resultsDir}\\{name + '_' + i}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery}\n");
+                    }
+
+                    foreach ((var name, var dataStructure) in existenceDataStructures)
+                    {
+                        Console.WriteLine($"Running + {name + '_' + i} on {textName}");
+                        var b = BenchExistDataStructure(name, dataStructure, textName, suffixA, query.X, query.Y.Min, query.Y.Max, queries);
+                        foreach (var bench in b)
+                        {
+                            table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
+                            Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
+                        }
+                        var qs = b.Select(s => (s.SinglePatternMatchesQuery, s.DoublePatternFixedMatchesQuery, s.DoublePatternVariableMatchesQuery)).ToArray();
+                        var bb = b[0];
+                        File.AppendAllText($"{resultsDir}\\{name + '_' + i}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery}\n");
+                    }
+                }
+
+                
+            }
+            table.Write();
         }
 
-        public static ReportDataStructure BuildSuffixOther(string str)
-        {
-            return new SuffixTreeOther(str);
-        }
+        
 
-        public static ReportDataStructure BuildBaratgabor(string str)
-        {
-            return new BaratgaborSuffixTree(str);
-        }
-
-        public static ExistDataStructure BuildSA_E_V0(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_E_V0(str, x, ymin, ymax);
-        }
-
-        public static ExistDataStructure BuildSA_E_V1(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_E_V1(str, x, ymin, ymax);
-        }
-
-        public static ExistDataStructure BuildSA_E_V2(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_E_V2(str, x, ymin, ymax);
-        }
-        public static ExistDataStructure BuildSA_E_V3(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_E_V3(str, x, ymin, ymax);
-        }
-        public static ExistDataStructure BuildSA_E_V4(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_E_V4(str, x, ymin, ymax);
-        }
-
-        public static Benchmark[] BenchReportDataStructure(string dsname, BuildReportDataStructure matcher, string name, SuffixArrayFinal str, params Query[] queries)       
+        public static Benchmark[] BenchReportDataStructure(string dsname, BuildReportDataStructure matcher, string name, SuffixArrayFinal str, params Query[] queries)
         {
             Benchmark[] benchmarks = new Benchmark[queries.Length];
             Stopwatch stopwatch = Stopwatch.StartNew();
@@ -130,32 +129,27 @@ namespace ConsoleApp
                 benchmarks[i].DataName = name;
                 benchmarks[i].QueryName = queries[i].QueryName;
             }
-            
-            int repetitions = 5;
+
             // Query Time
             for (int i = 0; i < queries.Length; i++) // For each query
             {
                 // Single Pattern
-                
+
                 try
                 {
-                    for (int j = 0; j < repetitions; j++) // for each repetition
-                    {
-                        stopwatch = Stopwatch.StartNew();
-                        var occs = patternMatcher.Matches(queries[i].P1);
-                        stopwatch.Stop();
-                        benchmarks[i].SinglePatternMatchesQueryOccs = occs.Count();
-                        benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
-                    }
-                    benchmarks[i].SinglePatternMatchesQuery /= repetitions;
+                    stopwatch = Stopwatch.StartNew();
+                    var occs = patternMatcher.Matches(queries[i].P1);
+                    stopwatch.Stop();
+                    benchmarks[i].SinglePatternMatchesQueryOccs = occs.Count();
+                    benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
                 }
                 catch (Exception e)
                 {
                     File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].SinglePatternMatchesQuery = -1;
                 }
-                
-                
+
+
                 // Double Pattern + Fixed Gap
                 try
                 {
@@ -170,9 +164,9 @@ namespace ConsoleApp
                     File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].DoublePatternFixedMatchesQuery = -1;
                 }
-                
+
                 // Double Pattern + Variable Gap
-                
+
                 try
                 {
                     stopwatch = Stopwatch.StartNew();
@@ -186,12 +180,12 @@ namespace ConsoleApp
                     File.AppendAllText("exceptions", e.StackTrace);
                     benchmarks[i].DoublePatternVariableMatchesQuery = -1;
                 }
-                
+
             }
             stopwatch.Stop();
             //benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-            
-            
+
+
             return benchmarks;
         }
 
@@ -214,7 +208,6 @@ namespace ConsoleApp
                 benchmarks[i].QueryName = queries[i].QueryName;
             }
 
-            int repetitions = 5;
             // Query Time
             for (int i = 0; i < queries.Length; i++) // For each query
             {
@@ -222,15 +215,11 @@ namespace ConsoleApp
 
                 try
                 {
-                    for (int j = 0; j < repetitions; j++) // for each repetition
-                    {
-                        stopwatch = Stopwatch.StartNew();
-                        var occs = patternMatcher.Matches(queries[i].P1);
-                        stopwatch.Stop();
-                        benchmarks[i].SinglePatternMatchesQueryOccs = occs;
-                        benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
-                    }
-                    benchmarks[i].SinglePatternMatchesQuery /= repetitions;
+                    stopwatch = Stopwatch.StartNew();
+                    var occs = patternMatcher.Matches(queries[i].P1);
+                    stopwatch.Stop();
+                    benchmarks[i].SinglePatternMatchesQueryOccs = occs;
+                    benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
                 }
                 catch (Exception e)
                 {
@@ -297,7 +286,6 @@ namespace ConsoleApp
                 benchmarks[i].QueryName = queries[i].QueryName;
             }
 
-            int repetitions = 5;
             // Query Time
             for (int i = 0; i < queries.Length; i++) // For each query
             {
@@ -305,15 +293,11 @@ namespace ConsoleApp
 
                 try
                 {
-                    for (int j = 0; j < repetitions; j++) // for each repetition
-                    {
-                        stopwatch = Stopwatch.StartNew();
-                        var occs = patternMatcher.Matches(queries[i].P1);
-                        stopwatch.Stop();
-                        benchmarks[i].SinglePatternMatchesQueryOccs = occs;
-                        benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
-                    }
-                    benchmarks[i].SinglePatternMatchesQuery /= repetitions;
+                    stopwatch = Stopwatch.StartNew();
+                    var occs = patternMatcher.Matches(queries[i].P1);
+                    stopwatch.Stop();
+                    benchmarks[i].SinglePatternMatchesQueryOccs = occs;
+                    benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
                 }
                 catch (Exception e)
                 {
@@ -362,233 +346,194 @@ namespace ConsoleApp
             return benchmarks;
         }
 
-        
 
-
-        public class Benchmark
+        private static void SetupDirectories(out string slnDir, out string resultDir)
         {
-            public string DataStructureName { get; set; }
-            public string DataName { get; set; }
-
-            public string QueryName { get; set; }
-            public long ConstructionTimeMilliseconds { get; set; }
-            public long QueryTimeMilliseconds { get; set; }
-            public long SinglePatternMatchesQuery { get; internal set; }
-            public long DoublePatternFixedMatchesQuery { get; internal set; }
-            public long DoublePatternVariableMatchesQuery { get; internal set; }
-            public object SinglePatternMatchesQueryOccs { get; internal set; }
-            public object DoublePatternFixedMatchesQueryOccs { get; internal set; }
-            public object DoublePatternVariableMatchesQueryOccs { get; internal set; }
-        }
-
-        static HashSet<string> timedout = new HashSet<string>();
-
-        static void Main(string[] args)
-        {
-
-
-
-
-            var testData = DummyData.GetData(new DS[]
-            {
-               DS._512,
-               DS._8192,
-               DS._16384,
-               DS._262144,
-               DS._524288,
-               DS._1048576,
-               DS._2097152,
-               DS._4194304,
-               DS._8388608,
-               DS._16777216,
-               DS._33554432,
-            });
-
-
-
-
-
-            var reportingDataStructures = new (string, BuildReportDataStructure)[]
-            {
-                //("SA_R_V1", BuildSuffixArray_V1),
-                ("SA_R_V2", BuildSuffixArray_V2),
-                //("SA_R_V3", BuildSuffixArray_V3),
-                //("SA_R_V4_1", BuildSuffixArray_V4_1),
-                //("SA_R_V4_2", BuildSuffixArray_V4_2),
-                //("SA_R_V4_3", BuildSuffixArray_V4_3),
-                //("SA_R_V5", BuildSuffixArray_V5)
-            };
-
-            var countingDataStructures = new(string, BuildCountDataStructure)[]
-            {
-                //  // ALTID BAD, IKKE KØR PÅ ANDET END 512
-                //("SA_C_V1", BuildSA_C_V1),
-                //("SA_C_V2", BuildSA_C_V2)
-            };
-
-            var existenceDataStructures = new(string, BuildExistDataStructure)[]
-            {
-                //("SA_E_V0", BuildSA_E_V0),
-                //("SA_E_V1", BuildSA_E_V1),
-                //("SA_E_V2", BuildSA_E_V2),
-                //("SA_E_V3", BuildSA_E_V3),
-                //("SA_E_V4", BuildSA_E_V4)
-            };
-
-
-            var table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Pattern Type", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
-
-            string p1 = "a";
-            Random random = new Random();
-            int x = 1;
-            string p2 = "a";
-            Query query = new Query(p1, x, p2);
-            query.Y = (1, 45);
-
-            string path = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-            Directory.CreateDirectory($"{path}\\StringIndexingGapResults");
-            var files = Directory.GetFileSystemEntries($"{path}\\StringIndexingGapResults", "Results_*");
+            slnDir = Helper.TryGetSolutionDirectoryInfo().ToString();
+            Directory.CreateDirectory($"{slnDir}\\StringIndexingGapResults");
+            var files = Directory.GetFileSystemEntries($"{slnDir}\\StringIndexingGapResults", "Results_*");
             int last = 0;
             if (files.Length > 0)
             {
                 last = files.Select(s => Convert.ToInt32(s.Split('_')[1])).Max() + 1;
             }
-            var directory = Directory.CreateDirectory($"{path}\\StringIndexingGapResults\\Results_{last}");
-
-
-            foreach (var item in reportingDataStructures)
-            {
-                File.AppendAllText($"{TryGetSolutionDirectoryInfo()}\\{item.Item1}.csv", "data,construction,topSingle,topFixed,topVariable,midSingle,midFixed,midVariable,bottomSingle,bottomFixed,bottomVariable\n");
-            }
-
-            foreach (var test in testData)
-            {
-                var textName = test.Item1;
-                var sequence = test.Item2.Invoke(textName);
-
-
-                SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner((textName, sequence));
-                if (suffixArray_Scanner.botPattern.EndsWith('|'))
-                {
-                    //suffixArray_Scanner.botPattern = suffixArray_Scanner.botPattern.Remove(suffixArray_Scanner.botPattern.Length -1);
-                }
-                Query query1 = new Query(suffixArray_Scanner.topPattern, x, p2, "Top");
-                Random random1 = new Random();
-                Query query2 = new Query(suffixArray_Scanner.midPatterns.GetRandom(), x, p2, "Mid");
-                Query query3 = new Query(suffixArray_Scanner.botPattern, x, p2, "Bot");
-                Query[] queries = new Query[3];
-                query1.Y = query.Y; query2.Y = query.Y; query3.Y = query.Y;
-                queries[0] = query1;
-                queries[1] = query2;
-                queries[2] = query3;
-                query.Y =  (1, (int)Math.Sqrt(sequence.Length));
-                suffixArray_Scanner = null;
-
-                var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(File.ReadAllText($"{TryGetSolutionDirectoryInfo()}\\{textName}.json"));
-
-                //Console.WriteLine(query3.P1);
-                
-                var file = $"{path}\\StringIndexingGapResults\\Results_{last}\\{textName}.csv";
-                File.AppendAllLines(file, new string[] { $"Data Structure Name, Construction Time, Query, Single Pattern Query Time, Fixed Gap Query Time, Variable Gap Query Time" });
-                
-                foreach ((var name, var dataStructure) in reportingDataStructures)
-                {
-                    
-                    Console.WriteLine($"Running + {name} on {textName}");
-                    var b = BenchReportDataStructure(name, dataStructure, textName, suffixA, queries);
-                    foreach (var bench in b)
-                    {
-                        table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
-                        Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
-                        File.AppendAllLines(file, new string[] { $"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}" });
-                        
-                    }
-                    var qs = b.Select(s => (s.SinglePatternMatchesQuery, s.DoublePatternFixedMatchesQuery, s.DoublePatternVariableMatchesQuery)).ToArray();
-                    var bb = b[0];
-                    File.AppendAllText($"{TryGetSolutionDirectoryInfo()}\\{name}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery}\n");
-                }
-
-                foreach ((var name, var dataStructure) in countingDataStructures)
-                {
-                    Console.WriteLine($"Running + {name} on {textName}");
-                    var b = BenchCountDataStructure(name, dataStructure, textName, suffixA, query.X, query.Y.Min, query.Y.Max, queries);
-                    foreach (var bench in b)
-                    {
-
-                        table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
-                        Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
-                        File.AppendAllLines(file, new string[] { $"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}" });
-                    }
-                }
-
-                foreach ((var name, var dataStructure) in existenceDataStructures)
-                {
-                    Console.WriteLine($"Running + {name} on {textName}");
-                    var b = BenchExistDataStructure(name, dataStructure, textName, suffixA, query.X, query.Y.Min, query.Y.Max, queries);
-                    foreach (var bench in b)
-                    {
-                        table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
-                        Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
-                        File.AppendAllLines(file, new string[] { $"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}" });
-                    }
-                }
-            }
-            table.Options.NumberAlignment = Alignment.Right;
-            table.Write();
-            var workdir = Assembly.GetAssembly(typeof(Program)).Location; ;
-            var dir = Directory.GetParent(workdir).Parent.Parent.Parent.FullName;
-            var date = DateTime.Now.ToString("yyyyMMddTHHmmss");
-            File.WriteAllText($"{dir}\\Data\\TablePrints\\consoleoutput{date}.txt", table.ToString());
+            resultDir = Directory.CreateDirectory($"{slnDir}\\StringIndexingGapResults\\Results_{last}").ToString();
         }
 
+        private static void GetTestSetup(string slnDir, string resultsDir, out IEnumerable<(string, GetData)> testData, out (string, BuildReportDataStructure)[] reportingDataStructures, out (string, BuildCountDataStructure)[] countingDataStructures, out (string, BuildExistDataStructure)[] existenceDataStructures)
+        {
+            testData = DummyData.GetData(new DS[] {
+                DS._512,
+                DS._8192,
+                DS._16384,
+                DS._262144,
+                DS._524288,
+                DS._1048576,
+                DS._2097152,
+                DS._4194304,
+                DS._8388608,
+                DS._16777216,
+                DS._33554432,
+            });
 
+            reportingDataStructures = new (string, BuildReportDataStructure)[]
+            {
+                ("SA_R_V1", BuildSuffixArray_V1),
+                ("SA_R_V2", BuildSuffixArray_V2),
+                /*
+                ("SA_R_V3", BuildSuffixArray_V3),
+                ("SA_R_V4_1", BuildSuffixArray_V4_1),
+                */
+                ("SA_R_V4_2", BuildSuffixArray_V4_2),
+                ("SA_R_V4_3", BuildSuffixArray_V4_3),
+                ("SA_R_V5", BuildSuffixArray_V5)
+            };
+            countingDataStructures = new (string, BuildCountDataStructure)[]
+            {
+                ("SA_C_V1", BuildSA_C_V1),
+                ("SA_C_V2", BuildSA_C_V2)
+            };
+            existenceDataStructures = new (string, BuildExistDataStructure)[]
+            {
+                ("SA_E_V0", BuildSA_E_V0),
+                /*
+                ("SA_E_V1", BuildSA_E_V1),
+                ("SA_E_V2", BuildSA_E_V2),
+                ("SA_E_V3", BuildSA_E_V3),
+                ("SA_E_V4", BuildSA_E_V4)
+                */
+            };
+
+            for (int i = 0; i < 10; i++)
+            {
+                foreach (var item in reportingDataStructures)
+                {
+                    File.WriteAllText($"{resultsDir}\\{item.Item1}_{i}.csv", "data,construction,topSingle,topFixed,topVariable,midSingle,midFixed,midVariable,bottomSingle,bottomFixed,bottomVariable\n");
+                }
+
+                foreach (var item in countingDataStructures)
+                {
+                    File.WriteAllText($"{resultsDir}\\{item.Item1}_{i}.csv", "data,construction,topSingle,topFixed,topVariable,midSingle,midFixed,midVariable,bottomSingle,bottomFixed,bottomVariable\n");
+                }
+
+                foreach (var item in existenceDataStructures)
+                {
+                    File.WriteAllText($"{resultsDir}\\{item.Item1}_{i}.csv", "data,construction,topSingle,topFixed,topVariable,midSingle,midFixed,midVariable,bottomSingle,bottomFixed,bottomVariable\n");
+                }
+            }
 
             
-
-        
-
-        public static T[] KWayMerge<T>(T[][] arrays) where T : IComparable<T>
-        {
-            // Create a SortedSet to store the current minimum element from each array
-            PriorityQueue<int, T> minHeap = new PriorityQueue<int, T>();
-            int[] counters = new int[arrays.Length];
-            // Initialize the heap with the first element from each input array
-            for (int i = 0; i < arrays.Length; i++)
-            {
-                if (arrays[i].Length > 0)
-                {
-                    minHeap.Enqueue(i, arrays[i][counters[i]++]);
-                }
-            }
-
-            // Calculate the total number of elements in all the input arrays
-            int totalElements = arrays.Sum(a => a.Length);
-
-            // Initialize the output array with the correct length
-            T[] result = new T[totalElements];
-            int index = 0;
-
-            // Merge the arrays using the k-way merge algorithm
-            while (minHeap.TryDequeue(out int arrayIndex, out T value) && index < totalElements)
-            {
-                result[index++] = value;
-                if (arrays[arrayIndex].Length > counters[arrayIndex])
-                {
-                    minHeap.Enqueue(arrayIndex, arrays[arrayIndex][counters[arrayIndex]++]);
-                }
-            }
-            return result;
         }
 
-        public static DirectoryInfo TryGetSolutionDirectoryInfo(string currentPath = null)
+        private static void InitConsoleTable()
         {
-            var directory = new DirectoryInfo(
-                currentPath ?? Directory.GetCurrentDirectory());
-            while (directory != null && !directory.GetFiles("*.sln").Any())
-            {
-                directory = directory.Parent;
-            }
-            return directory;
+            table = new ConsoleTable("Data Structure & Data", "Construction Time MS", "Pattern Type", "Single Pattern Query Time MS", "Double Pattern Fixed Query Time MS", "Double Pattern Variable Query Time MS");
+            table.Options.NumberAlignment = Alignment.Right;
+        }
+
+        static ConsoleTable table;
+
+
+
+
+
+
+
+        public delegate ReportDataStructure BuildReportDataStructure(SuffixArrayFinal str);
+        public delegate ExistDataStructure BuildExistDataStructure(SuffixArrayFinal str, int x, int ymin, int ymax);
+        public delegate CountDataStructure BuildCountDataStructure(SuffixArrayFinal str, int x, int ymin, int ymax);
+        public delegate string GetData(string str);
+
+        public static ReportDataStructure BuildSuffixArray_V1(SuffixArrayFinal str)
+        {
+            return new SA_R_V1(str);
+        }
+
+        public static ReportDataStructure BuildSuffixArray_V2(SuffixArrayFinal str)
+        {
+            return new SA_R_V2(str);
+        }
+
+        public static ReportDataStructure BuildSuffixArray_V3(SuffixArrayFinal str)
+        {
+            return new SA_R_V3(str);
+        }
+
+        public static ReportDataStructure BuildSuffixArray_V4_1(SuffixArrayFinal str)
+        {
+            return new SA_R_V4_1(str);
+        }
+
+        public static ReportDataStructure BuildSuffixArray_V5(SuffixArrayFinal str)
+        {
+            return new SA_R_V5(str);
+        }
+
+        public static ReportDataStructure BuildSuffixArray_V4_2(SuffixArrayFinal str)
+        {
+            return new SA_R_V4_2(str);
+        }
+
+        public static ReportDataStructure BuildSuffixArray_V4_3(SuffixArrayFinal str)
+        {
+            return new SA_R_V4_3(str);
+        }
+        public static CountDataStructure BuildSA_C_V1(SuffixArrayFinal str, int x, int ymin, int ymax)
+        {
+            return new SA_C_V1(str, x, ymin, ymax);
+        }
+        public static CountDataStructure BuildSA_C_V2(SuffixArrayFinal str, int x, int ymin, int ymax)
+        {
+            return new SA_C_V2(str, x, ymin, ymax);
+        }
+
+        public static ReportDataStructure BuildSuffixTree(string str)
+        {
+            return SuffixTree.Create(str);
+        }
+
+        public static ReportDataStructure BuildPrecomputed(string str)
+        {
+            return new PreCompSubs(str);
+        }
+
+        public static ReportDataStructure BuildUkkonen(string str)
+        {
+
+            return new UkkonenWrapper(str);
+        }
+
+        public static ReportDataStructure BuildSuffixOther(string str)
+        {
+            return new SuffixTreeOther(str);
+        }
+
+        public static ReportDataStructure BuildBaratgabor(string str)
+        {
+            return new BaratgaborSuffixTree(str);
+        }
+
+        public static ExistDataStructure BuildSA_E_V0(SuffixArrayFinal str, int x, int ymin, int ymax)
+        {
+            return new SA_E_V0(str, x, ymin, ymax);
+        }
+
+        public static ExistDataStructure BuildSA_E_V1(SuffixArrayFinal str, int x, int ymin, int ymax)
+        {
+            return new SA_E_V1(str, x, ymin, ymax);
+        }
+
+        public static ExistDataStructure BuildSA_E_V2(SuffixArrayFinal str, int x, int ymin, int ymax)
+        {
+            return new SA_E_V2(str, x, ymin, ymax);
+        }
+        public static ExistDataStructure BuildSA_E_V3(SuffixArrayFinal str, int x, int ymin, int ymax)
+        {
+            return new SA_E_V3(str, x, ymin, ymax);
+        }
+        public static ExistDataStructure BuildSA_E_V4(SuffixArrayFinal str, int x, int ymin, int ymax)
+        {
+            return new SA_E_V4(str, x, ymin, ymax);
         }
     }
 }
