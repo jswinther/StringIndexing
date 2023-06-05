@@ -74,7 +74,7 @@ namespace ConsoleApp
                         }
                         var qs = b.Select(s => (s.SinglePatternMatchesQuery, s.DoublePatternFixedMatchesQuery, s.DoublePatternVariableMatchesQuery)).ToArray();
                         var bb = b[0];
-                        File.AppendAllText($"{resultsDir}\\{name + '_' + i}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery}\n");
+                        File.AppendAllText($"{resultsDir}\\{name + '_' + i}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].DoublePatternFixedMatchesQuery},{qs[1].DoublePatternVariableMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].DoublePatternFixedMatchesQuery},{qs[2].DoublePatternVariableMatchesQuery}\n");
                     }
 
                     foreach ((var name, var dataStructure) in countingDataStructures)
@@ -88,7 +88,7 @@ namespace ConsoleApp
                         }
                         var qs = b.Select(s => (s.SinglePatternMatchesQuery, s.DoublePatternFixedMatchesQuery, s.DoublePatternVariableMatchesQuery)).ToArray();
                         var bb = b[0];
-                        File.AppendAllText($"{resultsDir}\\{name + '_' + i}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery}\n");
+                        File.AppendAllText($"{resultsDir}\\{name + '_' + i}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].DoublePatternFixedMatchesQuery},{qs[1].DoublePatternVariableMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].DoublePatternFixedMatchesQuery},{qs[2].DoublePatternVariableMatchesQuery}\n");
                     }
 
                     foreach ((var name, var dataStructure) in existenceDataStructures)
@@ -102,7 +102,7 @@ namespace ConsoleApp
                         }
                         var qs = b.Select(s => (s.SinglePatternMatchesQuery, s.DoublePatternFixedMatchesQuery, s.DoublePatternVariableMatchesQuery)).ToArray();
                         var bb = b[0];
-                        File.AppendAllText($"{resultsDir}\\{name + '_' + i}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].SinglePatternMatchesQuery}\n");
+                        File.AppendAllText($"{resultsDir}\\{name + '_' + i}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].DoublePatternFixedMatchesQuery},{qs[1].DoublePatternVariableMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].DoublePatternFixedMatchesQuery},{qs[2].DoublePatternVariableMatchesQuery}\n");
                     }
                 }
 
