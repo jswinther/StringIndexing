@@ -391,7 +391,7 @@ namespace ConsoleApp
             countingDataStructures = new (string, BuildCountDataStructure)[]
             {
                 ("SA_C_V1", BuildSA_C_V1),
-                ("SA_C_V2", BuildSA_C_V2)
+                //("SA_C_V2", BuildSA_C_V2)
             };
             existenceDataStructures = new (string, BuildExistDataStructure)[]
             {
