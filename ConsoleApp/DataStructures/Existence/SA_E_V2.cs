@@ -29,7 +29,7 @@ namespace ConsoleApp.DataStructures.Existence
 
         public SA_E_V2(string str, int fixedGap, int minGap, int maxGap) : base(str, fixedGap, minGap, maxGap)
         {
-            SA = new SuffixArrayFinal(str);
+            SA = SuffixArrayFinal.CreateSuffixArray(str);
             FixedGap = fixedGap;
             MinGap = minGap;
             MaxGap = maxGap;

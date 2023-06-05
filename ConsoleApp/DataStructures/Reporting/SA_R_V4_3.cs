@@ -25,7 +25,7 @@ namespace ConsoleApp.DataStructures.Reporting
         public double MaxSize { get; set; }
         public SA_R_V4_3(string str) : base(str)
         {
-            SA = new SuffixArrayFinal(str);
+            SA = SuffixArrayFinal.CreateSuffixArray(str);
             BuildDataStructure();
         }
 
@@ -42,8 +42,9 @@ namespace ConsoleApp.DataStructures.Reporting
 
 
             SA.GetAllLcpIntervals((int)MinSize, out Tree, out Leaves1, out Root);
+            SA.CalculateSubTreeSize(Root);
             Leaves = Leaves1.Keys.ToArray();
-            Root.SubtreeSize = Update(Root);
+            //Root.SubtreeSize = Update(Root);
             SortedTree = new();
             Nodes = Tree.Values.Skip(1).ToArray();
             

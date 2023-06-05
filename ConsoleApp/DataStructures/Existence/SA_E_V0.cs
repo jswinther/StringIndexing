@@ -12,7 +12,7 @@ namespace ConsoleApp.DataStructures.Existence
         private SuffixArrayFinal SA;
         public SA_E_V0(string str, int fixedGap, int minGap, int maxGap) : base(str, fixedGap, minGap, maxGap)
         {
-            SA = new SuffixArrayFinal(str);
+            SA = SuffixArrayFinal.CreateSuffixArray(str);
             
         }
 

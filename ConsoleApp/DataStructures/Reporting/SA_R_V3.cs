@@ -20,7 +20,7 @@ namespace ConsoleApp.DataStructures.Reporting
         SuffixArrayFinal SA;
         public SA_R_V3(string S) : base(S)
         {
-            SA = new SuffixArrayFinal(S);
+            SA = SuffixArrayFinal.CreateSuffixArray(S);
             SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
             Sort(Root);
 

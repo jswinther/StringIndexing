@@ -28,7 +28,7 @@ namespace ConsoleApp.DataStructures.Reporting
 
         public SA_R_V4_2(string str) : base(str)
         {
-            SA = new SuffixArrayFinal(str);
+            SA = SuffixArrayFinal.CreateSuffixArray(str);
             BuildDataStructure();
         }
 

@@ -19,7 +19,7 @@ namespace ConsoleApp.DataStructures.Existence
         public SA_E_V4(string str, int fixedGap, int minGap, int maxGap) : base(str, fixedGap, minGap, maxGap)
         {
             this.x = x;
-            SA = new SuffixArrayFinal(str);
+            SA = SuffixArrayFinal.CreateSuffixArray(str);
             
             SA.GetAllLcpIntervals((int)Math.Sqrt(SA.n.Value), out Tree, out Leaves, out Root);
             var hashed = Leaves.Values.Select(s => new { interval = s.Interval, occs = new HashSet<int>(SA.GetOccurrencesForInterval(s.Interval)) }).ToArray();

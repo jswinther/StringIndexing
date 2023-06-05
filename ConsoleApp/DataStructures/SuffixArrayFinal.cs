@@ -21,7 +21,12 @@
             
         }
 
-        public SuffixArrayFinal(string str)
+        public static SuffixArrayFinal CreateSuffixArray(string str)
+        {
+            return SuffixArrayFinal.CreateSuffixArray(str);
+        }
+
+        private SuffixArrayFinal(string str)
         {
             m_str = str + "|";
             n = m_str.Length;
@@ -74,6 +79,11 @@
                     RefineChainWithInductionSorting(chain);
                 }
             }
+        }
+
+        public void CalculateSubTreeSize(IntervalNode root)
+        {
+            root.SubtreeSize = Update(root);
         }
 
         private int CalcLcp(int i, int j)
@@ -430,7 +440,7 @@
 
             _nodes = new();
             _leaves = new();
-            System.Collections.Generic.HashSet<(int, int)> hashSet = new();
+            HashSet<(int, int)> hashSet = new();
             Queue<(int, int)> intervals = new Queue<(int, int)>();
             intervals.Enqueue((0, n.Value - 1));
             // First add child intervals for the interval [0..n]
@@ -482,7 +492,7 @@
                 }
 
             }
-            root.SubtreeSize = Update(root);
+            
         }
 
         public int[] GetOccurrencesForPattern(string pattern)
@@ -498,13 +508,7 @@
 
         public int[] GetOccurrencesForInterval(int start, int end)
         {
-            if (start == -1 && end == -1) return new int[] { };
-            int[] occurrences = new int[end + 1 - start];
-            for (int i = 0; i < occurrences.Length; i++)
-            {
-                occurrences[i] = m_sa[i + start];
-            }
-            return occurrences;
+            return m_sa[start..(end + 1)];
         }
 
         public int GetLcp(int i, int j)

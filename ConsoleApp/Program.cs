@@ -46,7 +46,7 @@ namespace ConsoleApp
                 query.Y = (1, (int)Math.Sqrt(sequence.Length));
                 for (int i = 0; i < 10; i++)
                 {
-                    SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner((textName, sequence));
+                    SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner((textName, sequence), suffixA);
                     Query query1 = new Query(suffixArray_Scanner.topPattern, x, p2, "Top");
                     Random random1 = new Random();
                     Query query2 = new Query(suffixArray_Scanner.midPatterns.GetRandom(), x, p2, "Mid");
@@ -129,58 +129,26 @@ namespace ConsoleApp
             for (int i = 0; i < queries.Length; i++) // For each query
             {
                 // Single Pattern
-
-                try
-                {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(queries[i].P1);
-                    stopwatch.Stop();
-                    benchmarks[i].SinglePatternMatchesQueryOccs = occs.Count();
-                    benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
-                }
-                catch (Exception e)
-                {
-                    File.AppendAllText("exceptions", e.StackTrace);
-                    benchmarks[i].SinglePatternMatchesQuery = -1;
-                }
-
+                stopwatch = Stopwatch.StartNew();
+                patternMatcher.Matches(queries[i].P1);
+                stopwatch.Stop();
+                benchmarks[i].SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
 
                 // Double Pattern + Fixed Gap
-                try
-                {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(queries[i].P1, queries[i].X, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs.Count();
-                }
-                catch (Exception e)
-                {
-                    File.AppendAllText("exceptions", e.StackTrace);
-                    benchmarks[i].DoublePatternFixedMatchesQuery = -1;
-                }
+                stopwatch = Stopwatch.StartNew();
+                patternMatcher.Matches(queries[i].P1, queries[i].X, queries[i].P2);
+                stopwatch.Stop();
+                benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
+                //benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs.Count();
 
                 // Double Pattern + Variable Gap
-
-                try
-                {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(queries[i].P1, queries[i].Y.Min, queries[i].Y.Max, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs.Count();
-                }
-                catch (Exception e)
-                {
-                    File.AppendAllText("exceptions", e.StackTrace);
-                    benchmarks[i].DoublePatternVariableMatchesQuery = -1;
-                }
+                stopwatch = Stopwatch.StartNew();
+                patternMatcher.Matches(queries[i].P1, queries[i].Y.Min, queries[i].Y.Max, queries[i].P2);
+                stopwatch.Stop();
+                benchmarks[i].DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
+                //benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs.Count();
 
             }
-            stopwatch.Stop();
-            //benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-
-
             return benchmarks;
         }
 
@@ -214,7 +182,7 @@ namespace ConsoleApp
                     var occs = patternMatcher.Matches(queries[i].P1);
                     stopwatch.Stop();
                     benchmarks[i].SinglePatternMatchesQueryOccs = occs;
-                    benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
+                    benchmarks[i].SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
                 }
                 catch (Exception e)
                 {
@@ -292,7 +260,7 @@ namespace ConsoleApp
                     var occs = patternMatcher.Matches(queries[i].P1);
                     stopwatch.Stop();
                     benchmarks[i].SinglePatternMatchesQueryOccs = occs;
-                    benchmarks[i].SinglePatternMatchesQuery += stopwatch.ElapsedMilliseconds;
+                    benchmarks[i].SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
                 }
                 catch (Exception e)
                 {

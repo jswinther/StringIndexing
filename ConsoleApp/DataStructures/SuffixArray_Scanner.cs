@@ -30,14 +30,17 @@ namespace ConsoleApp.DataStructures
         public string topPattern = null;
         public string botPattern = null;
         public string[] midPatterns = new string[5];
-        public SuffixArray_Scanner((string, string) args)
+        public SuffixArray_Scanner((string, string) args, SuffixArrayFinal sa)
         {
             (string name, string str) = args;
-            SA = new SuffixArrayFinal(str);
+            SA = sa;
             SA.GetAllLcpIntervals(1, out Tree, out Leaves1, out Root);
 
             Queue<IntervalNode> findTestNodes = new Queue<IntervalNode>();
-            findTestNodes.Enqueue(Tree.Values.First());
+            foreach (var child in Root.Children)
+            {
+                findTestNodes.Enqueue(child);
+            }
 
             //HashSet<(int, int)> top = new HashSet<(int, int)>();
             Random r = new Random();
@@ -72,8 +75,8 @@ namespace ConsoleApp.DataStructures
                 }
             }
 
-
-            var midNodes = Tree.Values.Where(n => n.SubtreeSize > Math.Sqrt(SA.n.Value));
+            SA.CalculateSubTreeSize(Root);
+            var midNodes = Tree.Values.Skip(1).Where(n => n.SubtreeSize > Math.Sqrt(SA.n.Value));
             for (int i = 0; i < 5; i++)
             {
                 int index = r.Next(0, midNodes.Count());

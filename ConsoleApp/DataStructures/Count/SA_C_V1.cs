@@ -13,7 +13,7 @@ namespace ConsoleApp.DataStructures.Count
         SuffixArrayFinal SA;
         public SA_C_V1(string str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
         {
-            SA = new SuffixArrayFinal(str);
+            SA = SuffixArrayFinal.CreateSuffixArray(str);
         }
 
         public SA_C_V1(SuffixArrayFinal str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)

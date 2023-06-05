@@ -19,7 +19,7 @@ namespace ConsoleApp.DataStructures.Count
 
         public SA_C_V2(string str, int x, int ymin, int ymax) : base(str, x, ymin, ymax)
         {
-            SA = new SuffixArrayFinal(str);
+            SA = SuffixArrayFinal.CreateSuffixArray(str);
             
             //SA.GetAllLcpIntervals(1, out Tree, out Leaves, out Root);
             int n = SA.n.Value;

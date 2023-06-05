@@ -17,7 +17,7 @@ namespace ConsoleApp.DataStructures.Reporting
         private KDBush<double[]> KDTree = null;
         public SA_R_V5(string str) : base(str)
         {
-            SA = new SuffixArrayFinal(str);
+            SA = SuffixArrayFinal.CreateSuffixArray(str);
             BuildDataStructure();
         }
 

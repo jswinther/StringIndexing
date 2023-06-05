@@ -15,7 +15,7 @@ namespace ConsoleApp.DataStructures.Reporting
         IntervalNode Root;
         public SA_R_V(string str) : base(str)
         {
-            SA = new(str);
+            SA = SuffixArrayFinal.CreateSuffixArray(str);
             
             SA.GetAllLcpIntervals(0, out Tree, out Leaves, out Root);
             int x = 5;
