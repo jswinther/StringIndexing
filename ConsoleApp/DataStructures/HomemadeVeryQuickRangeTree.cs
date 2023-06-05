@@ -8,12 +8,16 @@ namespace ConsoleApp.DataStructures
 {
     internal class HomemadeVeryQuickRangeTree
     {
+        // LCP intervals
         private readonly int[] x;
+        // Position in text T
         private readonly int[] y;
+        // Sorted starting positions (y-values) for every range (x-ranges).
         private readonly int[][] z;
         private readonly int lgn;
         private int w = 0;
         private readonly int n;
+        // Size of tree
         private readonly int m;
         private readonly RangeNode[] Nodes;
 

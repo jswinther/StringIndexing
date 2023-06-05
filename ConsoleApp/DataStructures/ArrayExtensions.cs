@@ -159,7 +159,8 @@
         {
             (int s, int e) = array.BinarySearchOnRange(x, y);
             if (s < 0) return Enumerable.Empty<int>();
-            return array.Take(new Range(s, e + 1));
+            return array[s..(e + 1)];
+            //return array.Take(new Range(s, e + 1));
         }
 
         public static int[] Sort(this int[] a)
