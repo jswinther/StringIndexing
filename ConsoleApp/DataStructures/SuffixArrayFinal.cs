@@ -23,7 +23,7 @@
 
         public static SuffixArrayFinal CreateSuffixArray(string str)
         {
-            return SuffixArrayFinal.CreateSuffixArray(str);
+            return new SuffixArrayFinal(str);
         }
 
         private SuffixArrayFinal(string str)

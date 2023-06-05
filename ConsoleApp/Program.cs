@@ -341,15 +341,15 @@ namespace ConsoleApp
 
             reportingDataStructures = new (string, BuildReportDataStructure)[]
             {
-                ("SA_R_V1", BuildSuffixArray_V1),
+                //("SA_R_V1", BuildSuffixArray_V1),
                 ("SA_R_V2", BuildSuffixArray_V2),
-                /*
-                ("SA_R_V3", BuildSuffixArray_V3),
-                ("SA_R_V4_1", BuildSuffixArray_V4_1),
-                */
+                
+                //("SA_R_V3", BuildSuffixArray_V3),
+                //("SA_R_V4_1", BuildSuffixArray_V4_1),
+                
                 ("SA_R_V4_2", BuildSuffixArray_V4_2),
                 ("SA_R_V4_3", BuildSuffixArray_V4_3),
-                ("SA_R_V5", BuildSuffixArray_V5)
+                //("SA_R_V5", BuildSuffixArray_V5)
             };
             countingDataStructures = new (string, BuildCountDataStructure)[]
             {

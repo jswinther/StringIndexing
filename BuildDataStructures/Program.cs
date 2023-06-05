@@ -12,11 +12,7 @@ namespace BuildDataStructures
         static void Main(string[] args)
         {
 
-            foreach (var set in DummyData.GetData(new DS[] { DS._512, DS._8192, DS._16384, DS._262144, DS._524288, DS._1048576, DS._2097152, DS._4194304, DS._8388608, DS._16777216, DS._33554432 }))
-            {
-                var name = set.Item1;
-
-            }
+            CreateJSONFiles();
         }
 
         private static void CreateJSONFiles()
@@ -32,7 +28,7 @@ namespace BuildDataStructures
                 for (int i = 0; i < 10; i++)
                 {
                     var sw = Stopwatch.StartNew();
-                    saf = new SuffixArrayFinal(data);
+                    saf = SuffixArrayFinal.CreateSuffixArray(data);
                     sw.Stop();
                     elapsed += sw.ElapsedMilliseconds;
                 }
