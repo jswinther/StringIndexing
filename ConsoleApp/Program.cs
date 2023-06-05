@@ -37,16 +37,15 @@ namespace ConsoleApp
             int x = 1;
             string p2 = "a";
             Query query = new Query(p1, x, p2);
-            query.Y = (1, 45);
 
             foreach (var test in testData)
             {
+                var textName = test.Item1;
+                var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(File.ReadAllText($"{Helper.TryGetSolutionDirectoryInfo()}\\{textName}.json"));
+                var sequence = test.Item2.Invoke(textName);
+                query.Y = (1, (int)Math.Sqrt(sequence.Length));
                 for (int i = 0; i < 10; i++)
                 {
-                    var textName = test.Item1;
-                    var sequence = test.Item2.Invoke(textName);
-
-
                     SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner((textName, sequence));
                     Query query1 = new Query(suffixArray_Scanner.topPattern, x, p2, "Top");
                     Random random1 = new Random();
@@ -57,11 +56,7 @@ namespace ConsoleApp
                     queries[0] = query1;
                     queries[1] = query2;
                     queries[2] = query3;
-                    query.Y = (1, (int)Math.Sqrt(sequence.Length));
                     suffixArray_Scanner = null;
-
-                    var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(File.ReadAllText($"{Helper.TryGetSolutionDirectoryInfo()}\\{textName}.json"));
-
 
                     foreach ((var name, var dataStructure) in reportingDataStructures)
                     {
