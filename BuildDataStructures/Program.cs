@@ -17,23 +17,14 @@ namespace BuildDataStructures
 
         private static void CreateJSONFiles()
         {
-            foreach (var set in DummyData.GetData(new DS[] { DS._512, DS._8192, DS._16384, DS._262144, DS._524288, DS._1048576, DS._2097152, DS._4194304, DS._8388608, DS._16777216, DS._33554432 }))
+            foreach (var set in DummyData.GetData(new DS[] { /*DS._512, DS._8192, DS._16384, DS._262144, DS._524288, DS._1048576, DS._2097152,*/ DS._4194304, DS._8388608, DS._16777216, DS._33554432 }))
             {
 
                 var name = set.Item1;
                 var fileName = $"{ConsoleApp.Helper.TryGetSolutionDirectoryInfo()}\\{name}.json";
                 var data = set.Item2.Invoke(name);
                 SuffixArrayFinal saf = null;
-                long elapsed = 0;
-                for (int i = 0; i < 10; i++)
-                {
-                    var sw = Stopwatch.StartNew();
-                    saf = SuffixArrayFinal.CreateSuffixArray(data);
-                    sw.Stop();
-                    elapsed += sw.ElapsedMilliseconds;
-                }
-                Console.WriteLine("Written " + name + $" in time {elapsed / 10}");
-                File.AppendAllText("constructionTimes.txt", $"{name}, {elapsed / 10}\n");
+                saf = SuffixArrayFinal.CreateSuffixArray(data);
 
                 File.WriteAllText(fileName, "{");
                 AddField(fileName, "n", saf.n);
