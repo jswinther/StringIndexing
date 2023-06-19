@@ -36,11 +36,11 @@ namespace ConsoleApp.DataStructures.Reporting
         private void BuildDataStructure()
         {
             MinIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
-            MaxIntervalSize = (int)Math.Floor(Math.Pow(SA.n.Value, (0.667)));
+            //MaxIntervalSize = (int)Math.Floor(Math.Pow(SA.n.Value, (0.667)));
             SA.GetAllLcpIntervals(MinIntervalSize, out Tree, out Leaves1, out Root);
             SortedTree = new();
             Nodes = Tree.Values.ToArray();
-            foreach (var intervalToBeSorted in Nodes.Where(n => n.Size <= MaxIntervalSize))
+            foreach (var intervalToBeSorted in Nodes)
             {
                 SortedTree.Add(intervalToBeSorted.Interval, new HashSet<int>(SA.GetOccurrencesForInterval(intervalToBeSorted.Interval)));
             }

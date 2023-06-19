@@ -79,7 +79,7 @@ namespace ConsoleApp.DataStructures.Reporting
                 var o = KDTree.Range(int2.i, min, int2.j, max);
                 occs.AddRange(o);
             }
-            return occs.Select(s => SA.m_sa[(int)s]);
+            return occs;
         }
     }
 }

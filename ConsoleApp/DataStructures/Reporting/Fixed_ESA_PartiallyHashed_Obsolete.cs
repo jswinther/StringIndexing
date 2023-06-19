@@ -11,7 +11,7 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V3
     /// </summary>
-    internal class Fixed_ESA_PartiallyHashed_V1 : ReportFixed
+    internal class Fixed_ESA_PartiallyHashed_Obsolete : ReportFixed
     {
         private Dictionary<(int, int), IntervalNode> Tree;
         Dictionary<(int, int), IntervalNode> Leaves1;
@@ -21,11 +21,11 @@ namespace ConsoleApp.DataStructures.Reporting
         public int Height { get; set; }
         private IntervalNode Root;
         private Dictionary<(int, int), HashSet<int>> Hashed;
-        public Fixed_ESA_PartiallyHashed_V1(SuffixArrayFinal str) : base(str)
+        public Fixed_ESA_PartiallyHashed_Obsolete(SuffixArrayFinal str) : base(str)
         {
             BuildDataStructure();
         }
-        public Fixed_ESA_PartiallyHashed_V1(string str) : base(str)
+        public Fixed_ESA_PartiallyHashed_Obsolete(string str) : base(str)
         {
             BuildDataStructure();
         }

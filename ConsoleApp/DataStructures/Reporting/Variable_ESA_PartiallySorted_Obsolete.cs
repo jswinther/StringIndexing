@@ -10,7 +10,7 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V3
     /// </summary>
-    internal class Variable_ESA_PartiallySorted_V1 : ReportVariable
+    internal class Variable_ESA_PartiallySorted_Obsolete : ReportVariable
     {
         private Dictionary<(int, int), IntervalNode> Tree;
         Dictionary<(int, int), IntervalNode> Leaves1;
@@ -20,11 +20,11 @@ namespace ConsoleApp.DataStructures.Reporting
         public int Height { get; set; }
         private IntervalNode Root;
         private Dictionary<(int, int), int[]> Sorted;
-        public Variable_ESA_PartiallySorted_V1(SuffixArrayFinal str) : base(str)
+        public Variable_ESA_PartiallySorted_Obsolete(SuffixArrayFinal str) : base(str)
         {
             BuildDataStructure();
         }
-        public Variable_ESA_PartiallySorted_V1(string str) : base(str)
+        public Variable_ESA_PartiallySorted_Obsolete(string str) : base(str)
         {
             BuildDataStructure();
         }

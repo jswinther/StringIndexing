@@ -33,7 +33,7 @@ namespace ConsoleApp.DataStructures.Reporting
         }
         private void BuildDataStructure()
         {
-            MinSize = Math.Pow(SA.n.Value, 0.33);
+            MinSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
             MaxSize = Math.Pow(SA.n.Value, 0.67);
 
 

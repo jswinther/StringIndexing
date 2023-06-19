@@ -46,22 +46,23 @@ namespace ConsoleApp
 
             fixedReportDataStructures = new (string, BuildFixedReportDataStructure)[]
             {
-                ("Fixed_SA_Runtime", Fixed_SA_Runtime_Build),
-                ("Fixed_ESA_Runtime", Fixed_ESA_Runtime_Build),
-                ("Fixed_ESA_Hashed", Fixed_ESA_Hashed_Build),
+                //("Fixed_SA_Runtime", Fixed_SA_Runtime_Build),
+                //("Fixed_ESA_Runtime", Fixed_ESA_Runtime_Build),
+                //("Fixed_ESA_Hashed", Fixed_ESA_Hashed_Build),
                 //("Fixed_ESA_PartiallyHashed_V1", Fixed_ESA_PartiallyHashed_V1_Build),
-                ("Fixed_ESA_PartiallyHashed_V2", Fixed_ESA_PartiallyHashed_V2_Build),
-                ("Fixed_ESA_PartiallyHashed_V3", Fixed_ESA_PartiallyHashed_V3_Build),
+                //("Fixed_ESA_PartiallyHashed_V2", Fixed_ESA_PartiallyHashed_V2_Build),
+                //("Fixed_ESA_PartiallyHashed_V3", Fixed_ESA_PartiallyHashed_V3_Build),
             };
 
             variableReportDataStructures = new (string, BuildVariableReportDataStructure)[]
             {
-                ("Variable_SA_Runtime", Variable_SA_Runtime_Build),
-                ("Variable_ESA_Runtime", Variable_ESA_Runtime_Build),
+                //("Variable_SA_Runtime", Variable_SA_Runtime_Build),
+                //("Variable_ESA_Runtime", Variable_ESA_Runtime_Build),
                 ("Variable_ESA_Sorted", Variable_ESA_Sorted_Build),
                 //("Variable_ESA_PartiallySorted_V1", Variable_ESA_PartiallySorted_V1_Build),
-                ("Variable_ESA_PartiallySorted_V2", Variable_ESA_PartiallySorted_V2_Build),
-                ("Variable_ESA_PartiallySorted_V3", Variable_ESA_PartiallySorted_V3_Build),
+                //("Variable_ESA_PartiallySorted_V2", Variable_ESA_PartiallySorted_V2_Build),
+                //("Variable_ESA_PartiallySorted_V3", Variable_ESA_PartiallySorted_V3_Build),
+                ("Variable_ESA_2D", Variable_ESA_2D_Build)
             };
 
             countingDataStructures = new (string, BuildCountDataStructure)[]
@@ -545,7 +546,7 @@ namespace ConsoleApp
 
         public static ReportFixed Fixed_ESA_PartiallyHashed_V1_Build(SuffixArrayFinal str)
         {
-            return new Fixed_ESA_PartiallyHashed_V1(str);
+            return new Fixed_ESA_PartiallyHashed_Obsolete(str);
         }
 
         public static ReportFixed Fixed_ESA_PartiallyHashed_V2_Build(SuffixArrayFinal str)
@@ -577,7 +578,7 @@ namespace ConsoleApp
 
         public static ReportVariable Variable_ESA_PartiallySorted_V1_Build(SuffixArrayFinal str)
         {
-            return new Variable_ESA_PartiallySorted_V1(str);
+            return new Variable_ESA_PartiallySorted_Obsolete(str);
         }
 
         public static ReportVariable Variable_ESA_PartiallySorted_V2_Build(SuffixArrayFinal str)
@@ -590,6 +591,10 @@ namespace ConsoleApp
             return new Variable_ESA_PartiallySorted_V3(str);
         }
 
+        public static ReportVariable Variable_ESA_2D_Build(SuffixArrayFinal str)
+        {
+            return new Variable_ESA_2D(str);
+        }
 
         public static ReportDataStructure BuildSuffixArray_V5(SuffixArrayFinal str)
         {
