@@ -383,6 +383,66 @@
         #endregion
 
         #region public
+        public IEnumerable<int> BinaryMatches(string pattern)
+        {
+            List<int> occurrences = new List<int>();
+
+            // Construct the suffix array for the text
+            int n = m_str.Length;
+            int[] suffixArray = m_sa;
+
+            // Find the first occurrence of the substring in the text
+            int substringIndex = BinarySearch(pattern, m_str, suffixArray);
+
+            // If the substring is not found in the text, return an empty list
+            if (substringIndex == -1)
+            {
+                return occurrences;
+            }
+
+            // Add the index of the first occurrence of the substring to the list of occurrences
+            occurrences.Add(suffixArray[substringIndex]);
+
+            // Check all suffixes that come after the first occurrence of the substring
+            for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern.Length; i++)
+            {
+                occurrences.Add(suffixArray[i]);
+            }
+
+            // Check all suffixes that come before the first occurrence of the substring
+            for (int i = substringIndex - 1; i >= 0 && m_lcp[i + 1] >= pattern.Length; i--)
+            {
+                occurrences.Add(suffixArray[i]);
+            }
+
+            return occurrences;
+        }
+
+        public int BinarySearch(string pattern, string text, int[] suffixArray)
+        {
+            int lo = 0;
+            int hi = suffixArray.Length - 1;
+            while (lo <= hi)
+            {
+                int mid = lo + (hi - lo) / 2;
+                string suffix = text.Substring(suffixArray[mid]);
+                int cmp = ComparePrefix(pattern, suffix);
+                if (cmp < 0)
+                {
+                    hi = mid - 1;
+                }
+                else if (cmp > 0)
+                {
+                    lo = mid + 1;
+                }
+                else
+                {
+                    return mid;
+                }
+            }
+            return -1;
+        }
+
         private int ComparePrefix(string pattern, string suffix)
         {
             int n = Math.Min(pattern.Length, suffix.Length);
