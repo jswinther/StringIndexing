@@ -85,16 +85,19 @@ namespace ConsoleApp.DataStructures.Reporting
 
         }
 
-        public override IEnumerable<int> Matches(string pattern1, int minGap, int maxGap, string pattern2)
+        public override IEnumerable<(int, int)> Matches(string pattern1, int minGap, int maxGap, string pattern2)
         {
-            List<int> occs = new();
+            List<(int, int)> occs = new();
             var occs1 = SA.GetOccurrencesForPattern(pattern1);
             var occs2 = ReportSortedOccurrences(pattern2);
             foreach (var occ1 in occs1)
             {
                 int min = occ1 + minGap + pattern1.Length;
                 int max = occ1 + maxGap + pattern1.Length;
-                occs.AddRange(occs2.GetViewBetween(min, max));
+                foreach (var occ2 in occs2.GetViewBetween(min, max))
+                {
+                    occs.Add((occ1, occ2 + pattern2.Length));
+                }
             }
             return occs;
         }

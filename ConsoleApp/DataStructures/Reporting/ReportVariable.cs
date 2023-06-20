@@ -18,6 +18,6 @@ namespace ConsoleApp.DataStructures.Reporting
             SA = SuffixArrayFinal.CreateSuffixArray(str);
         }
         public abstract int[] ReportSortedOccurrences(string pattern);
-        public abstract IEnumerable<int> Matches(string pattern1, int minGap, int maxGap, string pattern2);
+        public abstract IEnumerable<(int, int)> Matches(string pattern1, int minGap, int maxGap, string pattern2);
     }
 }

@@ -33,9 +33,9 @@ namespace ConsoleApp.DataStructures.Reporting
             KDTree = new KDBush<double[]>(points, nodeSize: 32);
         }
 
-        public override IEnumerable<int> Matches(string pattern1, int minGap, int maxGap, string pattern2)
+        public override IEnumerable<(int,int)> Matches(string pattern1, int minGap, int maxGap, string pattern2)
         {
-            List<int> occs = new();
+            List<(int,int)> occs = new();
             //List<KdNode<Node>> occs = new();
             var occs1 = SA.GetOccurrencesForPattern(pattern1);
             var int2 = SA.ExactStringMatchingWithESA(pattern2);
@@ -47,7 +47,7 @@ namespace ConsoleApp.DataStructures.Reporting
                 //Envelope envelope = new Envelope(int2.i, int2.j, min, max);
                 //var o = KdTree.Query(envelope);
                 var o = KDTree.Range(int2.i, min, int2.j, max);
-                occs.AddRange(o);
+                occs.AddRange(o.Select(s => (s, s)));
             }
             return occs;
         }

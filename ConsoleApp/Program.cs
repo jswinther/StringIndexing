@@ -57,12 +57,12 @@ namespace ConsoleApp
             variableReportDataStructures = new (string, BuildVariableReportDataStructure)[]
             {
                 //("Variable_SA_Runtime", Variable_SA_Runtime_Build),
-                //("Variable_ESA_Runtime", Variable_ESA_Runtime_Build),
-                ("Variable_ESA_Sorted", Variable_ESA_Sorted_Build),
+                ("Variable_ESA_Runtime", Variable_ESA_Runtime_Build),
+                //("Variable_ESA_Sorted", Variable_ESA_Sorted_Build),
                 //("Variable_ESA_PartiallySorted_V1", Variable_ESA_PartiallySorted_V1_Build),
                 //("Variable_ESA_PartiallySorted_V2", Variable_ESA_PartiallySorted_V2_Build),
                 //("Variable_ESA_PartiallySorted_V3", Variable_ESA_PartiallySorted_V3_Build),
-                ("Variable_ESA_2D", Variable_ESA_2D_Build)
+                //("Variable_ESA_KdTrees", Variable_ESA_2D_Build)
             };
 
             countingDataStructures = new (string, BuildCountDataStructure)[]
@@ -112,7 +112,7 @@ namespace ConsoleApp
             Query query = new Query(p1, x, p2);
 
             int constructionReps = 1;
-            int reps = 10;
+            int reps = 1;
 
             foreach (var test in testData)
             {
@@ -202,13 +202,13 @@ namespace ConsoleApp
                 {
                     ReportVariable reportVariable = null;
                     stopwatch = Stopwatch.StartNew();
-                    for (int i = 0; i < reps; i++)
+                    for (int i = 0; i < constructionReps; i++)
                     {
                         reportVariable = dataStructure.Invoke(suffixA);
                     }
                     stopwatch.Stop();
                     var constructionTime = stopwatch.ElapsedMilliseconds / reps;
-
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -232,8 +232,8 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomQueryTime = stopwatch.ElapsedMilliseconds / reps;
-
-                    /*
+                    
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -257,10 +257,10 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
-                    */
+                    
                     File.AppendAllText($"{resultsDir}\\{name}.csv",
                         $"{textName},{constructionTime},{topQueryTime},{-1},{midQueryTime},{-1},{bottomQueryTime},{-1}\n");
-                    Console.WriteLine($"{name} {textName},{constructionTime},{topQueryTime},{-1},{midQueryTime},{-1},{bottomQueryTime},{-1}");
+                    Console.WriteLine($"{name} {textName}\t{constructionTime}\t{topQueryTime}\t{topFixedQueryTime}\t{midQueryTime}\t{midFixedQueryTime}\t{bottomQueryTime}\t{bottomFixedQueryTime}");
                 }
 
                 /*
