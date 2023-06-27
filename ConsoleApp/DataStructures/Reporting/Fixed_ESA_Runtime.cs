@@ -20,7 +20,7 @@ namespace ConsoleApp.DataStructures.Reporting
         public override IEnumerable<int> Matches(string pattern1, int x, string pattern2)
         {
             List<int> occs = new();
-            var occurrencesP1 = SA.GetOccurrencesForPattern(pattern1);
+            var occurrencesP1 = SA.SinglePattern(pattern1);
             var occurencesP2 = ReportHashedOccurrences(pattern2);
             foreach (var occ1 in occurrencesP1)
             {
@@ -34,7 +34,7 @@ namespace ConsoleApp.DataStructures.Reporting
 
         public override HashSet<int> ReportHashedOccurrences(string pattern)
         {
-            return new HashSet<int>(SA.GetOccurrencesForPattern(pattern));
+            return new HashSet<int>(SA.SinglePattern(pattern));
         }
     }
 }

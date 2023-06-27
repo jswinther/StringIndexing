@@ -30,8 +30,8 @@ namespace ConsoleApp.DataStructures.Count
         public override int MatchesFixed(string pattern1, string pattern2)
         {
             int count = 0;
-            var occs1 = SA.GetOccurrencesForPattern(pattern1);
-            var occs2 = new HashSet<int>(SA.GetOccurrencesForPattern(pattern2));
+            var occs1 = SA.SinglePattern(pattern1);
+            var occs2 = new HashSet<int>(SA.SinglePattern(pattern2));
             
             foreach (var occ1 in occs1)
             {
@@ -44,8 +44,8 @@ namespace ConsoleApp.DataStructures.Count
         public override int MatchesVariable(string pattern1, string pattern2)
         {
             int count = 0;
-            var occs1 = SA.GetOccurrencesForPattern(pattern1);
-            var occs2 = SA.GetOccurrencesForPattern(pattern2);
+            var occs1 = SA.SinglePattern(pattern1);
+            var occs2 = SA.SinglePattern(pattern2);
             occs2.Sort();
             
             foreach (var occ1 in occs1)

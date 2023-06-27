@@ -13,18 +13,9 @@ namespace ConsoleApp.DataStructures.Reporting
     /// </summary>
     internal class Fixed_ESA_PartiallyHashed_V2 : ReportFixed
     {
-        public Dictionary<(int, int), IntervalNode> Tree;
-        public Dictionary<(int, int), HashSet<int>> SortedTree;
-        Dictionary<(int, int), IntervalNode> Leaves1;
-        public (int, int)[] Leaves { get; private set; }
-        public IntervalNode[] Nodes { get; private set; }
-        public List<(int, int)> TopNodes { get; private set; }
-        public int Height { get; set; }
+        private Dictionary<(int, int), IntervalNode> Tree;
+        private Dictionary<(int, int), HashSet<int>> SortedTree;
 
-        public int MinIntervalSize { get; set; }
-        public int MaxIntervalSize { get; set; }
-
-        private IntervalNode Root;
         public Fixed_ESA_PartiallyHashed_V2(SuffixArrayFinal str) : base(str)
         {
             BuildDataStructure();
@@ -35,23 +26,20 @@ namespace ConsoleApp.DataStructures.Reporting
         }
         private void BuildDataStructure()
         {
-            MinIntervalSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
-            //MaxIntervalSize = (int)Math.Floor(Math.Pow(SA.n.Value, (0.667)));
-            SA.GetAllLcpIntervals(MinIntervalSize, out Tree, out Leaves1, out Root);
+            var minSize = Math.Sqrt(SA.n.Value);
+            SA.GetAllLcpIntervals(minSize, out Tree, out var Leaves, out var Root);
             SortedTree = new();
-            Nodes = Tree.Values.ToArray();
-            foreach (var intervalToBeSorted in Nodes)
+            foreach (var i in Tree.Values.Select(node => node.Interval))
             {
-                SortedTree.Add(intervalToBeSorted.Interval, new HashSet<int>(SA.GetOccurrencesForInterval(intervalToBeSorted.Interval)));
+                SortedTree.Add(i, new HashSet<int>(SA.GetOccurrencesForInterval(i)));
             }
         }
 
         public override IEnumerable<int> Matches(string pattern1, int x, string pattern2)
         {
             List<int> occs = new();
-            var occs1 = SA.GetOccurrencesForPattern(pattern1);
             var occs2 = ReportHashedOccurrences(pattern2);
-            foreach (var occ1 in occs1)
+            foreach (var occ1 in SA.SinglePattern(pattern1))
             {
                 if (occs2.Contains(occ1 + pattern1.Length + x))
                     occs.Add(occ1);
@@ -62,7 +50,6 @@ namespace ConsoleApp.DataStructures.Reporting
         public override HashSet<int> ReportHashedOccurrences(string pattern)
         {
             var interval = SA.ExactStringMatchingWithESA(pattern);
-            var intervalSize = (interval.j + 1 - interval.i);
             if (SortedTree.ContainsKey(interval)) return SortedTree[interval];
             else return new HashSet<int>(SA.GetOccurrencesForInterval(interval));
         }

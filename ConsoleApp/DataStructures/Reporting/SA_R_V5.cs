@@ -44,7 +44,7 @@ namespace ConsoleApp.DataStructures.Reporting
 
         public override IEnumerable<int> Matches(string pattern)
         {
-            var occs = SA.GetOccurrencesForPattern(pattern);
+            var occs = SA.SinglePattern(pattern);
             occs.Sort();
             return occs;
         }
@@ -52,8 +52,8 @@ namespace ConsoleApp.DataStructures.Reporting
         public override IEnumerable<int> Matches(string pattern1, int x, string pattern2)
         {
             List<int> occs = new List<int>();
-            var occs1 = SA.GetOccurrencesForPattern(pattern1);
-            var occs2 = new HashSet<int>(SA.GetOccurrencesForPattern(pattern2));
+            var occs1 = SA.SinglePattern(pattern1);
+            var occs2 = new HashSet<int>(SA.SinglePattern(pattern2));
 
             foreach (var occ1 in occs1)
             {
@@ -67,7 +67,7 @@ namespace ConsoleApp.DataStructures.Reporting
         {
             List<int> occs = new();
             //List<KdNode<Node>> occs = new();
-            var occs1 = SA.GetOccurrencesForPattern(pattern1);
+            var occs1 = SA.SinglePattern(pattern1);
             var int2 = SA.ExactStringMatchingWithESA(pattern2);
             
             foreach (var occ1 in occs1)

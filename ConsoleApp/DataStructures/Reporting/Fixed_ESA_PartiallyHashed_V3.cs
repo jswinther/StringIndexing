@@ -88,7 +88,7 @@ namespace ConsoleApp.DataStructures.Reporting
         public override IEnumerable<int> Matches(string pattern1, int x, string pattern2)
         {
             List<int> occs = new();
-            var occs1 = SA.GetOccurrencesForPattern(pattern1);
+            var occs1 = SA.SinglePattern(pattern1);
             var occs2 = ReportHashedOccurrences(pattern2);
             foreach (var occ1 in occs1)
             {

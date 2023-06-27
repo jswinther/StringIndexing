@@ -37,7 +37,7 @@ namespace ConsoleApp.DataStructures.Reporting
         {
             List<(int,int)> occs = new();
             //List<KdNode<Node>> occs = new();
-            var occs1 = SA.GetOccurrencesForPattern(pattern1);
+            var occs1 = SA.SinglePattern(pattern1);
             var int2 = SA.ExactStringMatchingWithESA(pattern2);
 
             foreach (var occ1 in occs1)
@@ -54,7 +54,7 @@ namespace ConsoleApp.DataStructures.Reporting
 
         public override int[] ReportSortedOccurrences(string pattern)
         {
-            return SA.GetOccurrencesForPattern(pattern).Sort();
+            return SA.SinglePattern(pattern).Sort();
         }
     }
 }
