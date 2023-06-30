@@ -17,21 +17,6 @@ namespace Runner
             int max = int.Parse(args[4]);
             string p2 = args[5];
 
-            string data;
-
-            if (dn.StartsWith("DNA"))
-            {
-                data = DummyData.DNA(dn);
-            }
-            else if (dn.StartsWith("english"))
-            {
-                data = DummyData.ENG(dn);
-            }
-            else
-            {
-                data = DummyData.PCC(dn);
-            }
-
             ReportFixed rf = null;
             ReportVariable rv = null;
             var sw = Stopwatch.StartNew();
