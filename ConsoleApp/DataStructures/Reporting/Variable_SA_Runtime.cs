@@ -9,7 +9,7 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V1
     /// </summary>
-    internal class Variable_SA_Runtime : ReportVariable
+    public class Variable_SA_Runtime : ReportVariable
     {
         public Variable_SA_Runtime(SuffixArrayFinal str) : base(str)
         {

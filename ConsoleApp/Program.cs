@@ -551,7 +551,7 @@ namespace ConsoleApp
 
         public static ReportFixed Fixed_ESA_PartiallyHashed_V2_Build(SuffixArrayFinal str)
         {
-            return new Fixed_ESA_PartiallyHashed_V2(str);
+            return new Fixed_ESA_PartiallyHashed_V1(str);
         }
 
         public static ReportFixed Fixed_ESA_PartiallyHashed_V3_Build(SuffixArrayFinal str)
@@ -583,12 +583,12 @@ namespace ConsoleApp
 
         public static ReportVariable Variable_ESA_PartiallySorted_V2_Build(SuffixArrayFinal str)
         {
-            return new Variable_ESA_PartiallySorted_V2(str);
+            return new Variable_ESA_PartiallySorted_V1(str);
         }
 
         public static ReportVariable Variable_ESA_PartiallySorted_V3_Build(SuffixArrayFinal str)
         {
-            return new Variable_ESA_PartiallySorted_V3(str);
+            return new Variable_ESA_PartiallySorted_V2(str);
         }
 
         public static ReportVariable Variable_ESA_2D_Build(SuffixArrayFinal str)

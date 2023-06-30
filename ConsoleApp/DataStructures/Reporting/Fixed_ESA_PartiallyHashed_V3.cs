@@ -11,7 +11,7 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V4_3
     /// </summary>
-    internal class Fixed_ESA_PartiallyHashed_V3 : ReportFixed
+    public class Fixed_ESA_PartiallyHashed_V3 : ReportFixed
     {
         public Dictionary<(int, int), IntervalNode> Tree;
         public Dictionary<(int, int), HashSet<int>> SortedTree;

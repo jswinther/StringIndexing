@@ -9,7 +9,7 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V2
     /// </summary>
-    internal class Fixed_ESA_Runtime : ReportFixed
+    public class Fixed_ESA_Runtime : ReportFixed
     {
         public Fixed_ESA_Runtime(SuffixArrayFinal str) : base(str)
         {

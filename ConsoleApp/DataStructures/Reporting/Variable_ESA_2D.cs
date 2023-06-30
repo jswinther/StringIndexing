@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
-    internal class Variable_ESA_2D : ReportVariable
+    public class Variable_ESA_2D : ReportVariable
     {
         private KDBush<double[]> KDTree = null;
         public Variable_ESA_2D(SuffixArrayFinal str) : base(str)

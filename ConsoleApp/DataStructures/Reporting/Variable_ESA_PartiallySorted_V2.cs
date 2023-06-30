@@ -8,12 +8,20 @@ using System.Threading.Tasks;
 namespace ConsoleApp.DataStructures.Reporting
 {
     /// <summary>
-    /// Formerly known as V4_2
+    /// Formerly known as V4_3
     /// </summary>
-    internal class Variable_ESA_PartiallySorted_V2 : ReportVariable
+    public class Variable_ESA_PartiallySorted_V2 : ReportVariable
     {
-        private Dictionary<(int, int), IntervalNode> Tree;
-        private Dictionary<(int, int), int[]> SortedTree; 
+        public Dictionary<(int, int), IntervalNode> Tree;
+        public Dictionary<(int, int), IntervalNode> SortedTree;
+        Dictionary<(int, int), IntervalNode> Leaves1;
+        public (int, int)[] Leaves { get; private set; }
+        public IntervalNode[] Nodes { get; private set; }
+        public List<(int, int)> TopNodes { get; private set; }
+        public int Height { get; set; }
+        private IntervalNode Root;
+        public double MinSize { get; set; }
+        public double MaxSize { get; set; }
         public Variable_ESA_PartiallySorted_V2(SuffixArrayFinal str) : base(str)
         {
             BuildDataStructure();
@@ -24,13 +32,57 @@ namespace ConsoleApp.DataStructures.Reporting
         }
         private void BuildDataStructure()
         {
-            var minSize = Math.Sqrt(SA.n.Value);
-            SA.GetAllLcpIntervals(minSize, out Tree, out var Leaves, out var Root);
+            MinSize = (int)Math.Floor(Math.Sqrt(SA.n.Value));
+            MaxSize = Math.Pow(SA.n.Value, 0.67);
+
+
+            SA.GetAllLcpIntervals((int)MinSize, out Tree, out Leaves1, out Root);
+            Leaves = Leaves1.Keys.ToArray();
             SortedTree = new();
-            foreach (var i in Tree.Values.Select(node => node.Interval))
+            Nodes = Tree.Values.Skip(1).ToArray();
+
+
+
+            foreach (var intervalToBeSorted in Nodes.Where(n => n.Size <= MaxSize))
             {
-                SortedTree.Add(i, SA.GetOccurrencesForInterval(i).Sort());
+                var occs = SA.GetOccurrencesForInterval(intervalToBeSorted.Interval);
+                intervalToBeSorted.SortedOccurrences = occs;
+                intervalToBeSorted.SortedOccurrences.Sort();
+                SortedTree.Add(intervalToBeSorted.Interval, intervalToBeSorted);
             }
+            Queue<IntervalNode> findTopNodes = new Queue<IntervalNode>();
+            findTopNodes.Enqueue(Tree.Values.First());
+            HashSet<(int, int)> top = new HashSet<(int, int)>();
+            while (findTopNodes.Count > 0)
+            {
+                var n = findTopNodes.Dequeue();
+                if (SortedTree.ContainsKey(n.Interval)) top.Add(n.Interval);
+                else
+                {
+                    foreach (var item in n.Children)
+                    {
+                        findTopNodes.Enqueue(item);
+                    }
+                }
+            }
+            TopNodes = top.ToList();
+            HashSet<IntervalNode> parents = new();
+            for (int i = 0; i < TopNodes.Count; i++)
+            {
+                (int, int) leafInterval = TopNodes[i];
+                var leaf = Tree[leafInterval];
+                var parentInterval = leaf.Parent.Interval;
+                while (Tree.ContainsKey(parentInterval))
+                {
+                    var parent = Tree[parentInterval];
+                    parents.Add(parent);
+                    if (parent.LeftMostLeaf > i) Tree[parentInterval].LeftMostLeaf = i;
+                    if (parent.RightMostLeaf < i) Tree[parentInterval].RightMostLeaf = i;
+                    if (parent.Parent == null) break;
+                    parentInterval = parent.Parent.Interval;
+                }
+            }
+
         }
 
         public override IEnumerable<(int, int)> Matches(string pattern1, int minGap, int maxGap, string pattern2)
@@ -54,8 +106,26 @@ namespace ConsoleApp.DataStructures.Reporting
         public override int[] ReportSortedOccurrences(string pattern)
         {
             var interval = SA.ExactStringMatchingWithESA(pattern);
-            if (SortedTree.ContainsKey(interval)) return SortedTree[interval];
-            else return SA.GetOccurrencesForInterval(interval).Sort();
+            if (SortedTree.ContainsKey(interval)) return SortedTree[interval].SortedOccurrences;
+            if (Tree.ContainsKey(interval) && Tree[interval].LeftMostLeaf < int.MaxValue)
+            {
+
+                var intervalNode = Tree[interval];
+                int start = intervalNode.LeftMostLeaf;
+                int end = intervalNode.RightMostLeaf;
+                int[][] arr = new int[end - start + 1][];
+                for (int i = start; i < end + 1; i++)
+                {
+                    arr[i - start] = SortedTree[TopNodes[i]].SortedOccurrences;
+                }
+                return Helper.KWayMerge(arr);
+            }
+            else
+            {
+                var occs = SA.GetOccurrencesForInterval(interval);
+                occs.Sort();
+                return occs;
+            }
         }
     }
 }

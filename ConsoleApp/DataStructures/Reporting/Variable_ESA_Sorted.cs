@@ -9,7 +9,7 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V3
     /// </summary>
-    internal class Variable_ESA_Sorted : ReportVariable
+    public class Variable_ESA_Sorted : ReportVariable
     {
         private Dictionary<(int, int), IntervalNode> Tree;
         private Dictionary<(int, int), IntervalNode> Leaves;
