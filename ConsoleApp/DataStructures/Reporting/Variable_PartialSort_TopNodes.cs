@@ -10,7 +10,7 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V4_3
     /// </summary>
-    public class Variable_ESA_PartiallySorted_V2 : ReportVariable
+    public class Variable_PartialSort_TopNodes : ReportVariable
     {
         public Dictionary<(int, int), IntervalNode> Tree;
         public Dictionary<(int, int), IntervalNode> SortedTree;
@@ -22,11 +22,11 @@ namespace ConsoleApp.DataStructures.Reporting
         private IntervalNode Root;
         public double MinSize { get; set; }
         public double MaxSize { get; set; }
-        public Variable_ESA_PartiallySorted_V2(SuffixArrayFinal str) : base(str)
+        public Variable_PartialSort_TopNodes(SuffixArrayFinal str) : base(str)
         {
             BuildDataStructure();
         }
-        public Variable_ESA_PartiallySorted_V2(string str) : base(str)
+        public Variable_PartialSort_TopNodes(string str) : base(str)
         {
             BuildDataStructure();
         }

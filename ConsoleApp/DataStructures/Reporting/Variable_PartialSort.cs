@@ -10,15 +10,15 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V4_2
     /// </summary>
-    public class Variable_ESA_PartiallySorted_V1 : ReportVariable
+    public class Variable_PartialSort : ReportVariable
     {
         private Dictionary<(int, int), IntervalNode> Tree;
         private Dictionary<(int, int), int[]> SortedTree; 
-        public Variable_ESA_PartiallySorted_V1(SuffixArrayFinal str) : base(str)
+        public Variable_PartialSort(SuffixArrayFinal str) : base(str)
         {
             BuildDataStructure();
         }
-        public Variable_ESA_PartiallySorted_V1(string str) : base(str)
+        public Variable_PartialSort(string str) : base(str)
         {
             BuildDataStructure();
         }

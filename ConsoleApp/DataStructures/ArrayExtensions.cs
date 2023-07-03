@@ -163,6 +163,11 @@
             //return array.Take(new Range(s, e + 1));
         }
 
+        public static int Size(this (int, int) interval)
+        {
+            return interval.Item2 - interval.Item1 + 1;
+        }
+
         public static int[] Sort(this int[] a)
         {
             if (SuffixArrayFinal.k >= Math.Log2(a.Length))

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures.Existence
 {
+    /*
     public class SA_E_V4 : ExistDataStructure
     {
         int x;
@@ -136,4 +137,5 @@ namespace ConsoleApp.DataStructures.Existence
 
 
     }
+    */
 }

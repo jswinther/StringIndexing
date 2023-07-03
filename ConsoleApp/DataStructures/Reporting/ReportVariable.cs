@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
-    public abstract class ReportVariable
+    public abstract class ReportVariable : IReportVariable
     {
         protected SuffixArrayFinal SA;
         protected ReportVariable(SuffixArrayFinal str)

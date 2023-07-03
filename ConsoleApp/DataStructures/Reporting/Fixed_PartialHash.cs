@@ -11,16 +11,16 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V4_2
     /// </summary>
-    public class Fixed_ESA_PartiallyHashed_V1 : ReportFixed
+    public class Fixed_PartialHash : ReportFixed
     {
         private Dictionary<(int, int), IntervalNode> Tree;
         private Dictionary<(int, int), HashSet<int>> SortedTree;
 
-        public Fixed_ESA_PartiallyHashed_V1(SuffixArrayFinal str) : base(str)
+        public Fixed_PartialHash(SuffixArrayFinal str) : base(str)
         {
             BuildDataStructure();
         }
-        public Fixed_ESA_PartiallyHashed_V1(string str) : base(str)
+        public Fixed_PartialHash(string str) : base(str)
         {
             BuildDataStructure();
         }

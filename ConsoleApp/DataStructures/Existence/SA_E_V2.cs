@@ -8,6 +8,7 @@ using static ConsoleApp.DataStructures.SuffixArrayFinal;
 
 namespace ConsoleApp.DataStructures.Existence
 {
+    /*
     public class SA_E_V2 : ExistDataStructure
     {
         private SuffixArrayFinal SA;
@@ -41,7 +42,7 @@ namespace ConsoleApp.DataStructures.Existence
            
 
 
-            /*Precomputation 1
+   
             foreach (var int1 in Tree.Keys.Where(s => s.Item2 - s.Item1 > Math.Sqrt(SA.n.Value)))
             {
                 //var occs2 = new HashSet<int>(SA.GetOccurrencesForInterval(int2));
@@ -60,9 +61,9 @@ namespace ConsoleApp.DataStructures.Existence
                     }
                     //Exists.Add((int1, int2), occs1.Any(occ1 => occs2.Contains(occ1 + FixedGap)));
                 }
-            }*/
+            }
 
-            /*Precomputation 2 */
+         
             BotLevel = new List<IntervalNode>();
             findBotLevelRec(Tree.Values.First(), minSizeSaved);
 
@@ -120,7 +121,7 @@ namespace ConsoleApp.DataStructures.Existence
 
 
 
-            /*Precomputation 1
+          
             foreach (var int1 in Tree.Keys.Where(s => s.Item2 - s.Item1 > Math.Sqrt(SA.n.Value)))
             {
                 //var occs2 = new HashSet<int>(SA.GetOccurrencesForInterval(int2));
@@ -139,9 +140,9 @@ namespace ConsoleApp.DataStructures.Existence
                     }
                     //Exists.Add((int1, int2), occs1.Any(occ1 => occs2.Contains(occ1 + FixedGap)));
                 }
-            }*/
+            }
 
-            /*Precomputation 2 */
+         
             BotLevel = new List<IntervalNode>();
             findBotLevelRec(Tree.Values.First(), minSizeSaved);
 
@@ -273,4 +274,5 @@ namespace ConsoleApp.DataStructures.Existence
             throw new NotImplementedException();
         }
     }
+*/
 }

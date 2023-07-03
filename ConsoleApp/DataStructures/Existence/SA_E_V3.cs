@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures.Existence
 {
+    /*
     // Bruteforce
     internal class SA_E_V3 : ExistDataStructure
     {
@@ -130,5 +131,6 @@ namespace ConsoleApp.DataStructures.Existence
 
      
     }
+    */
 
 }
