@@ -9,7 +9,7 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V1
     /// </summary>
-    internal class Fixed_SA_Runtime : ReportFixed
+    public class Fixed_SA_Runtime : ReportFixed
     {
         public Fixed_SA_Runtime(SuffixArrayFinal str) : base(str)
         {

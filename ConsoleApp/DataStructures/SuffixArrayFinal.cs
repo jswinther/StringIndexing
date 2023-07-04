@@ -495,7 +495,7 @@
             }
         }
 
-        public void GetAllLcpIntervals(int minSize, out Dictionary<(int, int), IntervalNode> _nodes, out Dictionary<(int, int), IntervalNode> _leaves, out IntervalNode root)
+        public void GetAllLcpIntervals(double minSize, out Dictionary<(int, int), IntervalNode> _nodes, out Dictionary<(int, int), IntervalNode> _leaves, out IntervalNode root)
         {
 
             _nodes = new();
@@ -555,7 +555,7 @@
             
         }
 
-        public int[] GetOccurrencesForPattern(string pattern)
+        public int[] SinglePattern(string pattern)
         {
             (int start, int end) = ExactStringMatchingWithESA(pattern);
             return GetOccurrencesForInterval(start, end);

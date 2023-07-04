@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures.Reporting
 {
-    public abstract class ReportFixed
+    public abstract class ReportFixed : IReportFixed
     {
         protected SuffixArrayFinal SA;
         protected ReportFixed(string str)

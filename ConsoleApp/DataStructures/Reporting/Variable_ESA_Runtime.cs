@@ -9,7 +9,7 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V2
     /// </summary>
-    internal class Variable_ESA_Runtime : ReportVariable
+    public class Variable_ESA_Runtime : ReportVariable
     {
         public Variable_ESA_Runtime(SuffixArrayFinal str) : base(str)
         {
@@ -19,16 +19,19 @@ namespace ConsoleApp.DataStructures.Reporting
         {
         }
 
-        public override IEnumerable<int> Matches(string pattern1, int minGap, int maxGap, string pattern2)
+        public override IEnumerable<(int, int)> Matches(string pattern1, int minGap, int maxGap, string pattern2)
         {
-            List<int> occs = new();
-            var occurrencesP1 = SA.GetOccurrencesForPattern(pattern1);
+            List<(int, int)> occs = new();
+            var occurrencesP1 = SA.SinglePattern(pattern1);
             var occurrencesP2 = ReportSortedOccurrences(pattern2);
             foreach (var occ1 in occurrencesP1)
             {
                 int min = occ1 + minGap + pattern1.Length;
                 int max = occ1 + maxGap + pattern1.Length;
-                occs.AddRange(occurrencesP2.GetViewBetween(min, max));
+                foreach (var occ2 in occurrencesP2.GetViewBetween(min, max))
+                {
+                    occs.Add((occ1, occ2 + pattern2.Length));
+                }
             }
             return occs;
         
@@ -36,7 +39,7 @@ namespace ConsoleApp.DataStructures.Reporting
 
         public override int[] ReportSortedOccurrences(string pattern)
         {
-            return SA.GetOccurrencesForPattern(pattern).Sort();
+            return SA.SinglePattern(pattern).Sort();
         }
     }
 }

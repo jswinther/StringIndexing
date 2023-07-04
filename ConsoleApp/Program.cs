@@ -21,15 +21,17 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             IEnumerable<(string, GetData)> testData;
-            (string, BuildReportDataStructure)[] reportingDataStructures;
             (string, BuildFixedReportDataStructure)[] fixedReportDataStructures;
             (string, BuildVariableReportDataStructure)[] variableReportDataStructures;
-            (string, BuildCountDataStructure)[] countingDataStructures;
-            (string, BuildExistDataStructure)[] existenceDataStructures;
+            (string, BuildFixedExistDataStructure)[] fixedExistDataStructures;
+            (string, BuildVariableExistDataStructure)[] variableExistDataStructures;
+            (string, BuildFixedCountDataStructure)[] fixedCountingDataStructures;
+            (string, BuildVariableCountDataStructure)[] variableCountingDataStructures;
             string sln;
             string resultsDir;
             SetupDirectories(out sln, out resultsDir);
             testData = DummyData.GetData(new DS[] {
+                
                 DS._512,
                 DS._8192,
                 DS._16384,
@@ -37,49 +39,56 @@ namespace ConsoleApp
                 DS._524288,
                 DS._1048576,
                 DS._2097152,
+                
                 DS._4194304,
                 DS._8388608,
                 DS._16777216,
                 DS._33554432,
+                
             });
 
 
             fixedReportDataStructures = new (string, BuildFixedReportDataStructure)[]
             {
-                //("Fixed_SA_Runtime", Fixed_SA_Runtime_Build),
-                //("Fixed_ESA_Runtime", Fixed_ESA_Runtime_Build),
-                //("Fixed_ESA_Hashed", Fixed_ESA_Hashed_Build),
-                //("Fixed_ESA_PartiallyHashed_V1", Fixed_ESA_PartiallyHashed_V1_Build),
-                //("Fixed_ESA_PartiallyHashed_V2", Fixed_ESA_PartiallyHashed_V2_Build),
-                //("Fixed_ESA_PartiallyHashed_V3", Fixed_ESA_PartiallyHashed_V3_Build),
+                ("Fixed_Report_SA_Runtime", Fixed_SA_Runtime_Build),
+                ("Fixed_Report_ESA_Runtime", Fixed_ESA_Runtime_Build),
+                ("Fixed_Report_ESA_Hashed", Fixed_ESA_Hashed_Build),
+                ("Fixed_Report_ESA_PartialHash", Fixed_ESA_PartialHash_Build),
             };
 
             variableReportDataStructures = new (string, BuildVariableReportDataStructure)[]
             {
-                //("Variable_SA_Runtime", Variable_SA_Runtime_Build),
-                //("Variable_ESA_Runtime", Variable_ESA_Runtime_Build),
-                ("Variable_ESA_Sorted", Variable_ESA_Sorted_Build),
-                //("Variable_ESA_PartiallySorted_V1", Variable_ESA_PartiallySorted_V1_Build),
-                //("Variable_ESA_PartiallySorted_V2", Variable_ESA_PartiallySorted_V2_Build),
-                //("Variable_ESA_PartiallySorted_V3", Variable_ESA_PartiallySorted_V3_Build),
-                ("Variable_ESA_2D", Variable_ESA_2D_Build)
+                ("Variable_Report_SA_Runtime", Variable_SA_Runtime_Build),
+                ("Variable_Report_ESA_Runtime", Variable_ESA_Runtime_Build),
+                ("Variable_Report_ESA_Sorted", Variable_ESA_Sorted_Build),
+                ("Variable_Report_PartialSort", Variable_ESA_PartialSort_Build),
+                ("Variable_Report_PartialSort_TopNodes", Variable_ESA_PartialSort_TopNodes_Build),
+                ("Variable_Report_ESA_KdTrees", Variable_ESA_2D_Build)
             };
 
-            countingDataStructures = new (string, BuildCountDataStructure)[]
+            fixedCountingDataStructures = new (string, BuildFixedCountDataStructure)[]
             {
-                ("SA_C_V1", BuildSA_C_V1),
-                //("SA_C_V2", BuildSA_C_V2)
+                ("Fixed_Count_ESA_Runtime", Build_Count_Fixed_ESA_Runtime),
+                
             };
-            existenceDataStructures = new (string, BuildExistDataStructure)[]
+
+            variableCountingDataStructures = new (string, BuildVariableCountDataStructure)[]
             {
-                ("SA_E_V0", BuildSA_E_V0),
-                /*
-                ("SA_E_V1", BuildSA_E_V1),
-                ("SA_E_V2", BuildSA_E_V2),
-                ("SA_E_V3", BuildSA_E_V3),
-                ("SA_E_V4", BuildSA_E_V4)
-                */
+                ("Variable_Count_ESA_Runtime", Build_Count_Variable_ESA_Runtime),
             };
+
+            fixedExistDataStructures = new (string, BuildFixedExistDataStructure)[]
+            {
+                ("Fixed_Exist_ESA_Runtime", Build_Exist_Fixed_ESA_Runtime),
+                ("Fixed_Exist_ESA_PartiallyHashed",Fixed_Exist_ESA_PartiallyHashed)
+            };
+
+            variableExistDataStructures = new (string, BuildVariableExistDataStructure)[]
+            {
+                ("Variable_Exist_ESA_Runtime", Build_Exist_Variable_ESA_Runtime),
+            };
+
+            
 
             foreach (var item in fixedReportDataStructures)
             {
@@ -90,29 +99,39 @@ namespace ConsoleApp
             {
                 File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,construction,topSingle,topVariable,midSingle,midVariable,bottomSingle,bottomVariable\n");
             }
-            /*
-            foreach (var item in countingDataStructures)
+
+            foreach (var item in fixedCountingDataStructures)
             {
-                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,construction,topSingle,topFixed,topVariable,midSingle,midFixed,midVariable,bottomSingle,bottomFixed,bottomVariable\n");
+                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,construction,topFixed,midFixed,bottomFixed\n");
             }
 
-            foreach (var item in existenceDataStructures)
+            foreach (var item in variableCountingDataStructures)
             {
-                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,construction,topSingle,topFixed,topVariable,midSingle,midFixed,midVariable,bottomSingle,bottomFixed,bottomVariable\n");
+                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,construction,topVariable,midVariable,bottomVariable\n");
             }
-            */
+
+            foreach (var item in fixedExistDataStructures)
+            {
+                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,construction,topFixed,midFixed,bottomFixed\n");
+            }
+
+            foreach (var item in variableExistDataStructures)
+            {
+                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,construction,topVariable,midVariable,bottomVariable\n");
+            }
+
             InitConsoleTable();
             
 
 
             string p1 = "a";
             Random random = new Random();
-            int x = 1;
+            int x = 5;
             string p2 = "a";
             Query query = new Query(p1, x, p2);
 
             int constructionReps = 1;
-            int reps = 10;
+            int reps = 1;
 
             foreach (var test in testData)
             {
@@ -132,9 +151,10 @@ namespace ConsoleApp
                 queries[2] = query3;
                 suffixArray_Scanner = null;
                 Stopwatch stopwatch;
+
                 foreach ((var name, var dataStructure) in fixedReportDataStructures)
                 {
-                    ReportFixed reportFixed = null;
+                    IReportFixed reportFixed = null;
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < constructionReps; i++)
                     {
@@ -167,7 +187,7 @@ namespace ConsoleApp
                     stopwatch.Stop();
                     var bottomQueryTime = stopwatch.ElapsedMilliseconds / reps;
 
-                    /*
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -191,24 +211,23 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
-                    */
+                    
                     File.AppendAllText($"{resultsDir}\\{name}.csv", 
-                        $"{textName},{constructionTime},{topQueryTime},{-1},{midQueryTime},{-1},{bottomQueryTime},{-1}\n");
-                    Console.WriteLine($"{name} {textName},{constructionTime},{topQueryTime},{-1},{midQueryTime},{-1},{bottomQueryTime},{-1}");
-
+                        $"{textName},{constructionTime},{topQueryTime},{topFixedQueryTime},{midQueryTime},{midFixedQueryTime},{bottomQueryTime},{bottomFixedQueryTime}\n");
+                    Console.WriteLine($"{name} {textName},{constructionTime},{topQueryTime},{topFixedQueryTime},{midQueryTime},{midFixedQueryTime},{bottomQueryTime},{bottomFixedQueryTime}");
                 }
 
                 foreach ((var name, var dataStructure) in variableReportDataStructures)
                 {
-                    ReportVariable reportVariable = null;
+                    IReportVariable reportVariable = null;
                     stopwatch = Stopwatch.StartNew();
-                    for (int i = 0; i < reps; i++)
+                    for (int i = 0; i < constructionReps; i++)
                     {
                         reportVariable = dataStructure.Invoke(suffixA);
                     }
                     stopwatch.Stop();
                     var constructionTime = stopwatch.ElapsedMilliseconds / reps;
-
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -232,8 +251,8 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomQueryTime = stopwatch.ElapsedMilliseconds / reps;
-
-                    /*
+                    
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -257,241 +276,180 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
-                    */
+                    
                     File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{textName},{constructionTime},{topQueryTime},{-1},{midQueryTime},{-1},{bottomQueryTime},{-1}\n");
-                    Console.WriteLine($"{name} {textName},{constructionTime},{topQueryTime},{-1},{midQueryTime},{-1},{bottomQueryTime},{-1}");
+                        $"{textName},{constructionTime},{topQueryTime},{topFixedQueryTime},{midQueryTime},{midFixedQueryTime},{bottomQueryTime},{bottomFixedQueryTime}\n");
+                    Console.WriteLine($"{name} {textName}\t{constructionTime}\t{topQueryTime}\t{topFixedQueryTime}\t{midQueryTime}\t{midFixedQueryTime}\t{bottomQueryTime}\t{bottomFixedQueryTime}");
                 }
 
-                /*
-                foreach ((var name, var dataStructure) in countingDataStructures)
+                foreach ((var name, var dataStructure) in fixedCountingDataStructures)
                 {
-                    Console.WriteLine($"Running + {name + '_' + i} on {textName}");
-                    var b = BenchCountDataStructure(name, dataStructure, textName, suffixA, query.X, query.Y.Min, query.Y.Max, queries);
-                    foreach (var bench in b)
+                    CountFixed countFixed = null;
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < constructionReps; i++)
                     {
-                        table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
-                        Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
+                        countFixed = dataStructure.Invoke(suffixA, 5);
                     }
-                    var qs = b.Select(s => (s.SinglePatternMatchesQuery, s.DoublePatternFixedMatchesQuery, s.DoublePatternVariableMatchesQuery)).ToArray();
-                    var bb = b[0];
-                    File.AppendAllText($"{resultsDir}\\{name + '_' + i}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].DoublePatternFixedMatchesQuery},{qs[1].DoublePatternVariableMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].DoublePatternFixedMatchesQuery},{qs[2].DoublePatternVariableMatchesQuery}\n");
+                    stopwatch.Stop();
+                    var constructionTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query1.P1, query1.P2);
+                    }
+                    stopwatch.Stop();
+                    var topFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query2.P1, query2.P2);
+                    }
+                    stopwatch.Stop();
+                    var midFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query3.P1,  query3.P2);
+                    }
+                    stopwatch.Stop();
+                    var bottomFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    File.AppendAllText($"{resultsDir}\\{name}.csv",
+                        $"{textName},{constructionTime},{topFixedQueryTime},{midFixedQueryTime},{bottomFixedQueryTime}\n");
+                    Console.WriteLine($"{name} {textName}\t{constructionTime},{topFixedQueryTime},{midFixedQueryTime},{bottomFixedQueryTime}");
                 }
 
-                foreach ((var name, var dataStructure) in existenceDataStructures)
+                foreach ((var name, var dataStructure) in variableCountingDataStructures)
                 {
-                    Console.WriteLine($"Running + {name + '_' + i} on {textName}");
-                    var b = BenchExistDataStructure(name, dataStructure, textName, suffixA, query.X, query.Y.Min, query.Y.Max, queries);
-                    foreach (var bench in b)
+                    CountVariable countFixed = null;
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < constructionReps; i++)
                     {
-                        table.AddRow($"{bench.DataStructureName} {bench.DataName}", $"{bench.ConstructionTimeMilliseconds}", $"{bench.QueryName}", $"{bench.SinglePatternMatchesQuery}ms, Occs: {bench.SinglePatternMatchesQueryOccs}", $"{bench.DoublePatternFixedMatchesQuery}ms, Occs: {bench.DoublePatternFixedMatchesQueryOccs}", $"{bench.DoublePatternVariableMatchesQuery}ms, Occs: {bench.DoublePatternVariableMatchesQueryOccs}");
-                        Console.WriteLine($"{bench.DataStructureName}, {bench.ConstructionTimeMilliseconds}, {bench.QueryName}, {bench.SinglePatternMatchesQuery}, {bench.DoublePatternFixedMatchesQuery}, {bench.DoublePatternVariableMatchesQuery}");
+                        countFixed = dataStructure.Invoke(suffixA, 5, 45);
                     }
-                    var qs = b.Select(s => (s.SinglePatternMatchesQuery, s.DoublePatternFixedMatchesQuery, s.DoublePatternVariableMatchesQuery)).ToArray();
-                    var bb = b[0];
-                    File.AppendAllText($"{resultsDir}\\{name + '_' + i}.csv", $"{textName},{bb.ConstructionTimeMilliseconds},{qs[0].SinglePatternMatchesQuery},{qs[0].DoublePatternFixedMatchesQuery},{qs[0].DoublePatternVariableMatchesQuery},{qs[1].SinglePatternMatchesQuery},{qs[1].DoublePatternFixedMatchesQuery},{qs[1].DoublePatternVariableMatchesQuery},{qs[2].SinglePatternMatchesQuery},{qs[2].DoublePatternFixedMatchesQuery},{qs[2].DoublePatternVariableMatchesQuery}\n");
+                    stopwatch.Stop();
+                    var constructionTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query1.P1, query1.P2);
+                    }
+                    stopwatch.Stop();
+                    var topFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query2.P1, query2.P2);
+                    }
+                    stopwatch.Stop();
+                    var midFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query3.P1, query3.P2);
+                    }
+                    stopwatch.Stop();
+                    var bottomFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    File.AppendAllText($"{resultsDir}\\{name}.csv",
+                        $"{textName},{constructionTime},{topFixedQueryTime},{midFixedQueryTime},{bottomFixedQueryTime}\n");
+                    Console.WriteLine($"{name} {textName}\t{constructionTime},{topFixedQueryTime},{midFixedQueryTime},{bottomFixedQueryTime}");
                 }
-                */
+
+                foreach ((var name, var dataStructure) in fixedExistDataStructures)
+                {
+                    ExistFixed countFixed = null;
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < constructionReps; i++)
+                    {
+                        countFixed = dataStructure.Invoke(suffixA, 5);
+                    }
+                    stopwatch.Stop();
+                    var constructionTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query1.P1, query1.P2);
+                    }
+                    stopwatch.Stop();
+                    var topFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query2.P1, query2.P2);
+                    }
+                    stopwatch.Stop();
+                    var midFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query3.P1, query3.P2);
+                    }
+                    stopwatch.Stop();
+                    var bottomFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    File.AppendAllText($"{resultsDir}\\{name}.csv",
+                        $"{textName},{constructionTime},{topFixedQueryTime},{midFixedQueryTime},{bottomFixedQueryTime}\n");
+                    Console.WriteLine($"{name} {textName}\t{constructionTime},{topFixedQueryTime},{midFixedQueryTime},{bottomFixedQueryTime}");
+                }
+
+                foreach ((var name, var dataStructure) in variableExistDataStructures)
+                {
+                    ExistVariable countFixed = null;
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < constructionReps; i++)
+                    {
+                        countFixed = dataStructure.Invoke(suffixA, 5, 45);
+                    }
+                    stopwatch.Stop();
+                    var constructionTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query1.P1, query1.P2);
+                    }
+                    stopwatch.Stop();
+                    var topFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query2.P1, query2.P2);
+                    }
+                    stopwatch.Stop();
+                    var midFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    stopwatch = Stopwatch.StartNew();
+                    for (int i = 0; i < reps; i++)
+                    {
+                        countFixed.Matches(query3.P1, query3.P2);
+                    }
+                    stopwatch.Stop();
+                    var bottomFixedQueryTime = stopwatch.ElapsedMilliseconds / reps;
+
+                    File.AppendAllText($"{resultsDir}\\{name}.csv",
+                        $"{textName},{constructionTime},{topFixedQueryTime},{midFixedQueryTime},{bottomFixedQueryTime}\n");
+                    Console.WriteLine($"{name} {textName}\t{constructionTime},{topFixedQueryTime},{midFixedQueryTime},{bottomFixedQueryTime}");
+                }
 
             }
             table.Write();
         }
 
-        
-
-        public static Benchmark[] BenchReportDataStructure(string dsname, BuildFixedReportDataStructure matcher, string name, SuffixArrayFinal str, params Query[] queries)
+        private static ExistFixed Fixed_Exist_ESA_PartiallyHashed(SuffixArrayFinal str, int x)
         {
-            Benchmark[] benchmarks = new Benchmark[queries.Length];
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            // Construction
-            ReportFixed patternMatcher = matcher.Invoke(str);
-            stopwatch.Stop();
-            for (int i = 0; i < benchmarks.Length; i++)
-            {
-                benchmarks[i] = new Benchmark();
-                benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-                benchmarks[i].DataStructureName = dsname;
-                benchmarks[i].DataName = name;
-                benchmarks[i].QueryName = queries[i].QueryName;
-            }
-
-            // Query Time
-            for (int i = 0; i < queries.Length; i++) // For each query
-            {
-                // Single Pattern
-                stopwatch = Stopwatch.StartNew();
-                patternMatcher.ReportHashedOccurrences(queries[i].P1);
-                stopwatch.Stop();
-                benchmarks[i].SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
-
-                // Double Pattern + Fixed Gap
-                stopwatch = Stopwatch.StartNew();
-                patternMatcher.Matches(queries[i].P1, queries[i].X, queries[i].P2);
-                stopwatch.Stop();
-                benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
-                //benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs.Count();
-
-            }
-            return benchmarks;
+            return new Fixed_Exist_ESA_PartiallyHashed(str, x);
         }
-
-        public static Benchmark[] BenchCountDataStructure(string dsname, BuildCountDataStructure matcher, string name, SuffixArrayFinal str, int x, int ymin, int ymax, params Query[] queries)
-        {
-            Benchmark[] benchmarks = new Benchmark[queries.Length];
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            // Construction
-            CountDataStructure patternMatcher = null;
-
-            patternMatcher = matcher.Invoke(str, x, ymin, ymax);
-
-            stopwatch.Stop();
-            for (int i = 0; i < benchmarks.Length; i++)
-            {
-                benchmarks[i] = new Benchmark();
-                benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-                benchmarks[i].DataStructureName = dsname;
-                benchmarks[i].DataName = name;
-                benchmarks[i].QueryName = queries[i].QueryName;
-            }
-
-            // Query Time
-            for (int i = 0; i < queries.Length; i++) // For each query
-            {
-                // Single Pattern
-
-                try
-                {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(queries[i].P1);
-                    stopwatch.Stop();
-                    benchmarks[i].SinglePatternMatchesQueryOccs = occs;
-                    benchmarks[i].SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
-                }
-                catch (Exception e)
-                {
-                    File.AppendAllText("exceptions", e.StackTrace);
-                    benchmarks[i].SinglePatternMatchesQuery = -1;
-                }
-
-
-                // Double Pattern + Fixed Gap
-                try
-                {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.MatchesFixed(queries[i].P1, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs;
-                }
-                catch (Exception e)
-                {
-                    File.AppendAllText("exceptions", e.StackTrace);
-                    benchmarks[i].DoublePatternFixedMatchesQuery = -1;
-                }
-
-                // Double Pattern + Variable Gap
-
-                try
-                {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.MatchesVariable(queries[i].P1, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs;
-                }
-                catch (Exception e)
-                {
-                    File.AppendAllText("exceptions", e.StackTrace);
-                    benchmarks[i].DoublePatternVariableMatchesQuery = -1;
-                }
-
-            }
-            stopwatch.Stop();
-            //benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-
-
-            return benchmarks;
-        }
-
-        public static Benchmark[] BenchExistDataStructure(string dsname, BuildExistDataStructure matcher, string name, SuffixArrayFinal str, int x, int ymin, int ymax, params Query[] queries)
-        {
-            Benchmark[] benchmarks = new Benchmark[queries.Length];
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            // Construction
-            ExistDataStructure patternMatcher = null;
-
-            patternMatcher = matcher.Invoke(str, x, ymin, ymax);
-
-            stopwatch.Stop();
-            for (int i = 0; i < benchmarks.Length; i++)
-            {
-                benchmarks[i] = new Benchmark();
-                benchmarks[i].ConstructionTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-                benchmarks[i].DataStructureName = dsname;
-                benchmarks[i].DataName = name;
-                benchmarks[i].QueryName = queries[i].QueryName;
-            }
-
-            // Query Time
-            for (int i = 0; i < queries.Length; i++) // For each query
-            {
-                // Single Pattern
-
-                try
-                {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.Matches(queries[i].P1);
-                    stopwatch.Stop();
-                    benchmarks[i].SinglePatternMatchesQueryOccs = occs;
-                    benchmarks[i].SinglePatternMatchesQuery = stopwatch.ElapsedMilliseconds;
-                }
-                catch (Exception e)
-                {
-                    File.AppendAllText("exceptions", e.StackTrace);
-                    benchmarks[i].SinglePatternMatchesQuery = -1;
-                }
-
-
-                // Double Pattern + Fixed Gap
-                try
-                {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.MatchesFixedGap(queries[i].P1, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternFixedMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternFixedMatchesQueryOccs = occs;
-
-                }
-                catch (Exception e)
-                {
-                    File.AppendAllText("exceptions", e.StackTrace);
-                    benchmarks[i].DoublePatternFixedMatchesQuery = -1;
-                }
-
-                // Double Pattern + Variable Gap
-
-                try
-                {
-                    stopwatch = Stopwatch.StartNew();
-                    var occs = patternMatcher.MatchesVariableGap(queries[i].P1, queries[i].P2);
-                    stopwatch.Stop();
-                    benchmarks[i].DoublePatternVariableMatchesQuery = stopwatch.ElapsedMilliseconds;
-                    benchmarks[i].DoublePatternVariableMatchesQueryOccs = occs;
-                }
-                catch (Exception e)
-                {
-                    File.AppendAllText("exceptions", e.StackTrace);
-                    benchmarks[i].DoublePatternVariableMatchesQuery = -1;
-                }
-
-            }
-            stopwatch.Stop();
-            //benchmark.QueryTimeMilliseconds = stopwatch.ElapsedMilliseconds;
-
-
-            return benchmarks;
-        }
-
 
         private static void SetupDirectories(out string slnDir, out string resultDir)
         {
@@ -522,12 +480,19 @@ namespace ConsoleApp
 
 
 
-        public delegate ReportDataStructure BuildReportDataStructure(SuffixArrayFinal str);
-        public delegate ReportFixed BuildFixedReportDataStructure(SuffixArrayFinal str);
-        public delegate ReportVariable BuildVariableReportDataStructure(SuffixArrayFinal str);
-        public delegate ExistDataStructure BuildExistDataStructure(SuffixArrayFinal str, int x, int ymin, int ymax);
-        public delegate CountDataStructure BuildCountDataStructure(SuffixArrayFinal str, int x, int ymin, int ymax);
+        //public delegate ReportDataStructure BuildReportDataStructure(SuffixArrayFinal str);
+        public delegate IReportFixed BuildFixedReportDataStructure(SuffixArrayFinal str);
+        public delegate IReportVariable BuildVariableReportDataStructure(SuffixArrayFinal str);
+        public delegate ExistFixed BuildFixedExistDataStructure(SuffixArrayFinal str, int x);
+        public delegate ExistVariable BuildVariableExistDataStructure(SuffixArrayFinal str, int ymin, int ymax);
+        public delegate CountFixed BuildFixedCountDataStructure(SuffixArrayFinal str, int x);
+        public delegate CountVariable BuildVariableCountDataStructure(SuffixArrayFinal str, int ymin, int ymax);
         public delegate string GetData(string str);
+
+
+
+
+
 
         public static ReportFixed Fixed_SA_Runtime_Build(SuffixArrayFinal str)
         {
@@ -536,7 +501,7 @@ namespace ConsoleApp
 
         public static ReportFixed Fixed_ESA_Runtime_Build(SuffixArrayFinal str)
         {
-            return new Fixed_ESA_Runtime(str);
+            return new DataStructures.Reporting.Fixed_ESA_Runtime(str);
         }
 
         public static ReportFixed Fixed_ESA_Hashed_Build(SuffixArrayFinal str)
@@ -549,17 +514,10 @@ namespace ConsoleApp
             return new Fixed_ESA_PartiallyHashed_Obsolete(str);
         }
 
-        public static ReportFixed Fixed_ESA_PartiallyHashed_V2_Build(SuffixArrayFinal str)
+        public static ReportFixed Fixed_ESA_PartialHash_Build(SuffixArrayFinal str)
         {
-            return new Fixed_ESA_PartiallyHashed_V2(str);
+            return new Fixed_PartialHash(str);
         }
-
-        public static ReportFixed Fixed_ESA_PartiallyHashed_V3_Build(SuffixArrayFinal str)
-        {
-            return new Fixed_ESA_PartiallyHashed_V3(str);
-        }
-
-
 
         public static ReportVariable Variable_SA_Runtime_Build(SuffixArrayFinal str)
         {
@@ -568,7 +526,7 @@ namespace ConsoleApp
 
         public static ReportVariable Variable_ESA_Runtime_Build(SuffixArrayFinal str)
         {
-            return new Variable_ESA_Runtime(str);
+            return new DataStructures.Reporting.Variable_ESA_Runtime(str);
         }
 
         public static ReportVariable Variable_ESA_Sorted_Build(SuffixArrayFinal str)
@@ -581,14 +539,14 @@ namespace ConsoleApp
             return new Variable_ESA_PartiallySorted_Obsolete(str);
         }
 
-        public static ReportVariable Variable_ESA_PartiallySorted_V2_Build(SuffixArrayFinal str)
+        public static ReportVariable Variable_ESA_PartialSort_Build(SuffixArrayFinal str)
         {
-            return new Variable_ESA_PartiallySorted_V2(str);
+            return new Variable_PartialSort(str);
         }
 
-        public static ReportVariable Variable_ESA_PartiallySorted_V3_Build(SuffixArrayFinal str)
+        public static ReportVariable Variable_ESA_PartialSort_TopNodes_Build(SuffixArrayFinal str)
         {
-            return new Variable_ESA_PartiallySorted_V3(str);
+            return new Variable_PartialSort_TopNodes(str);
         }
 
         public static ReportVariable Variable_ESA_2D_Build(SuffixArrayFinal str)
@@ -596,68 +554,33 @@ namespace ConsoleApp
             return new Variable_ESA_2D(str);
         }
 
-        public static ReportDataStructure BuildSuffixArray_V5(SuffixArrayFinal str)
+        
+
+        public static CountFixed Build_Count_Fixed_ESA_Runtime(SuffixArrayFinal str, int x)
         {
-            return new SA_R_V5(str);
+            return new DataStructures.Count.Fixed_ESA_Runtime(str, x);
         }
 
-        public static CountDataStructure BuildSA_C_V1(SuffixArrayFinal str, int x, int ymin, int ymax)
+        public static CountVariable Build_Count_Variable_ESA_Runtime(SuffixArrayFinal str, int ymin, int ymax)
         {
-            return new SA_C_V1(str, x, ymin, ymax);
-        }
-        public static CountDataStructure BuildSA_C_V2(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_C_V2(str, x, ymin, ymax);
+            return new DataStructures.Count.Variable_ESA_Runtime(str, ymin, ymax);
         }
 
-        public static ReportDataStructure BuildSuffixTree(string str)
+
+        public static ExistFixed Build_Exist_Fixed_ESA_Runtime(SuffixArrayFinal str, int x)
         {
-            return SuffixTree.Create(str);
+            return new DataStructures.Existence.Fixed_ESA_Runtime(str, x);
         }
 
-        public static ReportDataStructure BuildPrecomputed(string str)
+        public static ExistVariable Build_Exist_Variable_ESA_Runtime(SuffixArrayFinal str, int ymin, int ymax)
         {
-            return new PreCompSubs(str);
+            return new DataStructures.Existence.Variable_ESA_Runtime(str, ymin, ymax);
         }
 
-        public static ReportDataStructure BuildUkkonen(string str)
-        {
 
-            return new UkkonenWrapper(str);
-        }
 
-        public static ReportDataStructure BuildSuffixOther(string str)
-        {
-            return new SuffixTreeOther(str);
-        }
 
-        public static ReportDataStructure BuildBaratgabor(string str)
-        {
-            return new BaratgaborSuffixTree(str);
-        }
 
-        public static ExistDataStructure BuildSA_E_V0(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_E_V0(str, x, ymin, ymax);
-        }
-
-        public static ExistDataStructure BuildSA_E_V1(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_E_V1(str, x, ymin, ymax);
-        }
-
-        public static ExistDataStructure BuildSA_E_V2(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_E_V2(str, x, ymin, ymax);
-        }
-        public static ExistDataStructure BuildSA_E_V3(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_E_V3(str, x, ymin, ymax);
-        }
-        public static ExistDataStructure BuildSA_E_V4(SuffixArrayFinal str, int x, int ymin, int ymax)
-        {
-            return new SA_E_V4(str, x, ymin, ymax);
-        }
     }
 }
 

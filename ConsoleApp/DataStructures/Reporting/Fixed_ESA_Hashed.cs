@@ -10,7 +10,7 @@ namespace ConsoleApp.DataStructures.Reporting
     /// <summary>
     /// Formerly known as V3
     /// </summary>
-    internal class Fixed_ESA_Hashed : ReportFixed
+    public class Fixed_ESA_Hashed : ReportFixed
     {
         private Dictionary<(int, int), IntervalNode> Tree;
         private Dictionary<(int, int), IntervalNode> Leaves;
