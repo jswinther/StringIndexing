@@ -571,6 +571,7 @@
             return m_sa[start..(end + 1)];
         }
 
+        /*
         public int GetLcp(int i, int j)
         {
             var sufi = m_str.Substring(m_sa[i]);
@@ -582,6 +583,16 @@
                 ++k;
             }
             return k;
+        }
+        */
+
+        public int GetLcp(int i, int j)
+        {
+            if (i < m_ct_up[j + 1] && m_ct_up[j + 1] <= j)
+            {
+                return m_lcp[m_ct_up[j + 1]];
+            }
+            else return m_lcp[m_ct_down[i]];
         }
 
         //Only works on interval [0..n]
