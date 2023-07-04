@@ -17,14 +17,69 @@ namespace BuildDataStructures
 
         private static void CreateJSONFiles()
         {
-            foreach (var set in DummyData.GetData(new DS[] { DS._512, DS._8192, DS._16384, DS._262144, DS._524288, DS._1048576, DS._2097152, DS._4194304, DS._8388608, DS._16777216, DS._33554432 }))
+            var data = new string[] {
+                "DNA_256",
+                "DNA_512",
+                "DNA_1024",
+                "DNA_2048",
+                "DNA_4096",
+                "DNA_8192",
+                "DNA_16384",
+                "DNA_32768",
+                "DNA_65536",
+                "DNA_131072",
+                "DNA_262144",
+                "DNA_524288",
+
+
+                "english_256",
+                "english_512",
+                "english_1024",
+                "english_2048",
+                "english_4096",
+                "english_8192",
+                "english_16384",
+                "english_32768",
+                "english_65536",
+                "english_131072",
+                "english_262144",
+                "english_524288",
+
+
+                "proteins_256",
+                "proteins_512",
+                "proteins_1024",
+                "proteins_2048",
+                "proteins_4096",
+                "proteins_8192",
+                "proteins_16384",
+                "proteins_32768",
+                "proteins_65536",
+                "proteins_131072",
+                "proteins_262144",
+                "proteins_524288",
+
+
+                "realDNA_256",
+                "realDNA_512",
+                "realDNA_1024",
+                "realDNA_2048",
+                "realDNA_4096",
+                "realDNA_8192",
+                "realDNA_16384",
+                "realDNA_32768",
+                "realDNA_65536",
+                "realDNA_131072",
+                "realDNA_262144",
+                "realDNA_524288",
+
+            };
+            foreach (var set in data)
             {
 
-                var name = set.Item1;
-                var fileName = $"{Helper.TryGetSolutionDirectoryInfo()}\\{name}.json";
-                var data = set.Item2.Invoke(name);
+                var fileName = $"{Helper.TryGetSolutionDirectoryInfo()}\\{set}.json";
                 SuffixArrayFinal saf = null;
-                saf = SuffixArrayFinal.CreateSuffixArray(data);
+                saf = SuffixArrayFinal.CreateSuffixArray(DummyData.Read(set));
 
                 File.WriteAllText(fileName, "{");
                 AddField(fileName, "n", saf.n);

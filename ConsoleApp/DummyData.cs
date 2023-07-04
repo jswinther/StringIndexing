@@ -10,6 +10,14 @@ namespace ConsoleApp
 {
     public class DummyData
     {
+        public static string Read(string name)
+        {
+            if (name.StartsWith("DNA")) return DNA(name);
+            if (name.StartsWith("e")) return ENG(name);
+            else return PCC(name);
+        }
+
+
         public static IEnumerable<(string, GetData)> GetData(DS[] dataSets)
         {
             List<(string, GetData)> data = new List<(string, GetData)> ();
