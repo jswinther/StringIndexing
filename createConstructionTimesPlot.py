@@ -11,3 +11,4 @@ plt.figure()
 ax = sns.lineplot(data = df, hue='set', x='size', y='time', palette=['blue', 'red', 'yellow', 'grey'])
 plt.show()
 
+

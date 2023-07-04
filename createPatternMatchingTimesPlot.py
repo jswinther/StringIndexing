@@ -15,7 +15,8 @@ import matplotlib.pyplot as plt
 path = os.getcwd()
 print(path)
 
-os.chdir(path+"/StringIndexingGapResults/Results_2")
+#os.chdir(path+"/StringIndexingGapResults/Results_2")
+#os.chdir(path+"/StringIndexingGapResults/Results_2")
 path = os.getcwd()
 print(path)
 #df = pd.read_csv('SA_R_V1_0.csv')
