@@ -17,11 +17,11 @@ namespace BuildDataStructures
 
         private static void CreateJSONFiles()
         {
-            foreach (var set in DummyData.GetData(new DS[] { /*DS._512, DS._8192, DS._16384, DS._262144, DS._524288, DS._1048576, DS._2097152,*/ DS._4194304, DS._8388608, DS._16777216, DS._33554432 }))
+            foreach (var set in DummyData.GetData(new DS[] { DS._512, DS._8192, DS._16384, DS._262144, DS._524288, DS._1048576, DS._2097152, DS._4194304, DS._8388608, DS._16777216, DS._33554432 }))
             {
 
                 var name = set.Item1;
-                var fileName = $"{ConsoleApp.Helper.TryGetSolutionDirectoryInfo()}\\{name}.json";
+                var fileName = $"{Helper.TryGetSolutionDirectoryInfo()}\\{name}.json";
                 var data = set.Item2.Invoke(name);
                 SuffixArrayFinal saf = null;
                 saf = SuffixArrayFinal.CreateSuffixArray(data);
@@ -32,9 +32,11 @@ namespace BuildDataStructures
                 AddField(fileName, "m_isa", saf.m_isa);
                 AddField(fileName, "m_lcp", saf.m_lcp);
                 AddField(fileName, "m_str", saf.m_str);
+                /*
                 AddField(fileName, "m_ct_up", saf.m_ct_up);
                 AddField(fileName, "m_ct_down", saf.m_ct_down);
                 AddField(fileName, "m_ct_next", saf.m_ct_next);
+                */
                 AddField(fileName, "m_chainHeadsDict", saf.m_chainHeadsDict);
                 AddField(fileName, "m_chainStack", saf.m_chainStack);
                 AddField(fileName, "m_subChains", saf.m_subChains);

@@ -45,7 +45,7 @@
             FormInitialChains();
             BuildSuffixArray();
             BuildLcpArray();
-            BuildChildTable();
+            //BuildChildTable();
         }
 
         #region Construction
@@ -146,8 +146,11 @@
 
         // 6.2, 6.5
 
-        private void BuildChildTable()
+        public void BuildChildTable()
         {
+            m_ct_up = new int[n.Value];
+            m_ct_down = new int[n.Value];
+            m_ct_next = new int[n.Value];
             Stack<int> stack = new Stack<int>();
             int lastIndex = -1;
             stack.Push(0);
@@ -386,46 +389,20 @@
         public IEnumerable<int> BinaryMatches(string pattern)
         {
             List<int> occurrences = new List<int>();
-
-            // Construct the suffix array for the text
-            int n = m_str.Length;
-            int[] suffixArray = m_sa;
-
             // Find the first occurrence of the substring in the text
-            int substringIndex = BinarySearch(pattern, m_str, suffixArray);
-
-            // If the substring is not found in the text, return an empty list
-            if (substringIndex == -1)
-            {
-                return occurrences;
-            }
-
-            // Add the index of the first occurrence of the substring to the list of occurrences
-            occurrences.Add(suffixArray[substringIndex]);
-
-            // Check all suffixes that come after the first occurrence of the substring
-            for (int i = substringIndex + 1; i < n && m_lcp[i] >= pattern.Length; i++)
-            {
-                occurrences.Add(suffixArray[i]);
-            }
-
-            // Check all suffixes that come before the first occurrence of the substring
-            for (int i = substringIndex - 1; i >= 0 && m_lcp[i + 1] >= pattern.Length; i--)
-            {
-                occurrences.Add(suffixArray[i]);
-            }
-
-            return occurrences;
+            (int i, int j) = BinarySearch(pattern);
+            if (i == -1 && j == -1) return Enumerable.Empty<int>();
+            return m_sa[i..(j + 1)];
         }
 
-        public int BinarySearch(string pattern, string text, int[] suffixArray)
+        public (int, int) BinarySearch(string pattern)
         {
             int lo = 0;
-            int hi = suffixArray.Length - 1;
+            int hi = n.Value;
             while (lo <= hi)
             {
                 int mid = lo + (hi - lo) / 2;
-                string suffix = text.Substring(suffixArray[mid]);
+                string suffix = m_str.Substring(m_sa[mid]);
                 int cmp = ComparePrefix(pattern, suffix);
                 if (cmp < 0)
                 {
@@ -437,10 +414,13 @@
                 }
                 else
                 {
-                    return mid;
+                    int i, j;
+                    for (j = mid + 1; j < n && m_lcp[j] >= pattern.Length; j++) ;
+                    for (i = mid - 1; i >= 0 && m_lcp[i + 1] >= pattern.Length; i--)
+                        return (i, j);
                 }
             }
-            return -1;
+            return (-1, -1);
         }
 
         private int ComparePrefix(string pattern, string suffix)
@@ -463,6 +443,7 @@
 
         public (int i, int j) ExactStringMatchingWithESA(string pattern)
         {
+            
             int c = 0;
             bool queryFound = true;
             //(int i, int j) = GetInterval(0, N - 1, pattern[c], c);

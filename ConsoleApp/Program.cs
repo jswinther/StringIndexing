@@ -20,7 +20,6 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            IEnumerable<(string, GetData)> testData;
             (string, BuildFixedReportDataStructure)[] fixedReportDataStructures;
             (string, BuildVariableReportDataStructure)[] variableReportDataStructures;
             (string, BuildFixedExistDataStructure)[] fixedExistDataStructures;
@@ -30,23 +29,39 @@ namespace ConsoleApp
             string sln;
             string resultsDir;
             SetupDirectories(out sln, out resultsDir);
-            testData = DummyData.GetData(new DS[] {
-                
-                DS._512,
-                DS._8192,
-                DS._16384,
-                DS._262144,
-                DS._524288,
-                DS._1048576,
-                DS._2097152,
-                
-                DS._4194304,
-                DS._8388608,
-                DS._16777216,
-                DS._33554432,
-                
-            });
 
+            var tests = new string[]
+            {
+                "DNA_512",
+                "DNA_8192",
+                "DNA_16384",
+                "DNA_262144",
+                "DNA_524288",
+                "DNA_1048576",
+                "proteins_1048576",
+                "realDNA_1048576",
+                "english_1048576",
+                "DNA_2097152",
+                "proteins_2097152",
+                "realDNA_2097152",
+                "english_2097152",
+                "DNA_4194304",
+                "proteins_4194304",
+                "realDNA_4194304",
+                "english_4194304",
+                "DNA_8388608",
+                "proteins_8388608",
+                "realDNA_8388608",
+                "english_8388608",
+                "DNA_16777216",
+                "proteins_16777216",
+                "realDNA_16777216",
+                "english_16777216",
+                "DNA_33554432",
+                "proteins_33554432",
+                "realDNA_33554432",
+                "english_33554432"
+            };
 
             fixedReportDataStructures = new (string, BuildFixedReportDataStructure)[]
             {
@@ -133,33 +148,32 @@ namespace ConsoleApp
             int constructionReps = 1;
             int reps = 1;
 
-            foreach (var test in testData)
+            foreach (var textName in tests)
             {
-                var textName = test.Item1;
-                var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(File.ReadAllText($"{Helper.TryGetSolutionDirectoryInfo()}\\{textName}.json"));
-                var sequence = test.Item2.Invoke(textName);
-                query.Y = (1, (int)Math.Sqrt(sequence.Length));
-                SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner((textName, sequence), suffixA);
-                Query query1 = new Query(suffixArray_Scanner.topPattern, x, p2, "Top");
-                Random random1 = new Random();
-                Query query2 = new Query(suffixArray_Scanner.midPatterns.GetRandom(), x, p2, "Mid");
-                Query query3 = new Query(suffixArray_Scanner.botPattern, x, p2, "Bot");
-                Query[] queries = new Query[3];
-                query1.Y = query.Y; query2.Y = query.Y; query3.Y = query.Y;
-                queries[0] = query1;
-                queries[1] = query2;
-                queries[2] = query3;
-                suffixArray_Scanner = null;
+                var json = File.ReadAllText($"{Helper.TryGetSolutionDirectoryInfo()}\\{textName}.json");
+                var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(json);
+                suffixA.BuildChildTable();
+                query.Y = (5, 25);
+
+                Query query1 = new Query("a", 5, "a");
+                Query query2 = new Query("a", 5, "a");
+                Query query3 = new Query("a", 5, "a");
+                /*
+                using (SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner(suffixA))
+                {
+                    query1 = new Query(suffixArray_Scanner.topPattern, x, p2, "Top");
+                    query2 = new Query(suffixArray_Scanner.midPatterns.GetRandom(), x, p2, "Mid");
+                    query3 = new Query(suffixArray_Scanner.botPattern, x, p2, "Bot");
+                    
+                }
+                */
                 Stopwatch stopwatch;
+                query1.Y = query.Y; query2.Y = query.Y; query3.Y = query.Y;
 
                 foreach ((var name, var dataStructure) in fixedReportDataStructures)
                 {
-                    IReportFixed reportFixed = null;
                     stopwatch = Stopwatch.StartNew();
-                    for (int i = 0; i < constructionReps; i++)
-                    {
-                        reportFixed = dataStructure.Invoke(suffixA);
-                    }
+                    IReportFixed reportFixed = dataStructure.Invoke(suffixA);
                     stopwatch.Stop();
                     var constructionTime = stopwatch.ElapsedMilliseconds / reps;
 
@@ -219,12 +233,9 @@ namespace ConsoleApp
 
                 foreach ((var name, var dataStructure) in variableReportDataStructures)
                 {
-                    IReportVariable reportVariable = null;
+                    
                     stopwatch = Stopwatch.StartNew();
-                    for (int i = 0; i < constructionReps; i++)
-                    {
-                        reportVariable = dataStructure.Invoke(suffixA);
-                    }
+                    IReportVariable reportVariable = dataStructure.Invoke(suffixA);
                     stopwatch.Stop();
                     var constructionTime = stopwatch.ElapsedMilliseconds / reps;
                     
@@ -284,12 +295,9 @@ namespace ConsoleApp
 
                 foreach ((var name, var dataStructure) in fixedCountingDataStructures)
                 {
-                    CountFixed countFixed = null;
+                    
                     stopwatch = Stopwatch.StartNew();
-                    for (int i = 0; i < constructionReps; i++)
-                    {
-                        countFixed = dataStructure.Invoke(suffixA, 5);
-                    }
+                    CountFixed countFixed = dataStructure.Invoke(suffixA, 5);
                     stopwatch.Stop();
                     var constructionTime = stopwatch.ElapsedMilliseconds / reps;
 
@@ -324,12 +332,9 @@ namespace ConsoleApp
 
                 foreach ((var name, var dataStructure) in variableCountingDataStructures)
                 {
-                    CountVariable countFixed = null;
+                    
                     stopwatch = Stopwatch.StartNew();
-                    for (int i = 0; i < constructionReps; i++)
-                    {
-                        countFixed = dataStructure.Invoke(suffixA, 5, 45);
-                    }
+                    CountVariable countFixed = dataStructure.Invoke(suffixA, 5, 45);
                     stopwatch.Stop();
                     var constructionTime = stopwatch.ElapsedMilliseconds / reps;
 
@@ -364,12 +369,9 @@ namespace ConsoleApp
 
                 foreach ((var name, var dataStructure) in fixedExistDataStructures)
                 {
-                    ExistFixed countFixed = null;
+                    
                     stopwatch = Stopwatch.StartNew();
-                    for (int i = 0; i < constructionReps; i++)
-                    {
-                        countFixed = dataStructure.Invoke(suffixA, 5);
-                    }
+                    ExistFixed countFixed = dataStructure.Invoke(suffixA, 5);
                     stopwatch.Stop();
                     var constructionTime = stopwatch.ElapsedMilliseconds / reps;
 
@@ -404,12 +406,9 @@ namespace ConsoleApp
 
                 foreach ((var name, var dataStructure) in variableExistDataStructures)
                 {
-                    ExistVariable countFixed = null;
+                    
                     stopwatch = Stopwatch.StartNew();
-                    for (int i = 0; i < constructionReps; i++)
-                    {
-                        countFixed = dataStructure.Invoke(suffixA, 5, 45);
-                    }
+                    ExistVariable countFixed = dataStructure.Invoke(suffixA, 5, 45);
                     stopwatch.Stop();
                     var constructionTime = stopwatch.ElapsedMilliseconds / reps;
 
