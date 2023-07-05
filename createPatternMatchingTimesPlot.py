@@ -21,7 +21,7 @@ for ds in data_structures:
     plt.figure()
     plt.yscale('log')
     ax = sns.barplot(data = df, hue='data', x='length', y='query')
-    plt.savefig(ds + '.png')
+    plt.savefig('figures\\' + ds + '.png')
 
 
 """
