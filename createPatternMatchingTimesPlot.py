@@ -12,11 +12,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-path = os.getcwd() + '\\Results_1'
+path = os.getcwd() + '\\Results_3\\'
 data_structures = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
 
 for ds in data_structures:
-    df = pd.read_csv(path + '\\' + ds)
+    df = pd.read_csv(path + ds)
     sns.set()
     plt.figure()
     plt.yscale('log')
@@ -24,7 +24,7 @@ for ds in data_structures:
     plt.savefig(ds + '.png')
 
 
-
+"""
 df = pd.DataFrame()
 
 for f in data_structures:
@@ -122,4 +122,7 @@ plt.yscale('log')
 ax = sns.barplot(data = df, hue='dataStruct', x='dataLength', y='topSingle') #palette=['blue', 'red', 'yellow', 'grey'])
 plt.show()
 
+
+
+"""
 
