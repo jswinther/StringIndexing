@@ -45,11 +45,13 @@ namespace ConsoleApp
                 "english_262144",
                 "english_524288",
                 "english_1048576",
+                /*
                 "english_2097152",
                 "english_4194304",
                 "english_8388608",
                 "english_16777216",
                 "english_33554432",
+                */
 
                 "proteins_256",
                 "proteins_512",
@@ -64,11 +66,13 @@ namespace ConsoleApp
                 "proteins_262144",
                 "proteins_524288",
                 "proteins_1048576",
+                /*
                 "proteins_2097152",
                 "proteins_4194304",
                 "proteins_8388608",
                 "proteins_16777216",
                 "proteins_33554432",
+                */
 
                 "realDNA_256",
                 "realDNA_512",
@@ -83,11 +87,13 @@ namespace ConsoleApp
                 "realDNA_262144",
                 "realDNA_524288",
                 "realDNA_1048576",
+                /*
                 "realDNA_2097152",
                 "realDNA_4194304",
                 "realDNA_8388608",
                 "realDNA_16777216",
                 "realDNA_33554432",
+                */
 
                 "DNA_256",
                 "DNA_512",
@@ -102,11 +108,13 @@ namespace ConsoleApp
                 "DNA_262144",
                 "DNA_524288",
                 "DNA_1048576",
+                /*
                 "DNA_2097152",
                 "DNA_4194304",
                 "DNA_8388608",
                 "DNA_16777216",
                 "DNA_33554432",
+                */
             };
 
             fixedReportDataStructures = new (string, BuildFixedReportDataStructure)[]
