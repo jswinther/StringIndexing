@@ -416,7 +416,7 @@
                 {
                     int i = mid - 1, j = mid + 1;
                     while (j < n && m_lcp[j] >= pattern.Length) j++;
-                    while (i >= 0 && m_lcp[i + 1] >= pattern.Length) i--;
+                    while (i >= 0 && m_lcp[i] >= pattern.Length) i--;
                     return (i, j);
                 }
             }
