@@ -19,7 +19,7 @@ for ds in data_structures:
     df = pd.read_csv(path + ds)
     sns.set()
     plt.figure()
-    plt.yscale('log')
+    plt.yscale('log', base=2)
     ax = sns.barplot(data = df, hue='data', x='length', y='query')
     
     plt.savefig(ds + '.png')
