@@ -98,7 +98,7 @@ namespace BuildDataStructures
             foreach (var set in data)
             {
 
-                var fileName = $"{Helper.TryGetSolutionDirectoryInfo()}\\{set}.json";
+                var fileName = $"{Helper.TryGetSolutionDirectoryInfo()}\\jsonFiles\\{set}.json";
                 SuffixArrayFinal saf = null;
                 saf = SuffixArrayFinal.CreateSuffixArray(DummyData.Read(set));
 

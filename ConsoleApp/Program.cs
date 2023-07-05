@@ -203,7 +203,7 @@ namespace ConsoleApp
 
             foreach (var textName in tests)
             {
-                var json = File.ReadAllText($"{Helper.TryGetSolutionDirectoryInfo()}\\{textName}.json");
+                var json = File.ReadAllText($"{Helper.TryGetSolutionDirectoryInfo()}\\jsonFiles\\{textName}.json");
                 var suffixA = JsonSerializer.Deserialize<SuffixArrayFinal>(json);
                 suffixA.BuildChildTable();
                 query.Y = (5, 25);
