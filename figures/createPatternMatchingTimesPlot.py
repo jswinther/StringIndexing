@@ -14,18 +14,26 @@ import matplotlib.pyplot as plt
 
 path = os.getcwd() + '\\Results_3\\'
 data_structures = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
-
+dfAll = pd.DataFrame()
 for ds in data_structures:
     df = pd.read_csv(path + ds)
+    df['name'] = ds
     sns.set()
     plt.figure()
     plt.yscale('log', base=2)
     ax = sns.barplot(data = df, hue='data', x='length', y='query')
-    
     plt.savefig(ds + '.png')
+    dfAll = pd.concat([df,dfAll])
 
+d = dfAll[dfAll['data'].str.startswith('english')]
+d = d.drop(columns=['data'])
+ax = sns.barplot(data = d, hue='name', x='length', y='query')
+plt.savefig('english')
 
 """
+
+
+
 df = pd.DataFrame()
 
 for f in data_structures:
@@ -125,5 +133,6 @@ plt.show()
 
 
 
-"""
 
+
+"""
