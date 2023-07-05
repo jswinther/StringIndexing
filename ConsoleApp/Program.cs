@@ -274,8 +274,8 @@ namespace ConsoleApp
                     var d = textName.Split('_');
                     
                     File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{constructionTime},{topFixedQueryTime}\n");
-                    Console.WriteLine($"{name} {textName},{constructionTime},{topFixedQueryTime}");
+                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
+                    Console.WriteLine($"{name} {textName},{(int)constructionTime},{(int)topFixedQueryTime}");
                 }
 
                 foreach ((var name, var dataStructure) in variableReportDataStructures)
@@ -338,7 +338,7 @@ namespace ConsoleApp
                     var d = textName.Split('_');
 
                     File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{constructionTime},{topFixedQueryTime}\n");
+                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
                     Console.WriteLine($"{name} {textName}\t{constructionTime}\t{topFixedQueryTime}");
                 }
 
@@ -377,8 +377,8 @@ namespace ConsoleApp
                     var d = textName.Split('_');
 
                     File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{constructionTime},{topFixedQueryTime}\n");
-                    Console.WriteLine($"{name} {textName}\t{constructionTime},{topFixedQueryTime}");
+                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
+                    Console.WriteLine($"{name} {textName}\t{(int)constructionTime},{(int)topFixedQueryTime}");
                 }
 
                 foreach ((var name, var dataStructure) in variableCountingDataStructures)
@@ -416,8 +416,8 @@ namespace ConsoleApp
                     var d = textName.Split('_');
 
                     File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{constructionTime},{topFixedQueryTime}\n");
-                    Console.WriteLine($"{name} {textName}\t{constructionTime},{topFixedQueryTime}");
+                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
+                    Console.WriteLine($"{name} {textName}\t{(int)constructionTime},{(int)topFixedQueryTime}");
                 }
 
                 foreach ((var name, var dataStructure) in fixedExistDataStructures)
@@ -455,8 +455,8 @@ namespace ConsoleApp
                     var d = textName.Split('_');
 
                     File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{constructionTime},{topFixedQueryTime}\n");
-                    Console.WriteLine($"{name} {textName}\t{constructionTime},{topFixedQueryTime}");
+                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
+                    Console.WriteLine($"{name} {textName}\t{(int)constructionTime},{(int)topFixedQueryTime}");
                 }
 
                 foreach ((var name, var dataStructure) in variableExistDataStructures)
@@ -494,8 +494,8 @@ namespace ConsoleApp
                     var d = textName.Split('_');
 
                     File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{constructionTime},{topFixedQueryTime}\n");
-                    Console.WriteLine($"{name} {textName}\t{constructionTime},{topFixedQueryTime}");
+                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
+                    Console.WriteLine($"{name} {textName}\t{(int)constructionTime},{(int)topFixedQueryTime}");
                 }
 
             }
