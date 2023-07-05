@@ -111,42 +111,42 @@ namespace ConsoleApp
 
             fixedReportDataStructures = new (string, BuildFixedReportDataStructure)[]
             {
-                //("Fixed_Report_SA_Runtime", Fixed_SA_Runtime_Build),
-                ("Fixed_Report_ESA_Runtime", Fixed_ESA_Runtime_Build),
-                ("Fixed_Report_ESA_Hashed", Fixed_ESA_Hashed_Build),
-                ("Fixed_Report_ESA_PartialHash", Fixed_ESA_PartialHash_Build),
+                ("Fixed_Report_SA_Runtime", Fixed_SA_Runtime_Build),
+                //("Fixed_Report_ESA_Runtime", Fixed_ESA_Runtime_Build),
+                //("Fixed_Report_ESA_Hashed", Fixed_ESA_Hashed_Build),
+                //("Fixed_Report_ESA_PartialHash", Fixed_ESA_PartialHash_Build),
             };
 
             variableReportDataStructures = new (string, BuildVariableReportDataStructure)[]
             {
                 //("Variable_Report_SA_Runtime", Variable_SA_Runtime_Build),
-                ("Variable_Report_ESA_Runtime", Variable_ESA_Runtime_Build),
-                ("Variable_Report_ESA_Sorted", Variable_ESA_Sorted_Build),
-                ("Variable_Report_PartialSort", Variable_ESA_PartialSort_Build),
-                ("Variable_Report_PartialSort_TopNodes", Variable_ESA_PartialSort_TopNodes_Build),
-                ("Variable_Report_ESA_KdTrees", Variable_ESA_2D_Build)
+                //("Variable_Report_ESA_Runtime", Variable_ESA_Runtime_Build),
+                //("Variable_Report_ESA_Sorted", Variable_ESA_Sorted_Build),
+                //("Variable_Report_PartialSort", Variable_ESA_PartialSort_Build),
+                //("Variable_Report_PartialSort_TopNodes", Variable_ESA_PartialSort_TopNodes_Build),
+                //("Variable_Report_ESA_KdTrees", Variable_ESA_2D_Build)
             };
 
             fixedCountingDataStructures = new (string, BuildFixedCountDataStructure)[]
             {
-                ("Fixed_Count_ESA_Runtime", Build_Count_Fixed_ESA_Runtime),
+                //("Fixed_Count_ESA_Runtime", Build_Count_Fixed_ESA_Runtime),
                 
             };
 
             variableCountingDataStructures = new (string, BuildVariableCountDataStructure)[]
             {
-                ("Variable_Count_ESA_Runtime", Build_Count_Variable_ESA_Runtime),
+                //("Variable_Count_ESA_Runtime", Build_Count_Variable_ESA_Runtime),
             };
 
             fixedExistDataStructures = new (string, BuildFixedExistDataStructure)[]
             {
-                ("Fixed_Exist_ESA_Runtime", Build_Exist_Fixed_ESA_Runtime),
-                ("Fixed_Exist_ESA_PartiallyHashed",Fixed_Exist_ESA_PartiallyHashed)
+                //("Fixed_Exist_ESA_Runtime", Build_Exist_Fixed_ESA_Runtime),
+                //("Fixed_Exist_ESA_PartiallyHashed",Fixed_Exist_ESA_PartiallyHashed)
             };
 
             variableExistDataStructures = new (string, BuildVariableExistDataStructure)[]
             {
-                ("Variable_Exist_ESA_Runtime", Build_Exist_Variable_ESA_Runtime),
+                //("Variable_Exist_ESA_Runtime", Build_Exist_Variable_ESA_Runtime),
             };
 
             

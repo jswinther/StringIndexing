@@ -414,10 +414,10 @@
                 }
                 else
                 {
-                    int i, j;
-                    for (j = mid + 1; j < n && m_lcp[j] >= pattern.Length; j++) ;
-                    for (i = mid - 1; i >= 0 && m_lcp[i + 1] >= pattern.Length; i--)
-                        return (i, j);
+                    int i = mid - 1, j = mid + 1;
+                    while (j < n && m_lcp[j] >= pattern.Length) j++;
+                    while (i >= 0 && m_lcp[i + 1] >= pattern.Length) i--;
+                    return (i, j);
                 }
             }
             return (-1, -1);
