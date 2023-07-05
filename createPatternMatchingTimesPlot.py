@@ -12,22 +12,22 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-path = os.getcwd()
-print(path)
+path = os.getcwd() + '\\Results_1'
+data_structures = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
 
-#os.chdir(path+"/StringIndexingGapResults/Results_2")
-#os.chdir(path+"/StringIndexingGapResults/Results_2")
-path = os.getcwd()
-print(path)
-#df = pd.read_csv('SA_R_V1_0.csv')
+for ds in data_structures:
+    df = pd.read_csv(path + '\\' + ds)
+    sns.set()
+    plt.figure()
+    plt.yscale('log')
+    ax = sns.barplot(data = df, hue='data', x='length', y='query')
+    plt.savefig(ds + '.png')
 
-onlyfiles = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
+
 
 df = pd.DataFrame()
 
-
-## ONLY DNA ##
-for f in onlyfiles:
+for f in data_structures:
     print(f)
     df2 = pd.read_csv(f)
     df2 = df2[df2['data'].str.startswith('DNA_')]

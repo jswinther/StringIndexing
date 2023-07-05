@@ -1,4 +1,4 @@
-data,construction,topSingle,topVariable,midSingle,midVariable,bottomSingle,bottomVariable
+data,dataLength,construction,topSingle,topVariable,midSingle,midVariable,bottomSingle,bottomVariable
 DNA_512,0,0,-1,0,-1,0,-1
 DNA_8192,0,0,-1,0,-1,0,-1
 DNA_16384,0,0,-1,0,-1,0,-1
