@@ -1,4 +1,4 @@
-data,construction,topSingle,topFixed,midSingle,midFixed,bottomSingle,bottomFixed
+data,dataLength,construction,topSingle,topFixed,midSingle,midFixed,bottomSingle,bottomFixed
 DNA_512,0,0,-1,0,-1,0,-1
 DNA_8192,0,0,-1,0,-1,0,-1
 DNA_16384,0,0,-1,1,-1,0,-1
