@@ -33,88 +33,77 @@ namespace ConsoleApp
             var tests = new string[]
             {
                 "english_256",
-                "english_512",
-                "english_1024",
-                "english_2048",
-                "english_4096",
-                "english_8192",
-                "english_16384",
-                "english_32768",
-                "english_65536",
-                "english_131072",
-                "english_262144",
-                "english_524288",
-                "english_1048576",
-                /*
-                "english_2097152",
-                "english_4194304",
-                "english_8388608",
-                "english_16777216",
-                "english_33554432",
-                */
-
+                "realDNA_256",
+                "DNA_256",
                 "proteins_256",
+                "english_512",
+                "DNA_512",
+                "realDNA_512",
                 "proteins_512",
+                "DNA_1024",
+                "english_1024",
+                "realDNA_1024",
                 "proteins_1024",
+                "english_2048",
+                "DNA_2048",
+                "realDNA_2048",
                 "proteins_2048",
+                "english_4096",
+                "DNA_4096",
+                "realDNA_4096",
                 "proteins_4096",
+                "english_8192",
+                "realDNA_8192",
+                "DNA_8192",
                 "proteins_8192",
                 "proteins_16384",
-                "proteins_32768",
-                "proteins_65536",
-                "proteins_131072",
-                "proteins_262144",
-                "proteins_524288",
-                "proteins_1048576",
-                /*
-                "proteins_2097152",
-                "proteins_4194304",
-                "proteins_8388608",
-                "proteins_16777216",
-                "proteins_33554432",
-                */
-
-                "realDNA_256",
-                "realDNA_512",
-                "realDNA_1024",
-                "realDNA_2048",
-                "realDNA_4096",
-                "realDNA_8192",
                 "realDNA_16384",
-                "realDNA_32768",
-                "realDNA_65536",
-                "realDNA_131072",
-                "realDNA_262144",
-                "realDNA_524288",
-                "realDNA_1048576",
-                /*
-                "realDNA_2097152",
-                "realDNA_4194304",
-                "realDNA_8388608",
-                "realDNA_16777216",
-                "realDNA_33554432",
-                */
-
-                "DNA_256",
-                "DNA_512",
-                "DNA_1024",
-                "DNA_2048",
-                "DNA_4096",
-                "DNA_8192",
                 "DNA_16384",
+                "english_16384",
                 "DNA_32768",
+                "english_32768",
+                "realDNA_32768",
+                "proteins_32768",
+                "english_65536",
+                "realDNA_65536",
                 "DNA_65536",
+                "proteins_65536",
                 "DNA_131072",
+                "proteins_131072",
+                "realDNA_131072",
+                "english_131072",
+                "proteins_262144",
+                "realDNA_262144",
                 "DNA_262144",
+                "english_262144",
+                "proteins_524288",
+                "realDNA_524288",
                 "DNA_524288",
+                "english_524288",
+                "proteins_1048576",
+                "realDNA_1048576",
                 "DNA_1048576",
-                /*
+                "english_1048576",
+                "proteins_2097152",
+                "realDNA_2097152",
                 "DNA_2097152",
+                "english_2097152",
+                "proteins_4194304",
                 "DNA_4194304",
+                "realDNA_4194304",
+                "english_4194304",
+                "proteins_8388608",
                 "DNA_8388608",
+                "realDNA_8388608",
+                "english_8388608",
+                "proteins_16777216",
                 "DNA_16777216",
+                "realDNA_16777216",
+                "english_16777216",
+                "proteins_33554432",
+                "realDNA_33554432",
+                "english_33554432",
                 "DNA_33554432",
-                */
             };
 
             fixedReportDataStructures = new (string, BuildFixedReportDataStructure)[]
@@ -132,7 +121,7 @@ namespace ConsoleApp
                 ("Variable_Report_ESA_Sorted", Variable_ESA_Sorted_Build),
                 ("Variable_Report_PartialSort", Variable_ESA_PartialSort_Build),
                 ("Variable_Report_PartialSort_TopNodes", Variable_ESA_PartialSort_TopNodes_Build),
-                //("Variable_Report_ESA_KdTrees", Variable_ESA_2D_Build)
+                ("Variable_Report_ESA_KdTrees", Variable_ESA_2D_Build)
             };
 
             fixedCountingDataStructures = new (string, BuildFixedCountDataStructure)[]
@@ -161,32 +150,32 @@ namespace ConsoleApp
 
             foreach (var item in fixedReportDataStructures)
             {
-                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,query\n");
+                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,sptop,spmid,spbot,dptop,dpmid,dpbot\n");
             }
 
             foreach (var item in variableReportDataStructures)
             {
-                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,query\n");
+                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,sptop,spmid,spbot,dptop,dpmid,dpbot\n");
             }
 
             foreach (var item in fixedCountingDataStructures)
             {
-                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,query\n");
+                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,dptop,dpmid,dpbot\n");
             }
 
             foreach (var item in variableCountingDataStructures)
             {
-                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,query\n");
+                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,dptop,dpmid,dpbot\n");
             }
 
             foreach (var item in fixedExistDataStructures)
             {
-                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,query\n");
+                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,dptop,dpmid,dpbot\n");
             }
 
             foreach (var item in variableExistDataStructures)
             {
-                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,query\n");
+                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,dptop,dpmid,dpbot\n");
             }
 
             InitConsoleTable();
@@ -199,7 +188,7 @@ namespace ConsoleApp
             string p2 = "a";
             Query query = new Query(p1, x, p2);
 
-            int reps = 10;
+            int reps = 5;
 
             foreach (var textName in tests)
             {
@@ -208,18 +197,12 @@ namespace ConsoleApp
                 suffixA.BuildChildTable();
                 query.Y = (5, 25);
 
-                Query query1 = new Query("a", 5, "a");
-                Query query2 = new Query("a", 5, "a");
-                Query query3 = new Query("a", 5, "a");
-                /*
-                using (SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner(suffixA))
-                {
-                    query1 = new Query(suffixArray_Scanner.topPattern, x, p2, "Top");
-                    query2 = new Query(suffixArray_Scanner.midPatterns.GetRandom(), x, p2, "Mid");
-                    query3 = new Query(suffixArray_Scanner.botPattern, x, p2, "Bot");
+                SuffixArray_Scanner suffixArray_Scanner = new SuffixArray_Scanner((textName, ""), suffixA);
+
+                Query query1 = new Query(suffixArray_Scanner.topPattern, x, p2, "Top");
+                Query query2 = new Query(suffixArray_Scanner.midPatterns.GetRandom(), x, p2, "Mid");
+                Query query3 = new Query(suffixArray_Scanner.botPattern, x, p2, "Bot");
                     
-                }
-                */
                 Stopwatch stopwatch;
                 query1.Y = query.Y; query2.Y = query.Y; query3.Y = query.Y;
 
@@ -229,7 +212,7 @@ namespace ConsoleApp
                     IReportFixed reportFixed = dataStructure.Invoke(suffixA);
                     stopwatch.Stop();
                     var constructionTime = stopwatch.Elapsed.TotalMicroseconds;
-                    /*
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -253,7 +236,7 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    */
+                    
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -262,7 +245,7 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    /*
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -278,12 +261,13 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    */
+                   
                     var d = textName.Split('_');
-                    
-                    File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
-                    Console.WriteLine($"{name} {textName},{(int)constructionTime},{(int)topFixedQueryTime}");
+                    string s = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}\n",
+                        d[0], d[1], (int)constructionTime, (int)topQueryTime, (int)midQueryTime, (int)bottomQueryTime,
+                        (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                    File.AppendAllText($"{resultsDir}\\{name}.csv", s);
+                    Console.WriteLine(s);
                 }
 
                 foreach ((var name, var dataStructure) in variableReportDataStructures)
@@ -293,7 +277,7 @@ namespace ConsoleApp
                     IReportVariable reportVariable = dataStructure.Invoke(suffixA);
                     stopwatch.Stop();
                     var constructionTime = stopwatch.Elapsed.TotalMicroseconds;
-                    /*
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -317,7 +301,7 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    */
+                    
                     
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -326,7 +310,7 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    /*
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -342,12 +326,14 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    */
+                    
                     var d = textName.Split('_');
 
-                    File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
-                    Console.WriteLine($"{name} {textName}\t{constructionTime}\t{topFixedQueryTime}");
+                    string s = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}\n",
+                        d[0], d[1], (int)constructionTime, (int)topQueryTime, (int)midQueryTime, (int)bottomQueryTime,
+                        (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                    File.AppendAllText($"{resultsDir}\\{name}.csv", s);
+                    Console.WriteLine(s);
                 }
 
                 foreach ((var name, var dataStructure) in fixedCountingDataStructures)
@@ -365,7 +351,7 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    /*
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -381,12 +367,13 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    */
+                    
                     var d = textName.Split('_');
 
-                    File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
-                    Console.WriteLine($"{name} {textName}\t{(int)constructionTime},{(int)topFixedQueryTime}");
+                    string s = string.Format("{0},{1},{2},{3},{4},{5}\n",
+                        d[0], d[1], (int)constructionTime, (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                    File.AppendAllText($"{resultsDir}\\{name}.csv", s);
+                    Console.WriteLine(s);
                 }
 
                 foreach ((var name, var dataStructure) in variableCountingDataStructures)
@@ -404,7 +391,7 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    /*
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -420,12 +407,13 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    */
+                    
                     var d = textName.Split('_');
 
-                    File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
-                    Console.WriteLine($"{name} {textName}\t{(int)constructionTime},{(int)topFixedQueryTime}");
+                    string s = string.Format("{0},{1},{2},{3},{4},{5}\n",
+                        d[0], d[1], (int)constructionTime, (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                    File.AppendAllText($"{resultsDir}\\{name}.csv", s);
+                    Console.WriteLine(s);
                 }
 
                 foreach ((var name, var dataStructure) in fixedExistDataStructures)
@@ -443,7 +431,7 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    /*
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -459,12 +447,13 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    */
+                    
                     var d = textName.Split('_');
 
-                    File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
-                    Console.WriteLine($"{name} {textName}\t{(int)constructionTime},{(int)topFixedQueryTime}");
+                    string s = string.Format("{0},{1},{2},{3},{4},{5}\n",
+                        d[0], d[1], (int)constructionTime, (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                    File.AppendAllText($"{resultsDir}\\{name}.csv", s);
+                    Console.WriteLine(s);
                 }
 
                 foreach ((var name, var dataStructure) in variableExistDataStructures)
@@ -482,7 +471,7 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    /*
+                    
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
@@ -498,12 +487,13 @@ namespace ConsoleApp
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
-                    */
+                    
                     var d = textName.Split('_');
 
-                    File.AppendAllText($"{resultsDir}\\{name}.csv",
-                        $"{d[0]},{d[1]},{(int)constructionTime},{(int)topFixedQueryTime}\n");
-                    Console.WriteLine($"{name} {textName}\t{(int)constructionTime},{(int)topFixedQueryTime}");
+                    string s = string.Format("{0},{1},{2},{3},{4},{5}\n",
+                        d[0], d[1], (int)constructionTime, (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                    File.AppendAllText($"{resultsDir}\\{name}.csv", s);
+                    Console.WriteLine(s);
                 }
 
             }
