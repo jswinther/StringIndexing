@@ -1,3 +1,4 @@
+using ConsoleApp.DataStructures.Obsolete.TrieNet.Ukkonen;
 using System;
 
 namespace ConsoleApp.Data.Obsolete.TrieNet.Ukkonen

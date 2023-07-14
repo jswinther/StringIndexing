@@ -1,4 +1,5 @@
 ﻿using ConsoleApp.Data.Obsolete.TrieNet.Ukkonen;
+using ConsoleApp.DataStructures.Obsolete.TrieNet.Ukkonen;
 using ConsoleApp.DataStructures.Reporting;
 using System;
 using System.Collections.Generic;

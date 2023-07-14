@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleApp.Data.Obsolete;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -7,7 +8,7 @@ using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
-namespace ConsoleApp.Data.Obsolete
+namespace ConsoleApp.DataStructures.Obsolete
 {
     internal class SuffixArrayKarkkainan
     {

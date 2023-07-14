@@ -1,8 +1,9 @@
+using ConsoleApp.Data.Obsolete.TrieNet.Ukkonen;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ConsoleApp.Data.Obsolete.TrieNet.Ukkonen
+namespace ConsoleApp.DataStructures.Obsolete.TrieNet.Ukkonen
 {
     internal class Node<K, T> where K : IComparable<K>
     {

@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ConsoleApp.Data.Obsolete.TrieNet;
+using ConsoleApp.Data.Obsolete.TrieNet.Ukkonen;
+using ConsoleApp.DataStructures.Obsolete.TrieNet;
 
-namespace ConsoleApp.Data.Obsolete.TrieNet.Ukkonen
+namespace ConsoleApp.DataStructures.Obsolete.TrieNet.Ukkonen
 {
     public class UkkonenTrie<K, T> : IGenericSuffixTrie<K, T> where K : IEquatable<K>, IComparable<K>
     {
@@ -43,9 +45,10 @@ namespace ConsoleApp.Data.Obsolete.TrieNet.Ukkonen
         {
             if (word.Length < _minSuffixLength) return Enumerable.Empty<WordPosition<T>>();
             var tmpNode = SearchNode(word);
-            return tmpNode == null
+            var val = tmpNode == null
                 ? Enumerable.Empty<WordPosition<T>>()
                 : tmpNode.GetData();
+            return val;
         }
 
         public IEnumerable<WordPosition<T>> RetrieveSubstringsRange(ReadOnlyMemory<K> min, ReadOnlyMemory<K> max)

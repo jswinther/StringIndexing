@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-namespace ConsoleApp.Data.Obsolete.TrieNet.Ukkonen
+namespace ConsoleApp.DataStructures.Obsolete.TrieNet.Ukkonen
 {
     [Serializable]
     [DebuggerDisplay(

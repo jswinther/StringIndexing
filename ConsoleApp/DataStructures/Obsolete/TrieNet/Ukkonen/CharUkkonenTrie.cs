@@ -1,8 +1,9 @@
 using ConsoleApp.Data.Obsolete.TrieNet;
+using ConsoleApp.DataStructures.Obsolete.TrieNet;
 using System;
 using System.Collections.Generic;
 
-namespace ConsoleApp.Data.Obsolete.TrieNet.Ukkonen
+namespace ConsoleApp.DataStructures.Obsolete.TrieNet.Ukkonen
 {
     public class CharUkkonenTrie<T> : UkkonenTrie<char, T>, ISuffixTrie<T>
     {

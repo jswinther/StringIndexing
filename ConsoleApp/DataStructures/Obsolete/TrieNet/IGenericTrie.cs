@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ConsoleApp.Data.Obsolete.TrieNet
+namespace ConsoleApp.DataStructures.Obsolete.TrieNet
 {
     /// <summary>
     /// Interface to be implemented by a data structure 
