@@ -7,7 +7,7 @@ namespace BuildDataStruct
         static void Main(string[] args)
         {
             var sa = SuffixArrayFinal.CreateSuffixArray("banana");
-
+            Console.WriteLine();
         }
     }
 }
