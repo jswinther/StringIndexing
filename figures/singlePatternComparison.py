@@ -30,5 +30,5 @@ for d in data_set:
         dfDs = dfAll.loc[dfAll['data'] == d]
         sns.barplot(data = dfAll, hue='name', x='length', y=q).set(title=d + ' ' + q)
         plt.tight_layout()
-        plt.savefig('SinglePattern\\' + d + '_' + q + '.png')
+        plt.savefig('SinglePattern\\' + d + '_singlepattern_' + q + '.png')
         plt.close()

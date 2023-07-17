@@ -34,6 +34,6 @@ for d in data_set:
         dfDs = dfAll.loc[dfAll['data'] == d]
         sns.barplot(data = dfAll, hue='name', x='length', y=q).set(title=d + ' ' + q)
         plt.tight_layout()
-        plt.savefig('CountAndExistenceFixedAndVariable\\' + d + '_' + q + '.png')
+        plt.savefig('CountAndExistenceFixedAndVariable\\' + d + '_exist_count_' + q + '.png')
         plt.close()
 
