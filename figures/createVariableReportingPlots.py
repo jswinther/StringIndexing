@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 path = os.getcwd() + '\\Results_3\\'
 data_structures = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
-data_set = ["english,realDNA,DNA,proteins"]
+data_set = ['english','realDNA','DNA','proteins']
 
 
 query = ['sptop','spmid','spbot','dptop','dpmid','dpbot', 'construction']
@@ -22,13 +22,16 @@ for q in query:
             plt.yscale('log', base=2)
             sns.barplot(data = df, hue='data', x='length', y=q).set(title=ds + ' ' + q)
             plt.savefig('VariableReport\\' + ds + '_' + q + '.png')
+            plt.close()
             dfAll = pd.concat([df,dfAll])
 
-for ds in data_set:
-    sns.set()
-    plt.figure()
-    plt.yscale('log', base=2)
-    dfDs = dfAll[ds]
-    sns.barplot(data = dfAll, hue='name', x='length', y='construction')
-    plt.savefig('VariableReport\\' + 'all' + '_' + 'construction' + '.png')
+for d in data_set:
+    for q in query:
+        sns.set()
+        plt.figure()
+        plt.yscale('log', base=2)
+        dfDs = dfAll.loc[dfAll['data'] == d]
+        sns.barplot(data = dfAll, hue='name', x='length', y=q).set(title=d + ' ' + q)
+        plt.savefig('VariableReport\\' + d + '_' + q + '.png')
+        plt.close()
 
