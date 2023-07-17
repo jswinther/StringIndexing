@@ -18,9 +18,10 @@ for q in query:
             df = pd.read_csv(path + ds)
             df['name'] = ds
             sns.set()
-            plt.figure()
+            plt.figure(figsize=(17,9))
             plt.yscale('log', base=2)
             sns.barplot(data = df, hue='data', x='length', y=q).set(title=ds + ' ' + q)
+            plt.tight_layout()
             plt.savefig('VariableReport\\' + ds + '_' + q + '.png')
             plt.close()
             dfAll = pd.concat([df,dfAll])
@@ -28,10 +29,12 @@ for q in query:
 for d in data_set:
     for q in query:
         sns.set()
-        plt.figure()
+        plt.figure(figsize=(17,9))
         plt.yscale('log', base=2)
         dfDs = dfAll.loc[dfAll['data'] == d]
         sns.barplot(data = dfAll, hue='name', x='length', y=q).set(title=d + ' ' + q)
+        plt.tight_layout()
         plt.savefig('VariableReport\\' + d + '_' + q + '.png')
         plt.close()
+
 
