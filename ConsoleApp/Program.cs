@@ -230,15 +230,15 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     IReportSinglePattern reportFixed = dataStructure.Invoke(dataset);
                     stopwatch.Stop();
-                    var constructionTime = stopwatch.Elapsed.TotalMicroseconds;
+                    var constructionTime = stopwatch.Elapsed.TotalNanoseconds;
                     
-                    double matchingTime = 0;
-                    double reportingTime = 0;
+                    long matchingTime = 0;
+                    long reportingTime = 0;
                     for (int i = 0; i < reps; i++)
                     {
                         reportFixed.SinglePatternMatching(query1.P1, out var mt, out var rt);
-                        matchingTime += mt;
-                        reportingTime += rt;
+                        matchingTime += (long)mt;
+                        reportingTime += (long)rt;
                     }
                     var topMatchingTime = matchingTime / reps;
                     var topReportingTime = reportingTime / reps;
@@ -248,8 +248,8 @@ namespace ConsoleApp
                     for (int i = 0; i < reps; i++)
                     {
                         reportFixed.SinglePatternMatching(query2.P1, out var mt, out var rt);
-                        matchingTime += mt;
-                        reportingTime += rt;
+                        matchingTime += (long)mt;
+                        reportingTime += (long)rt;
                     }
                     var midMatchingTime = matchingTime / reps;
                     var midReportingTime = reportingTime / reps;
@@ -259,14 +259,14 @@ namespace ConsoleApp
                     for (int i = 0; i < reps; i++)
                     {
                         reportFixed.SinglePatternMatching(query3.P1, out var mt, out var rt);
-                        matchingTime += mt;
-                        reportingTime += rt;
+                        matchingTime += (long)mt;
+                        reportingTime += (long)rt;
                     }
                     var botMatchingTime = matchingTime / reps;
                     var botReportingTime = reportingTime / reps;
 
                     var d = textName.Split('_');
-                    string s = string.Format($"{d[0]},{d[1]},{constructionTime},{topMatchingTime},{midMatchingTime},{botMatchingTime},{topReportingTime},{midReportingTime},{botReportingTime}\n");
+                    string s = string.Format($"{d[0]},{d[1]},{(long)constructionTime},{(long)topMatchingTime},{(long)midMatchingTime},{(long)botMatchingTime},{(long)topReportingTime},{(long)midReportingTime},{(long)botReportingTime}\n");
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(name + " " + s);
                 }
