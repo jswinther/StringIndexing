@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace ConsoleApp.DataStructures.Obsolete.TrieNet.Ukkonen
 {
-    internal class Node<K, T> where K : IComparable<K>
+    public class Node<K, T> where K : IComparable<K>
     {
         private readonly IDictionary<K, Edge<K, T>> _edges;
         private readonly HashSet<T> _data;

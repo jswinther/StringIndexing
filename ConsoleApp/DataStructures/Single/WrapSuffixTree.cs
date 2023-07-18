@@ -1,6 +1,7 @@
 ﻿using ConsoleApp.DataStructures.Obsolete.TrieNet.Ukkonen;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,9 +17,18 @@ namespace ConsoleApp.DataStructures.Single
             suffixTree.Add(str, 0);
         }
 
-        public IEnumerable<int> SinglePatternMatching(string pattern)
+        public IEnumerable<int> SinglePatternMatching(string pattern, out double mt, out double rt)
         {
-            return new List<int>(suffixTree.RetrieveSubstrings(pattern).Select(x => x.CharPosition));
+            var sw = Stopwatch.StartNew();
+
+            sw.Stop();
+            mt = sw.Elapsed.TotalNanoseconds;
+            var p = suffixTree.SearchNode(pattern);
+            sw = Stopwatch.StartNew();
+            var occs = new List<int>(p.GetData().Select(x => x.CharPosition));
+            sw.Stop();
+            rt = sw.Elapsed.TotalNanoseconds;
+            return occs;
         }
     }
 }

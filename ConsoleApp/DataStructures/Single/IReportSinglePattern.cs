@@ -8,6 +8,6 @@ namespace ConsoleApp.DataStructures.Single
 {
     public interface IReportSinglePattern
     {
-        public IEnumerable<int> SinglePatternMatching(string pattern);
+        public IEnumerable<int> SinglePatternMatching(string pattern, out double matchingTime, out double reportingTime);
     }
 }

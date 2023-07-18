@@ -132,7 +132,7 @@ namespace ConsoleApp.DataStructures.Obsolete.TrieNet.Ukkonen
         /**
          * Returns the tree NodeA<T> (if present) that corresponds to the given string.
          */
-        private Node<K, WordPosition<T>> SearchNode(ReadOnlySpan<K> word)
+        public Node<K, WordPosition<T>> SearchNode(ReadOnlySpan<K> word)
         {
             /*
              * Verifies if exists a path from the root to a NodeA<T> such that the concatenation

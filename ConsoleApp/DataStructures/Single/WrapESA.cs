@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,9 +16,17 @@ namespace ConsoleApp.DataStructures.Single
             SA.BuildChildTable();
         }
 
-        public IEnumerable<int> SinglePatternMatching(string pattern)
+        public IEnumerable<int> SinglePatternMatching(string pattern, out double mt, out double rt)
         {
-            return SA.SinglePattern(pattern);
+            Stopwatch sw = Stopwatch.StartNew();
+            var interval = SA.ExactStringMatchingWithESA(pattern);
+            sw.Stop();
+            mt = sw.Elapsed.TotalNanoseconds;
+            sw = Stopwatch.StartNew();
+            var occs = SA.GetOccurrencesForInterval(interval);
+            sw.Stop();
+            rt = sw.Elapsed.TotalNanoseconds;
+            return occs;
         }
     }
 }

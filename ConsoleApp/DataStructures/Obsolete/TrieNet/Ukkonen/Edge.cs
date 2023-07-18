@@ -3,7 +3,7 @@ using System;
 
 namespace ConsoleApp.Data.Obsolete.TrieNet.Ukkonen
 {
-    internal class Edge<K, T> where K : IComparable<K>
+    public class Edge<K, T> where K : IComparable<K>
     {
         public Edge(ReadOnlyMemory<K> label, Node<K, T> target)
         {

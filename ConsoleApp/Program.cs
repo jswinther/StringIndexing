@@ -115,47 +115,47 @@ namespace ConsoleApp
 
             fixedReportDataStructures = new (string, BuildFixedReportDataStructure)[]
             {
-                /*
+                
                 ("Fixed_Report_SA_Runtime", Fixed_SA_Runtime_Build),
                 ("Fixed_Report_ESA_Runtime", Fixed_ESA_Runtime_Build),
                 ("Fixed_Report_ESA_Hashed", Fixed_ESA_Hashed_Build),
                 ("Fixed_Report_ESA_PartialHash", Fixed_ESA_PartialHash_Build),
-                */
+                
             };
 
             variableReportDataStructures = new (string, BuildVariableReportDataStructure)[]
             {
-                /*
+                
 
                 ("Variable_Report_SA_Runtime", Variable_SA_Runtime_Build),
                 ("Variable_Report_ESA_Runtime", Variable_ESA_Runtime_Build),
                 ("Variable_Report_ESA_Sorted", Variable_ESA_Sorted_Build),
                 ("Variable_Report_PartialSort", Variable_ESA_PartialSort_Build),
                 ("Variable_Report_PartialSort_TopNodes", Variable_ESA_PartialSort_TopNodes_Build),
-                //("Variable_Report_ESA_KdTrees", Variable_ESA_2D_Build)
-                */
+                ("Variable_Report_ESA_KdTrees", Variable_ESA_2D_Build)
+                
             };
 
             fixedCountingDataStructures = new (string, BuildFixedCountDataStructure)[]
             {
-                //("Fixed_Count_ESA_Runtime", Build_Count_Fixed_ESA_Runtime),
+                ("Fixed_Count_ESA_Runtime", Build_Count_Fixed_ESA_Runtime),
                 
             };
 
             variableCountingDataStructures = new (string, BuildVariableCountDataStructure)[]
             {
-                //("Variable_Count_ESA_Runtime", Build_Count_Variable_ESA_Runtime),
+                ("Variable_Count_ESA_Runtime", Build_Count_Variable_ESA_Runtime),
             };
 
             fixedExistDataStructures = new (string, BuildFixedExistDataStructure)[]
             {
-                //("Fixed_Exist_ESA_Runtime", Build_Exist_Fixed_ESA_Runtime),
+                ("Fixed_Exist_ESA_Runtime", Build_Exist_Fixed_ESA_Runtime),
                 //("Fixed_Exist_ESA_PartiallyHashed",Fixed_Exist_ESA_PartiallyHashed)
             };
 
             variableExistDataStructures = new (string, BuildVariableExistDataStructure)[]
             {
-                //("Variable_Exist_ESA_Runtime", Build_Exist_Variable_ESA_Runtime),
+                ("Variable_Exist_ESA_Runtime", Build_Exist_Variable_ESA_Runtime),
             };
 
             
@@ -192,7 +192,7 @@ namespace ConsoleApp
 
             foreach (var item in singlePatternReportingDataStructures)
             {
-                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,top,mid,bot,topCount,midCount,botCount\n");
+                File.WriteAllText($"{resultsDir}\\{item.Item1}.csv", "data,length,construction,topMatching,midMatching,botMatching,topReporting,midReporting,botReporting\n");
             }
 
             InitConsoleTable();
@@ -205,7 +205,8 @@ namespace ConsoleApp
             string p2 = "a";
             Query query = new Query(p1, x, p2);
 
-            int reps = 10;
+            int reps = 25;
+
 
             foreach (var textName in tests)
             {
@@ -230,47 +231,47 @@ namespace ConsoleApp
                     IReportSinglePattern reportFixed = dataStructure.Invoke(dataset);
                     stopwatch.Stop();
                     var constructionTime = stopwatch.Elapsed.TotalMicroseconds;
-                    stopwatch = Stopwatch.StartNew();
-                    IEnumerable<int> top = null;
-                    IEnumerable<int> mid = null;
-                    IEnumerable<int> bot = null;
-                    int topC;
-                    int midC;
-                    int botC;
+                    
+                    double matchingTime = 0;
+                    double reportingTime = 0;
                     for (int i = 0; i < reps; i++)
                     {
-                        top = reportFixed.SinglePatternMatching(query1.P1);
+                        reportFixed.SinglePatternMatching(query1.P1, out var mt, out var rt);
+                        matchingTime += mt;
+                        reportingTime += rt;
                     }
-                    stopwatch.Stop();
-                    topC = top.Count();
-                    var topQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var topMatchingTime = matchingTime / reps;
+                    var topReportingTime = reportingTime / reps;
 
-                    stopwatch = Stopwatch.StartNew();
+                    matchingTime = 0;
+                    reportingTime = 0;
                     for (int i = 0; i < reps; i++)
                     {
-                        mid = reportFixed.SinglePatternMatching(query2.P1);
+                        reportFixed.SinglePatternMatching(query2.P1, out var mt, out var rt);
+                        matchingTime += mt;
+                        reportingTime += rt;
                     }
-                    stopwatch.Stop();
-                    midC = mid.Count();
-                    var midQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var midMatchingTime = matchingTime / reps;
+                    var midReportingTime = reportingTime / reps;
 
-                    stopwatch = Stopwatch.StartNew();
+                    matchingTime = 0;
+                    reportingTime = 0;
                     for (int i = 0; i < reps; i++)
                     {
-                        bot = reportFixed.SinglePatternMatching(query3.P1);
+                        reportFixed.SinglePatternMatching(query3.P1, out var mt, out var rt);
+                        matchingTime += mt;
+                        reportingTime += rt;
                     }
-                    stopwatch.Stop();
-                    botC = bot.Count();
-                    var bottomQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var botMatchingTime = matchingTime / reps;
+                    var botReportingTime = reportingTime / reps;
 
                     var d = textName.Split('_');
-                    string s = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}\n",
-                        d[0], d[1], (int)constructionTime, (int)topQueryTime, (int)midQueryTime, (int)bottomQueryTime, topC, midC, botC);
+                    string s = string.Format($"{d[0]},{d[1]},{constructionTime},{topMatchingTime},{midMatchingTime},{botMatchingTime},{topReportingTime},{midReportingTime},{botReportingTime}\n");
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(name + " " + s);
                 }
 
-
+                /*
                 foreach ((var name, var dataStructure) in fixedReportDataStructures)
                 {
                     stopwatch = Stopwatch.StartNew();
@@ -560,6 +561,7 @@ namespace ConsoleApp
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(s);
                 }
+                */
 
             }
             table.Write();

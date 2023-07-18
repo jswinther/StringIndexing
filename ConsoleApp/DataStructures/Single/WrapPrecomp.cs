@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,10 +23,17 @@ namespace ConsoleApp.DataStructures.Single
             }
         }
 
-        public IEnumerable<int> SinglePatternMatching(string pattern)
+        public IEnumerable<int> SinglePatternMatching(string pattern, out double mt, out double rt)
         {
-            if (D.ContainsKey(pattern)) return D[pattern];
-            else return Enumerable.Empty<int>();
+            var sw = Stopwatch.StartNew();
+            var t = D.ContainsKey(pattern);
+            sw.Stop();
+            mt = sw.Elapsed.TotalNanoseconds;
+            sw = Stopwatch.StartNew();
+            var occs = D[pattern];
+            sw.Stop();
+            rt = sw.Elapsed.TotalNanoseconds;
+            return occs;
         }
     }
 }
