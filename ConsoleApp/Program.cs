@@ -126,14 +126,16 @@ namespace ConsoleApp
             variableReportDataStructures = new (string, BuildVariableReportDataStructure)[]
             {
                 
-
+                /*
                 ("Variable_Report_SA_Runtime", Variable_SA_Runtime_Build),
                 ("Variable_Report_ESA_Runtime", Variable_ESA_Runtime_Build),
                 ("Variable_Report_ESA_Sorted", Variable_ESA_Sorted_Build),
                 ("Variable_Report_PartialSort", Variable_ESA_PartialSort_Build),
                 ("Variable_Report_PartialSort_TopNodes", Variable_ESA_PartialSort_TopNodes_Build),
                 ("Variable_Report_ESA_KdTrees", Variable_ESA_2D_Build)
-                
+                */
+                ("Variable_Report_ESA_BottomUp", Variable_ESA_BottomUp_Build),
+
             };
 
             fixedCountingDataStructures = new (string, BuildFixedCountDataStructure)[]
@@ -224,6 +226,7 @@ namespace ConsoleApp
                 Stopwatch stopwatch;
                 query1.Y = query.Y; query2.Y = query.Y; query3.Y = query.Y;
 
+                /*
                 foreach ((var name, var dataStructure) in singlePatternReportingDataStructures)
                 {
                     var dataset = DummyData.Read(textName);
@@ -270,6 +273,7 @@ namespace ConsoleApp
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(name + " " + s);
                 }
+                */
 
                 /*
                 foreach ((var name, var dataStructure) in fixedReportDataStructures)
@@ -335,6 +339,7 @@ namespace ConsoleApp
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(s);
                 }
+                */
 
                 foreach ((var name, var dataStructure) in variableReportDataStructures)
                 {
@@ -402,6 +407,7 @@ namespace ConsoleApp
                     Console.WriteLine(s);
                 }
 
+                /*
                 foreach ((var name, var dataStructure) in fixedCountingDataStructures)
                 {
                     
@@ -565,6 +571,11 @@ namespace ConsoleApp
 
             }
             table.Write();
+        }
+
+        private static IReportVariable Variable_ESA_BottomUp_Build(SuffixArrayFinal str)
+        {
+            return new Variable_Report_BottomUp_Hash(str);
         }
 
         private static IReportSinglePattern BuildEnhancedSuffixArray(string str)
