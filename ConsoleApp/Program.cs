@@ -208,7 +208,7 @@ namespace ConsoleApp
             string p2 = "a";
             Query query = new Query(p1, x, p2);
 
-            int reps = 10;
+            double reps = 10;
 
 
             foreach (var textName in tests)
@@ -284,7 +284,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     IReportFixed reportFixed = dataStructure.Invoke(suffixA);
                     stopwatch.Stop();
-                    var constructionTime = stopwatch.Elapsed.TotalMicroseconds;
+                    var constructionTime = stopwatch.Elapsed.TotalNanoseconds;
                     
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -292,7 +292,7 @@ namespace ConsoleApp
                         reportFixed.ReportHashedOccurrences(query1.P1);
                     }
                     stopwatch.Stop();
-                    var topQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var topQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -300,7 +300,7 @@ namespace ConsoleApp
                         reportFixed.ReportHashedOccurrences(query2.P1);
                     }
                     stopwatch.Stop();
-                    var midQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var midQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -308,7 +308,7 @@ namespace ConsoleApp
                         reportFixed.ReportHashedOccurrences(query3.P1);
                     }
                     stopwatch.Stop();
-                    var bottomQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var bottomQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
 
                     stopwatch = Stopwatch.StartNew();
@@ -317,7 +317,7 @@ namespace ConsoleApp
                         reportFixed.Matches(query1.P1, query1.X, query1.P2);
                     }
                     stopwatch.Stop();
-                    var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var topFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -325,7 +325,7 @@ namespace ConsoleApp
                         reportFixed.Matches(query2.P1, query2.X, query2.P2);
                     }
                     stopwatch.Stop();
-                    var midFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -333,12 +333,12 @@ namespace ConsoleApp
                         reportFixed.Matches(query3.P1, query3.X, query3.P2);
                     }
                     stopwatch.Stop();
-                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                    
                     var d = textName.Split('_');
                     string s = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}\n",
-                        d[0], d[1], (int)constructionTime, (int)topQueryTime, (int)midQueryTime, (int)bottomQueryTime,
-                        (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                        d[0], d[1], (long)constructionTime, (long)topQueryTime, (long)midQueryTime, (long)bottomQueryTime,
+                        (long)topFixedQueryTime, (long)midFixedQueryTime, (long)bottomFixedQueryTime);
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(s);
                 }
@@ -350,7 +350,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     IReportVariable reportVariable = dataStructure.Invoke(suffixA);
                     stopwatch.Stop();
-                    var constructionTime = stopwatch.Elapsed.TotalMicroseconds;
+                    var constructionTime = stopwatch.Elapsed.TotalNanoseconds;
                     
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -358,7 +358,7 @@ namespace ConsoleApp
                         reportVariable.ReportSortedOccurrences(query1.P1);
                     }
                     stopwatch.Stop();
-                    var topQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var topQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -366,7 +366,7 @@ namespace ConsoleApp
                         reportVariable.ReportSortedOccurrences(query2.P1);
                     }
                     stopwatch.Stop();
-                    var midQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var midQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -374,7 +374,7 @@ namespace ConsoleApp
                         reportVariable.ReportSortedOccurrences(query3.P1);
                     }
                     stopwatch.Stop();
-                    var bottomQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var bottomQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     
                     stopwatch = Stopwatch.StartNew();
@@ -383,7 +383,7 @@ namespace ConsoleApp
                         reportVariable.Matches(query1.P1, query1.Y.Min, query1.Y.Max, query1.P2);
                     }
                     stopwatch.Stop();
-                    var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var topFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -391,7 +391,7 @@ namespace ConsoleApp
                         reportVariable.Matches(query2.P1, query2.Y.Min, query2.Y.Max, query2.P2);
                     }
                     stopwatch.Stop();
-                    var midFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -399,25 +399,25 @@ namespace ConsoleApp
                         reportVariable.Matches(query3.P1, query3.Y.Min, query3.Y.Max, query3.P2);
                     }
                     stopwatch.Stop();
-                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     var d = textName.Split('_');
 
                     string s = string.Format("{0},{1},{2},{3},{4},{5},{6},{7},{8}\n",
-                        d[0], d[1], (int)constructionTime, (int)topQueryTime, (int)midQueryTime, (int)bottomQueryTime,
-                        (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                        d[0], d[1], (long)constructionTime, (long)topQueryTime, (long)midQueryTime, (long)bottomQueryTime,
+                        (long)topFixedQueryTime, (long)midFixedQueryTime, (long)bottomFixedQueryTime);
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(s);
                 }
 
-                /*
+                
                 foreach ((var name, var dataStructure) in fixedCountingDataStructures)
                 {
                     
                     stopwatch = Stopwatch.StartNew();
                     CountFixed countFixed = dataStructure.Invoke(suffixA, x);
                     stopwatch.Stop();
-                    var constructionTime = stopwatch.Elapsed.TotalMicroseconds;
+                    var constructionTime = stopwatch.Elapsed.TotalNanoseconds;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -425,7 +425,7 @@ namespace ConsoleApp
                         countFixed.Matches(query1.P1, query1.P2);
                     }
                     stopwatch.Stop();
-                    var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var topFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -433,7 +433,7 @@ namespace ConsoleApp
                         countFixed.Matches(query2.P1, query2.P2);
                     }
                     stopwatch.Stop();
-                    var midFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -441,12 +441,12 @@ namespace ConsoleApp
                         countFixed.Matches(query3.P1,  query3.P2);
                     }
                     stopwatch.Stop();
-                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     var d = textName.Split('_');
 
                     string s = string.Format("{0},{1},{2},{3},{4},{5}\n",
-                        d[0], d[1], (int)constructionTime, (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                        d[0], d[1], (long)constructionTime, (long)topFixedQueryTime, (long)midFixedQueryTime, (long)bottomFixedQueryTime);
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(s);
                 }
@@ -457,7 +457,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     CountVariable countFixed = dataStructure.Invoke(suffixA, query.Y.Min, query.Y.Max);
                     stopwatch.Stop();
-                    var constructionTime = stopwatch.Elapsed.TotalMicroseconds;
+                    var constructionTime = stopwatch.Elapsed.TotalNanoseconds;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -465,7 +465,7 @@ namespace ConsoleApp
                         countFixed.Matches(query1.P1, query1.P2);
                     }
                     stopwatch.Stop();
-                    var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var topFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -473,7 +473,7 @@ namespace ConsoleApp
                         countFixed.Matches(query2.P1, query2.P2);
                     }
                     stopwatch.Stop();
-                    var midFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -481,12 +481,12 @@ namespace ConsoleApp
                         countFixed.Matches(query3.P1, query3.P2);
                     }
                     stopwatch.Stop();
-                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     var d = textName.Split('_');
 
                     string s = string.Format("{0},{1},{2},{3},{4},{5}\n",
-                        d[0], d[1], (int)constructionTime, (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                        d[0], d[1], (long)constructionTime, (long)topFixedQueryTime, (long)midFixedQueryTime, (long)bottomFixedQueryTime);
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(s);
                 }
@@ -497,7 +497,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     ExistFixed countFixed = dataStructure.Invoke(suffixA, x);
                     stopwatch.Stop();
-                    var constructionTime = stopwatch.Elapsed.TotalMicroseconds;
+                    var constructionTime = stopwatch.Elapsed.TotalNanoseconds;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -505,7 +505,7 @@ namespace ConsoleApp
                         countFixed.Matches(query1.P1, query1.P2);
                     }
                     stopwatch.Stop();
-                    var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var topFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -513,7 +513,7 @@ namespace ConsoleApp
                         countFixed.Matches(query2.P1, query2.P2);
                     }
                     stopwatch.Stop();
-                    var midFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -521,12 +521,12 @@ namespace ConsoleApp
                         countFixed.Matches(query3.P1, query3.P2);
                     }
                     stopwatch.Stop();
-                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     var d = textName.Split('_');
 
                     string s = string.Format("{0},{1},{2},{3},{4},{5}\n",
-                        d[0], d[1], (int)constructionTime, (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                        d[0], d[1], (long)constructionTime, (long)topFixedQueryTime, (long)midFixedQueryTime, (long)bottomFixedQueryTime);
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(s);
                 }
@@ -537,7 +537,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     ExistVariable countFixed = dataStructure.Invoke(suffixA, query.Y.Min, query.Y.Max);
                     stopwatch.Stop();
-                    var constructionTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var constructionTime = stopwatch.Elapsed.TotalNanoseconds / reps;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -545,7 +545,7 @@ namespace ConsoleApp
                         countFixed.Matches(query1.P1, query1.P2);
                     }
                     stopwatch.Stop();
-                    var topFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var topFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -553,7 +553,7 @@ namespace ConsoleApp
                         countFixed.Matches(query2.P1, query2.P2);
                     }
                     stopwatch.Stop();
-                    var midFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
 
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
@@ -561,16 +561,16 @@ namespace ConsoleApp
                         countFixed.Matches(query3.P1, query3.P2);
                     }
                     stopwatch.Stop();
-                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalMicroseconds / reps;
+                    var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
                     
                     var d = textName.Split('_');
 
                     string s = string.Format("{0},{1},{2},{3},{4},{5}\n",
-                        d[0], d[1], (int)constructionTime, (int)topFixedQueryTime, (int)midFixedQueryTime, (int)bottomFixedQueryTime);
+                        d[0], d[1], (long)constructionTime, (long)topFixedQueryTime, (long)midFixedQueryTime, (long)bottomFixedQueryTime);
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(s);
                 }
-                */
+                
 
             }
             table.Write();
