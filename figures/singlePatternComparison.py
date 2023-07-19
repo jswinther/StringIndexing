@@ -5,15 +5,16 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-path = os.getcwd() + '\\Results_32\\'
+path = os.getcwd() + '\\Results\\'
 data_structures = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
 query = ['topMatching', 'midMatching', 'botMatching', 'construction', 'topReporting', 'midReporting', 'botReporting']
 
 dfAll = pd.DataFrame()
 for ds in data_structures:
-    df = pd.read_csv(path + ds)
-    df['name'] = ds
-    dfAll = pd.concat([df,dfAll])
+    if ds.startswith('Suffix') or ds.startswith('Precomp') or ds.startswith('Enhanced'):
+        df = pd.read_csv(path + ds)
+        df['name'] = ds
+        dfAll = pd.concat([df,dfAll])
     
 
 for q in query:

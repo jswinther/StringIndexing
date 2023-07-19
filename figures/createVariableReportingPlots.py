@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-path = os.getcwd() + '\\Results_3\\'
+path = os.getcwd() + '\\Results\\'
 data_structures = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
 
 
