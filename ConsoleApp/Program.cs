@@ -99,15 +99,17 @@ namespace ConsoleApp
                 "DNA_16777216",
                 "realDNA_16777216",
                 "english_16777216",
+                /*
                 "proteins_33554432",
                 "realDNA_33554432",
                 "english_33554432",
                 "DNA_33554432",
+                */
             };
 
             var singlePatternReportingDataStructures = new (string, BuildSinglePatternReporting)[]
             {
-                //("Precomputed Substrings", BuildPrecomputedSubstrings),
+                ("Precomputed Substrings", BuildPrecomputedSubstrings),
                 ("Suffix Tree", BuildSuffixTree),
                 ("Suffix Array", BuildSuffixArray),
                 ("Enhanced Suffix Array", BuildEnhancedSuffixArray)
@@ -126,14 +128,13 @@ namespace ConsoleApp
             variableReportDataStructures = new (string, BuildVariableReportDataStructure)[]
             {
                 
-                /*
+                
                 ("Variable_Report_SA_Runtime", Variable_SA_Runtime_Build),
                 ("Variable_Report_ESA_Runtime", Variable_ESA_Runtime_Build),
                 ("Variable_Report_ESA_Sorted", Variable_ESA_Sorted_Build),
                 ("Variable_Report_PartialSort", Variable_ESA_PartialSort_Build),
                 ("Variable_Report_PartialSort_TopNodes", Variable_ESA_PartialSort_TopNodes_Build),
-                ("Variable_Report_ESA_KdTrees", Variable_ESA_2D_Build)
-                */
+                ("Variable_Report_ESA_KdTrees", Variable_ESA_2D_Build),
                 ("Variable_Report_ESA_BottomUp", Variable_ESA_BottomUp_Build),
 
             };
@@ -152,7 +153,6 @@ namespace ConsoleApp
             fixedExistDataStructures = new (string, BuildFixedExistDataStructure)[]
             {
                 ("Fixed_Exist_ESA_Runtime", Build_Exist_Fixed_ESA_Runtime),
-                //("Fixed_Exist_ESA_PartiallyHashed",Fixed_Exist_ESA_PartiallyHashed)
             };
 
             variableExistDataStructures = new (string, BuildVariableExistDataStructure)[]
@@ -226,9 +226,10 @@ namespace ConsoleApp
                 Stopwatch stopwatch;
                 query1.Y = query.Y; query2.Y = query.Y; query3.Y = query.Y;
 
-                /*
+                
                 foreach ((var name, var dataStructure) in singlePatternReportingDataStructures)
                 {
+                    if (name.Contains("Precomputed") && suffixA.n > 2050) continue;
                     var dataset = DummyData.Read(textName);
                     stopwatch = Stopwatch.StartNew();
                     IReportSinglePattern reportFixed = dataStructure.Invoke(dataset);
@@ -273,11 +274,12 @@ namespace ConsoleApp
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(name + " " + s);
                 }
-                */
+                
 
-                /*
+                
                 foreach ((var name, var dataStructure) in fixedReportDataStructures)
                 {
+                    
                     stopwatch = Stopwatch.StartNew();
                     IReportFixed reportFixed = dataStructure.Invoke(suffixA);
                     stopwatch.Stop();
@@ -339,7 +341,7 @@ namespace ConsoleApp
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(s);
                 }
-                */
+                
 
                 foreach ((var name, var dataStructure) in variableReportDataStructures)
                 {
