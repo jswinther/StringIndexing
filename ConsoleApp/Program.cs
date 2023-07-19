@@ -95,11 +95,12 @@ namespace ConsoleApp
                 "DNA_8388608",
                 "realDNA_8388608",
                 "english_8388608",
+                /*
                 "proteins_16777216",
                 "DNA_16777216",
                 "realDNA_16777216",
                 "english_16777216",
-                /*
+                
                 "proteins_33554432",
                 "realDNA_33554432",
                 "english_33554432",
@@ -207,7 +208,7 @@ namespace ConsoleApp
             string p2 = "a";
             Query query = new Query(p1, x, p2);
 
-            int reps = 25;
+            int reps = 10;
 
 
             foreach (var textName in tests)
