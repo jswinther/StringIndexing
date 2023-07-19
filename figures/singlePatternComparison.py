@@ -5,9 +5,10 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-path = os.getcwd() + '\\Results_48\\'
+path = os.getcwd() + '\\Results_32\\'
 data_structures = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
-query = ['top', 'mid', 'bot', 'construction']
+query = ['topMatching', 'midMatching', 'botMatching', 'construction', 'topReporting', 'midReporting', 'botReporting']
+
 dfAll = pd.DataFrame()
 for ds in data_structures:
     df = pd.read_csv(path + ds)
