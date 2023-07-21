@@ -51,7 +51,7 @@ namespace ConsoleApp.DataStructures
                 var n = findTestNodes.Dequeue();
                 if (n.DistanceToRoot < 5 && n.DistanceToRoot > 0)
                 {
-                    probRoll = n.SubtreeSize / (double)Tree.Count * 0.2;
+                    probRoll = n.Size / (double)Tree.Count * 0.2;
                     if (r.NextDouble() <= probRoll || topPattern == null)
                     {
                         var patLength = SA.GetLcp(n.Interval.start, n.Interval.end);
@@ -59,9 +59,9 @@ namespace ConsoleApp.DataStructures
                     }
 
                 }
-                else if (n.SubtreeSize <= minSize)
+                else if (n.Size <= minSize)
                 {
-                    probRoll = n.SubtreeSize / (0.5 * Tree.Count);
+                    probRoll = n.Size / (0.5 * Tree.Count);
                     if (r.NextDouble() <= probRoll || botPattern == null)
                     {
                         var patLength = SA.GetLcp(n.Interval.start, n.Interval.end);
@@ -75,8 +75,8 @@ namespace ConsoleApp.DataStructures
                 }
             }
 
-            SA.CalculateSubTreeSize(Root);
-            var midNodes = Tree.Values.Skip(1).Where(n => n.SubtreeSize > Math.Sqrt(SA.n.Value));
+     
+            var midNodes = Tree.Values.Skip(1).Where(n => n.Size > Math.Sqrt(SA.n.Value));
             for (int i = 0; i < 5; i++)
             {
                 int index = r.Next(0, midNodes.Count());
