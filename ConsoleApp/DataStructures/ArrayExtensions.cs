@@ -35,7 +35,7 @@
 
         public static T GetRandom<T>(this IEnumerable<T> values)
         {
-            return values.ElementAt(Random.Next(values.Count()));
+            return values.ElementAt(Random.Next(values.Count() -1));
         }
 
         public static IEnumerable<T> GetRandom<T>(this IEnumerable<T> values, int amount)
