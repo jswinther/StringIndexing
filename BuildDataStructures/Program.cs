@@ -82,6 +82,7 @@ namespace BuildDataStructures
                 "DNA_8388608",
                 "realDNA_8388608",
                 "english_8388608",
+                /*
                 "proteins_16777216",
                 "DNA_16777216",
                 "realDNA_16777216",
@@ -90,7 +91,7 @@ namespace BuildDataStructures
                 "realDNA_33554432",
                 "english_33554432",
                 "DNA_33554432",
-
+                */
             };
             foreach (var set in data)
             {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ConsoleApp.DataStructures.Single;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,14 @@ namespace ConsoleApp.DataStructures.Reporting
                     }
                     Substrings[s].Add(j);
                 }
+            }
+        }
+
+        public Fixed_PreCompSubs(WrapPrecomp? wrap)
+        {
+            foreach ((var key, var val) in wrap.D)
+            {
+                Substrings[key] = val.ToHashSet();
             }
         }
 

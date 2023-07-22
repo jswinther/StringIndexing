@@ -7,11 +7,12 @@ using System.Threading.Tasks;
 
 namespace ConsoleApp.DataStructures.Single
 {
-    internal class WrapPrecomp : IReportSinglePattern
+    public class WrapPrecomp : IReportSinglePattern
     {
-        private Dictionary<string, LinkedList<int>> D = new Dictionary<string, LinkedList<int>>();
+        public Dictionary<string, LinkedList<int>> D = new Dictionary<string, LinkedList<int>>();
         public WrapPrecomp(string text) 
         {
+            text += "|";
             for (int i = 1; i <= text.Length; i++)
             {
                 for (int j = 0; j <= text.Length - i; j++)
@@ -30,7 +31,7 @@ namespace ConsoleApp.DataStructures.Single
             sw.Stop();
             mt = sw.Elapsed.TotalNanoseconds;
             sw = Stopwatch.StartNew();
-            var occs = D[pattern];
+            D.TryGetValue(pattern, out var occs);
             sw.Stop();
             rt = sw.Elapsed.TotalNanoseconds;
             return occs;

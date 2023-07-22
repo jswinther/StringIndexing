@@ -10,9 +10,10 @@ namespace ConsoleApp.DataStructures.Single
 {
     internal class WrapSuffixTree : IReportSinglePattern
     {
-        CharUkkonenTrie<int> suffixTree;
+        public CharUkkonenTrie<int> suffixTree;
         public WrapSuffixTree(string str)
         {
+            str += "|";
             suffixTree = new CharUkkonenTrie<int>(0);
             suffixTree.Add(str, 0);
         }

@@ -100,7 +100,6 @@ namespace ConsoleApp
                 "DNA_16777216",
                 "realDNA_16777216",
                 "english_16777216",
-                
                 "proteins_33554432",
                 "realDNA_33554432",
                 "english_33554432",
@@ -227,6 +226,7 @@ namespace ConsoleApp
                 Stopwatch stopwatch;
                 //query1.Y = query.Y; query2.Y = query.Y; query3.Y = query.Y;
 
+                  
                 
                 foreach ((var name, var dataStructure) in singlePatternReportingDataStructures)
                 {
@@ -274,6 +274,157 @@ namespace ConsoleApp
                     string s = string.Format($"{d[0]},{d[1]},{(long)constructionTime},{(long)topMatchingTime},{(long)midMatchingTime},{(long)botMatchingTime},{(long)topReportingTime},{(long)midReportingTime},{(long)botReportingTime}\n");
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(name + " " + s);
+
+                    if (name.Contains("Precomp") && suffixA.n < 2050)
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        Variable_PreCompSubs vps = new Variable_PreCompSubs((WrapPrecomp)reportFixed);
+                        stopwatch.Stop();
+                        constructionTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            vps.Matches(suffixArray_Scanner.topPattern[i], query.Y.Min, query.Y.Max, p2);
+                        }
+                        stopwatch.Stop();
+                        var topFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            vps.Matches(suffixArray_Scanner.midPatterns[i], query.Y.Min, query.Y.Max, p2);
+                        }
+                        stopwatch.Stop();
+                        var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            vps.Matches(suffixArray_Scanner.botPattern[i], query.Y.Min, query.Y.Max, p2);
+                        }
+                        stopwatch.Stop();
+                        var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        d = textName.Split('_');
+
+                        s = string.Format("{0},{1},{2},{3},{4},{5}\n",
+                            d[0], d[1], (long)constructionTime, (long)topFixedQueryTime, (long)midFixedQueryTime, (long)bottomFixedQueryTime);
+                        File.AppendAllText($"{resultsDir}\\Variable_Report_PreComp_1DRP.csv", s);
+                        Console.WriteLine(s);
+
+                        stopwatch = Stopwatch.StartNew();
+                        Fixed_PreCompSubs fps = new Fixed_PreCompSubs((WrapPrecomp)reportFixed);
+                        stopwatch.Stop();
+                        constructionTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            fps.Matches(suffixArray_Scanner.topPattern[i], x, p2);
+                        }
+                        stopwatch.Stop();
+                        topFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            fps.Matches(suffixArray_Scanner.midPatterns[i], x, p2);
+                        }
+                        stopwatch.Stop();
+                        midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            fps.Matches(suffixArray_Scanner.botPattern[i], x, p2);
+                        }
+                        stopwatch.Stop();
+                        bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        d = textName.Split('_');
+
+                        s = string.Format("{0},{1},{2},{3},{4},{5}\n",
+                            d[0], d[1], (long)constructionTime, (long)topFixedQueryTime, (long)midFixedQueryTime, (long)bottomFixedQueryTime);
+                        File.AppendAllText($"{resultsDir}\\Fixed_Report_PreComp_Hash.csv", s);
+                        Console.WriteLine(s);
+                    }
+
+                    if (name.Contains("Suffix Tree"))
+                    {
+                        stopwatch = Stopwatch.StartNew();
+                        Variable_ST_Runtime vps = new Variable_ST_Runtime((WrapSuffixTree)reportFixed);
+                        stopwatch.Stop();
+                        constructionTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            vps.Matches(suffixArray_Scanner.topPattern[i], query.Y.Min, query.Y.Max, p2);
+                        }
+                        stopwatch.Stop();
+                        var topFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            vps.Matches(suffixArray_Scanner.midPatterns[i], query.Y.Min, query.Y.Max, p2);
+                        }
+                        stopwatch.Stop();
+                        var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            vps.Matches(suffixArray_Scanner.botPattern[i], query.Y.Min, query.Y.Max, p2);
+                        }
+                        stopwatch.Stop();
+                        var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        d = textName.Split('_');
+
+                        s = string.Format("{0},{1},{2},{3},{4},{5}\n",
+                            d[0], d[1], (long)constructionTime, (long)topFixedQueryTime, (long)midFixedQueryTime, (long)bottomFixedQueryTime);
+                        File.AppendAllText($"{resultsDir}\\Variable_Report_SuffixTree_1DRP.csv", s);
+                        Console.WriteLine(s);
+
+                        stopwatch = Stopwatch.StartNew();
+                        Fixed_ST_Runtime fps = new Fixed_ST_Runtime((WrapSuffixTree)reportFixed);
+                        stopwatch.Stop();
+                        constructionTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            fps.Matches(suffixArray_Scanner.topPattern[i], x, p2);
+                        }
+                        stopwatch.Stop();
+                        topFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            fps.Matches(suffixArray_Scanner.midPatterns[i], x, p2);
+                        }
+                        stopwatch.Stop();
+                        midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        stopwatch = Stopwatch.StartNew();
+                        for (int i = 0; i < reps; i++)
+                        {
+                            fps.Matches(suffixArray_Scanner.botPattern[i], x, p2);
+                        }
+                        stopwatch.Stop();
+                        bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
+
+                        d = textName.Split('_');
+
+                        s = string.Format("{0},{1},{2},{3},{4},{5}\n",
+                            d[0], d[1], (long)constructionTime, (long)topFixedQueryTime, (long)midFixedQueryTime, (long)bottomFixedQueryTime);
+                        File.AppendAllText($"{resultsDir}\\Fixed_Report_SuffixTree_Hash.csv", s);
+                        Console.WriteLine(s);
+                    }
+
                 }
                 
 
@@ -570,7 +721,11 @@ namespace ConsoleApp
                     File.AppendAllText($"{resultsDir}\\{name}.csv", s);
                     Console.WriteLine(s);
                 }
+
                 
+
+
+
 
             }
             table.Write();

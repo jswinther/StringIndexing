@@ -68,7 +68,7 @@ namespace ConsoleApp.DataStructures
                     {
                         if (n.Interval.start == n.Interval.end)
                         {
-                            topPattern.Add(SA.m_str[SA.m_sa[n.Interval.start]..(SA.n.Value -1)]);
+                            topPattern.Add(SA.m_str[SA.m_sa[n.Interval.start]..(SA.n.Value)]);
                         } else
                         {
                             var patLength = SA.GetLcp(n.Interval.start, n.Interval.end);
@@ -88,7 +88,7 @@ namespace ConsoleApp.DataStructures
                     {
                         if (n.Interval.start == n.Interval.end)
                         {
-                            botPattern.Add(SA.m_str[SA.m_sa[n.Interval.start]..(SA.n.Value -1)]);
+                            botPattern.Add(SA.m_str[SA.m_sa[n.Interval.start]..(SA.n.Value)]);
                         }
                         else
                         {
@@ -124,7 +124,7 @@ namespace ConsoleApp.DataStructures
                 var node = midNodes.ElementAt(index);
                 if (node.Interval.start == node.Interval.end)
                 {
-                    midPatterns.Add(SA.m_str[SA.m_sa[node.Interval.start]..(SA.n.Value - 1)]);
+                    midPatterns.Add(SA.m_str[SA.m_sa[node.Interval.start]..(SA.n.Value)]);
                 }
                 else
                 {
@@ -132,8 +132,6 @@ namespace ConsoleApp.DataStructures
                     midPatterns.Add(SA.m_str[SA.m_sa[node.Interval.start]..(SA.m_sa[node.Interval.start] + patLength)]);
                 }
             }
-
-
         }
     }
 }
