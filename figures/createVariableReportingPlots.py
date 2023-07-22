@@ -9,7 +9,10 @@ path = os.getcwd() + '\\Results\\'
 data_structures = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
 
 
+"""
 query = ['sptop','spmid','spbot','dptop','dpmid','dpbot', 'construction']
+"""
+query = ['dptop','dpmid','dpbot', 'construction']
 dfAll = pd.DataFrame()
 for ds in data_structures:
     if ds.startswith('Variable_Report'):
