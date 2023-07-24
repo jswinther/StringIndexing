@@ -6,7 +6,14 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 path = os.getcwd() + '\\Results\\'
-data_structures = [f for f in os.listdir(path) if os.path.isfile(os.path.join(path,f))]
+data_structures = [
+    'Fixed_Report_ESA_PartialHash.csv',
+    'Fixed_Report_ESA_Hashed.csv',
+    'Fixed_Report_ESA_Runtime.csv',
+    'Fixed_Report_SA_Runtime.csv',
+    'Fixed_Report_SuffixTree_Hash.csv',
+    'Fixed_Report_PreComp_Hash.csv'
+]
 
 """
 query = ['sptop','spmid','spbot','dptop','dpmid','dpbot', 'construction']
