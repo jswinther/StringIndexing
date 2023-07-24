@@ -163,9 +163,9 @@ namespace ConsoleApp
                 ("Variable_Exist_ESA_Runtime", Build_Exist_Variable_ESA_Runtime),
             };
 
-            File.WriteAllText($"{resultsDir}\\Fixed_Report_SuffixTree_1DRP.csv", "data,length,construction,dptop,dpmid,dpbot\n");
+            File.WriteAllText($"{resultsDir}\\Fixed_Report_SuffixTree_Hash.csv", "data,length,construction,dptop,dpmid,dpbot\n");
             File.WriteAllText($"{resultsDir}\\Variable_Report_SuffixTree_1DRP.csv", "data,length,construction,dptop,dpmid,dpbot\n");
-            File.WriteAllText($"{resultsDir}\\Fixed_Report_PreComp_1DRP.csv", "data,length,construction,dptop,dpmid,dpbot\n");
+            File.WriteAllText($"{resultsDir}\\Fixed_Report_PreComp_Hash.csv", "data,length,construction,dptop,dpmid,dpbot\n");
             File.WriteAllText($"{resultsDir}\\Variable_Report_PreComp_1DRP.csv", "data,length,construction,dptop,dpmid,dpbot\n");
 
             foreach (var item in fixedReportDataStructures)
@@ -299,7 +299,7 @@ namespace ConsoleApp
                         stopwatch = Stopwatch.StartNew();
                         for (int i = 0; i < reps; i++)
                         {
-                            vps.Matches(suffixArray_Scanner.midPatterns[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.midPatterns.GetRandom());
+                            vps.Matches(suffixArray_Scanner.midPatterns[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.topPattern.GetRandom());
                         }
                         stopwatch.Stop();
                         var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -307,7 +307,7 @@ namespace ConsoleApp
                         stopwatch = Stopwatch.StartNew();
                         for (int i = 0; i < reps; i++)
                         {
-                            vps.Matches(suffixArray_Scanner.botPattern[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.botPattern.GetRandom());
+                            vps.Matches(suffixArray_Scanner.botPattern[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.topPattern.GetRandom());
                         }
                         stopwatch.Stop();
                         var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -335,7 +335,7 @@ namespace ConsoleApp
                         stopwatch = Stopwatch.StartNew();
                         for (int i = 0; i < reps; i++)
                         {
-                            fps.Matches(suffixArray_Scanner.midPatterns[i], x, suffixArray_Scanner.midPatterns.GetRandom());
+                            fps.Matches(suffixArray_Scanner.midPatterns[i], x, suffixArray_Scanner.topPattern.GetRandom());
                         }
                         stopwatch.Stop();
                         midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -343,7 +343,7 @@ namespace ConsoleApp
                         stopwatch = Stopwatch.StartNew();
                         for (int i = 0; i < reps; i++)
                         {
-                            fps.Matches(suffixArray_Scanner.botPattern[i], x, suffixArray_Scanner.botPattern.GetRandom());
+                            fps.Matches(suffixArray_Scanner.botPattern[i], x, suffixArray_Scanner.topPattern.GetRandom());
                         }
                         stopwatch.Stop();
                         bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -374,7 +374,7 @@ namespace ConsoleApp
                         stopwatch = Stopwatch.StartNew();
                         for (int i = 0; i < reps; i++)
                         {
-                            vps.Matches(suffixArray_Scanner.midPatterns[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.midPatterns.GetRandom());
+                            vps.Matches(suffixArray_Scanner.midPatterns[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.topPattern.GetRandom());
                         }
                         stopwatch.Stop();
                         var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -382,7 +382,7 @@ namespace ConsoleApp
                         stopwatch = Stopwatch.StartNew();
                         for (int i = 0; i < reps; i++)
                         {
-                            vps.Matches(suffixArray_Scanner.botPattern[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.botPattern.GetRandom());
+                            vps.Matches(suffixArray_Scanner.botPattern[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.topPattern.GetRandom());
                         }
                         stopwatch.Stop();
                         var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -410,7 +410,7 @@ namespace ConsoleApp
                         stopwatch = Stopwatch.StartNew();
                         for (int i = 0; i < reps; i++)
                         {
-                            fps.Matches(suffixArray_Scanner.midPatterns[i], x, suffixArray_Scanner.midPatterns.GetRandom());
+                            fps.Matches(suffixArray_Scanner.midPatterns[i], x, suffixArray_Scanner.topPattern.GetRandom());
                         }
                         stopwatch.Stop();
                         midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -418,7 +418,7 @@ namespace ConsoleApp
                         stopwatch = Stopwatch.StartNew();
                         for (int i = 0; i < reps; i++)
                         {
-                            fps.Matches(suffixArray_Scanner.botPattern[i], x, suffixArray_Scanner.botPattern.GetRandom());
+                            fps.Matches(suffixArray_Scanner.botPattern[i], x, suffixArray_Scanner.topPattern.GetRandom());
                         }
                         stopwatch.Stop();
                         bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -479,7 +479,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        reportFixed.Matches(suffixArray_Scanner.midPatterns[i], x, suffixArray_Scanner.midPatterns.GetRandom());
+                        reportFixed.Matches(suffixArray_Scanner.midPatterns[i], x, suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -487,7 +487,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        reportFixed.Matches(suffixArray_Scanner.botPattern[i], x, suffixArray_Scanner.botPattern.GetRandom());
+                        reportFixed.Matches(suffixArray_Scanner.botPattern[i], x, suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -545,7 +545,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        reportVariable.Matches(suffixArray_Scanner.midPatterns[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.midPatterns.GetRandom());
+                        reportVariable.Matches(suffixArray_Scanner.midPatterns[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -553,7 +553,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        reportVariable.Matches(suffixArray_Scanner.botPattern[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.botPattern.GetRandom());
+                        reportVariable.Matches(suffixArray_Scanner.botPattern[i], query.Y.Min, query.Y.Max, suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -587,7 +587,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        countFixed.Matches(suffixArray_Scanner.midPatterns[i], suffixArray_Scanner.midPatterns.GetRandom());
+                        countFixed.Matches(suffixArray_Scanner.midPatterns[i], suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -595,7 +595,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        countFixed.Matches(suffixArray_Scanner.botPattern[i],  suffixArray_Scanner.botPattern.GetRandom());
+                        countFixed.Matches(suffixArray_Scanner.botPattern[i],  suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -627,7 +627,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        countFixed.Matches(suffixArray_Scanner.midPatterns[i], suffixArray_Scanner.midPatterns.GetRandom());
+                        countFixed.Matches(suffixArray_Scanner.midPatterns[i], suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -635,7 +635,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        countFixed.Matches(suffixArray_Scanner.botPattern[i], suffixArray_Scanner.botPattern.GetRandom());
+                        countFixed.Matches(suffixArray_Scanner.botPattern[i], suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -667,7 +667,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        countFixed.Matches(suffixArray_Scanner.midPatterns[i], suffixArray_Scanner.midPatterns.GetRandom());
+                        countFixed.Matches(suffixArray_Scanner.midPatterns[i], suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -675,7 +675,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        countFixed.Matches(suffixArray_Scanner.botPattern[i], suffixArray_Scanner.botPattern.GetRandom());
+                        countFixed.Matches(suffixArray_Scanner.botPattern[i], suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -707,7 +707,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        countFixed.Matches(suffixArray_Scanner.midPatterns[i], suffixArray_Scanner.midPatterns.GetRandom());
+                        countFixed.Matches(suffixArray_Scanner.midPatterns[i], suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var midFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
@@ -715,7 +715,7 @@ namespace ConsoleApp
                     stopwatch = Stopwatch.StartNew();
                     for (int i = 0; i < reps; i++)
                     {
-                        countFixed.Matches(suffixArray_Scanner.botPattern[i], suffixArray_Scanner.botPattern.GetRandom());
+                        countFixed.Matches(suffixArray_Scanner.botPattern[i], suffixArray_Scanner.topPattern.GetRandom());
                     }
                     stopwatch.Stop();
                     var bottomFixedQueryTime = stopwatch.Elapsed.TotalNanoseconds / reps;
