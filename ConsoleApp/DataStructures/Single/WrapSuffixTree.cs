@@ -21,10 +21,9 @@ namespace ConsoleApp.DataStructures.Single
         public IEnumerable<int> SinglePatternMatching(string pattern, out double mt, out double rt)
         {
             var sw = Stopwatch.StartNew();
-
+            var p = suffixTree.SearchNode(pattern);
             sw.Stop();
             mt = sw.Elapsed.TotalNanoseconds;
-            var p = suffixTree.SearchNode(pattern);
             sw = Stopwatch.StartNew();
             var occs = new List<int>(p.GetData().Select(x => x.CharPosition));
             sw.Stop();
