@@ -16,19 +16,20 @@ for ds in data_structures:
         df['name'] = ds
         dfAll = pd.concat([df,dfAll])
     
-
+sns.set_style('darkgrid')
 for q in query:
-    fig, axes = plt.subplots(2,2,figsize=(17,9),sharey=True)
+    fig, axes = plt.subplots(3,1,figsize=(11,16),sharey=True)
+    
     plt.yscale('log', base=2)
     dfDs = dfAll.loc[dfAll['data'] == 'english']
-    sns.barplot(ax=axes[0,0], data = dfDs, hue='name', x='length', y=q).set(title='english ' + q)
+    sns.barplot(ax=axes[0], data = dfDs, hue='name', x='length', y=q).set(title='english ' + q)
     dfDs = dfAll.loc[dfAll['data'] == 'realDNA']
-    sns.barplot(ax=axes[0,1], data = dfDs, hue='name', x='length', y=q).set(title='realDNA ' + q)
-    dfDs = dfAll.loc[dfAll['data'] == 'DNA']
-    sns.barplot(ax=axes[1,0], data = dfDs, hue='name', x='length', y=q).set(title='DNA ' + q)
+    sns.barplot(ax=axes[1], data = dfDs, hue='name', x='length', y=q).set(title='DNA ' + q)
+    #dfDs = dfAll.loc[dfAll['data'] == 'DNA']
+    #sns.barplot(ax=axes[1,0], data = dfDs, hue='name', x='length', y=q).set(title='DNA ' + q)
     dfDs = dfAll.loc[dfAll['data'] == 'proteins']
-    sns.barplot(ax=axes[1,1], data = dfDs, hue='name', x='length', y=q).set(title='proteins ' + q)
+    sns.barplot(ax=axes[2], data = dfDs, hue='name', x='length', y=q).set(title='proteins ' + q)
     plt.tight_layout()  
-    plt.savefig('SinglePattern\\singlepattern_' + q + '.png')
+    plt.savefig('Figures\\singlepattern_' + q + '.png')
     plt.close()
 
