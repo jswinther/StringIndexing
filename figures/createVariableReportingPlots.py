@@ -33,7 +33,7 @@ for e in base_data_structures:
     dfBase = pd.concat([df,dfBase])
 
 fig, axes = plt.subplots(3,1,figsize=(11,16),sharey=True)
-plt.yscale('log', base=2)
+plt.yscale('log', base=10)
 dfDs = dfBase.loc[dfBase['data'] == 'english']
 sns.barplot(ax=axes[0], data = dfDs, hue='name', x='length', y='construction').set(title='english ' + 'construction')
 dfDs = dfBase.loc[dfBase['data'] == 'realDNA']
@@ -66,7 +66,7 @@ for e in base_data_structures:
 
 for q in query:
     fig, axes = plt.subplots(3,1,figsize=(11,16),sharey=True)
-    plt.yscale('log', base=2)
+    plt.yscale('log', base=10)
     dfDs = dfBase.loc[dfBase['data'] == 'english']
     sns.barplot(ax=axes[0], data = dfDs, hue='name', x='length', y=q).set(title='english ' + q)
     dfDs = dfBase.loc[dfBase['data'] == 'realDNA']
