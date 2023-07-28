@@ -10,14 +10,14 @@ data_structures = [f for f in os.listdir(path) if os.path.isfile(os.path.join(pa
 
 
 base_data_structures = {
+    "Precomputed Substrings + 1DRR": 'Variable_Report_PreComp_1DRP.csv',
     "ESA + 2DRR": 'Variable_Report_ESA_KdTrees.csv',
     "ESA + Partial Sorting and Top Nodes": 'Variable_Report_PartialSort_TopNodes.csv',
     "ESA + Partial Sorting": 'Variable_Report_PartialSort.csv',
     "ESA + Sorted": 'Variable_Report_ESA_Sorted.csv',
     "ESA + Runtime 1DRR": 'Variable_Report_ESA_Runtime.csv',
     "Suffix Array + 1DRR": 'Variable_Report_SA_Runtime.csv',
-    "Suffix Tree + 1DRR": 'Variable_Report_SuffixTree_1DRP.csv',
-    "Precomputed substrings + 1DRR": 'Variable_Report_PreComp_1DRP.csv'
+    "Suffix Tree + 1DRR": 'Variable_Report_SuffixTree_1DRP.csv'
 }
 
 """

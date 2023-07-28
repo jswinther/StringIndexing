@@ -7,12 +7,12 @@ import matplotlib.pyplot as plt
 
 path = os.getcwd() + '\\Results\\'
 data_structures = {
+    "Precomputed Substrings + Hashing": 'Fixed_Report_PreComp_Hash.csv',
     "ESA + Partial Hashing": 'Fixed_Report_ESA_PartialHash.csv',
     "ESA + Hashed": 'Fixed_Report_ESA_Hashed.csv',
     "ESA + Runtime Hashing": 'Fixed_Report_ESA_Runtime.csv',
     "SA + Runtime Hashing": 'Fixed_Report_SA_Runtime.csv',
-    "Suffix tree": 'Fixed_Report_SuffixTree_Hash.csv',
-    "Precomputed substring": 'Fixed_Report_PreComp_Hash.csv'
+    "Suffix Tree + Runtime Hashing": 'Fixed_Report_SuffixTree_Hash.csv'
 }
 
 sns.set_style('darkgrid')
