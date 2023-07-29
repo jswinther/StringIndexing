@@ -32,7 +32,6 @@ namespace ConsoleApp.DataStructures.Obsolete
 
         private class TrieNode
         {
-            // We could probably use something smaller than a char since we know that the alphabet never exceeds 26 or whatever the size of the DNA alphabet is.
             Dictionary<char, TrieNode> children = new Dictionary<char, TrieNode>();
             public bool ContainsKey(char key) => children.ContainsKey(key);
             public TrieNode this[char key]

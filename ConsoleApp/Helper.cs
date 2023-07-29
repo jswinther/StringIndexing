@@ -8,12 +8,11 @@ namespace ConsoleApp
 {
     public static class Helper
     {
-        public static T[] KWayMerge<T>(T[][] arrays) where T : IComparable<T>
+        public static int[] KWayMerge(int[][] arrays)
         {
-            // Create a SortedSet to store the current minimum element from each array
-            PriorityQueue<int, T> minHeap = new PriorityQueue<int, T>();
+            PriorityQueue<int, int> minHeap = new PriorityQueue<int, int>();
             int[] counters = new int[arrays.Length];
-            // Initialize the heap with the first element from each input array
+
             for (int i = 0; i < arrays.Length; i++)
             {
                 if (arrays[i].Length > 0)
@@ -22,15 +21,12 @@ namespace ConsoleApp
                 }
             }
 
-            // Calculate the total number of elements in all the input arrays
-            int totalElements = arrays.Sum(a => a.Length);
 
-            // Initialize the output array with the correct length
-            T[] result = new T[totalElements];
+            int totalElements = arrays.Sum(a => a.Length);
+            int[] result = new int[totalElements];
             int index = 0;
 
-            // Merge the arrays using the k-way merge algorithm
-            while (minHeap.TryDequeue(out int arrayIndex, out T value) && index < totalElements)
+            while (minHeap.TryDequeue(out int arrayIndex, out int value) && index < totalElements)
             {
                 result[index++] = value;
                 if (arrays[arrayIndex].Length > counters[arrayIndex])

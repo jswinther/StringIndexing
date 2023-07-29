@@ -15,7 +15,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace ConsoleApp
 {
-    public partial class Program
+    public class Program
     {
         static void Main(string[] args)
         {

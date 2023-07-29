@@ -14,13 +14,11 @@
             table = new int[n, logN];
             logTable = new int[n + 1];
 
-            // Initialize the table with the base case values
             for (int i = 0; i < n; i++)
             {
                 table[i, 0] = arr[i];
             }
 
-            // Compute the values for the rest of the table
             for (int j = 1; j < logN; j++)
             {
                 for (int i = 0; i + (1 << j) <= n; i++)
@@ -29,7 +27,6 @@
                 }
             }
 
-            // Precompute the logarithm table for faster queries
             for (int i = 2; i <= n; i++)
             {
                 logTable[i] = logTable[i / 2] + 1;
